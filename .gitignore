@@ -4,13 +4,18 @@
 
 # vim/vi
 *.swp
+**/*.swp
 
 # JavaScript
 node_modules/
+**/node_modules/
 .node_modules/
+**/.node_modules/
 .eslintcache
-unpackage/dist/build/
-unpackage/dist/dev/
+**/.eslintcache
+unpackage/dist/
+**/unpackage/dist/
 
 # python
 *.pyc
+**/*.pyc

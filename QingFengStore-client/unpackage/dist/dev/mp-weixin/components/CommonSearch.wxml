@@ -1,1 +1,0 @@
-<view class="search-container data-v-12fddf87" style="{{e}}"><view class="search-input data-v-12fddf87"><uni-easyinput wx:if="{{d}}" class="data-v-12fddf87" bindiconClick="{{a}}" bindconfirm="{{b}}" u-i="12fddf87-0" bind:__l="__l" bindupdateModelValue="{{c}}" u-p="{{d}}"></uni-easyinput></view><view class="search-space data-v-12fddf87"></view></view>

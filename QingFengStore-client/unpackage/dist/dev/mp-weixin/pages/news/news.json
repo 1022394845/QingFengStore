@@ -1,7 +1,0 @@
-{
-  "navigationBarTitleText": "资讯",
-  "navigationStyle": "custom",
-  "usingComponents": {
-    "common-nav-bar": "../../components/CommonNavBar"
-  }
-}

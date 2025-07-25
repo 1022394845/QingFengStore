@@ -1,1 +1,0 @@
-<view class="container"><common-nav-bar wx:if="{{a}}" u-i="6e9eb144-0" bind:__l="__l" u-p="{{a}}"></common-nav-bar><common-search wx:if="{{b}}" u-i="6e9eb144-1" bind:__l="__l" u-p="{{b}}"></common-search><view wx:for="{{c}}" wx:for-item="item" class="">{{item.a}}</view></view>

@@ -1,1 +1,0 @@
-<view class="container"><common-nav-bar wx:if="{{a}}" u-i="6540f93e-0" bind:__l="__l" u-p="{{a}}"></common-nav-bar> 资讯 </view>
