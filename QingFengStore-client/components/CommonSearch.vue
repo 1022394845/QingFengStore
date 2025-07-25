@@ -2,6 +2,12 @@
 import { ref } from 'vue'
 import { navBarHeight_px } from '@/utils/system.js'
 
+defineOptions({
+	options: {
+		styleIsolation: 'shared'
+	}
+})
+
 const props = defineProps({
 	placeholder: {
 		type: String,
@@ -42,7 +48,7 @@ const onSearch = () => {
 		background-color: $uni-color-primary;
 
 		:deep(.is-input-border) {
-			border-radius: 35rpx;
+			border-radius: 35rpx !important;
 			border-color: $uni-color-primary !important;
 		}
 
