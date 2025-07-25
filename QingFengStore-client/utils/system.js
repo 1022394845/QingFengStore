@@ -10,12 +10,15 @@ const MENU_BUTTON_INFO = uni.getMenuButtonBoundingClientRect ? uni.getMenuButton
 
 // 状态栏高度 px
 export const statusBarHeight = (SYSTEM_WINDOW_INFO.statusBarHeight || 0)
+export const statusBarHeight_px = `${statusBarHeight}px`
 
 // 标题栏高度 px
 export const titleBarHeight =
 	(!MENU_BUTTON_INFO.height || !MENU_BUTTON_INFO.top) ?
 	40 :
 	MENU_BUTTON_INFO.height + (MENU_BUTTON_INFO.top - statusBarHeight) * 2;
+export const titleBarHeight_px = `${titleBarHeight}px`
 
 // 导航栏高度 px
 export const navBarHeight = statusBarHeight + titleBarHeight
+export const navBarHeight_px = `${navBarHeight}px`

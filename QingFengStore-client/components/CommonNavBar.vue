@@ -1,5 +1,5 @@
 <script setup>
-import { statusBarHeight, titleBarHeight, navBarHeight } from '@/utils/system.js'
+import { statusBarHeight_px, titleBarHeight_px, navBarHeight_px } from '@/utils/system.js'
 
 const props = defineProps({
 	title: {
@@ -28,8 +28,8 @@ const navBack = () => {
 <template>
 	<view class="common-nav-bar">
 		<view class="common-nav-bar_container">
-			<view class="common-nav-bar_status-bar" :style="{ height: `${statusBarHeight}px` }"></view>
-			<view class="common-nav-bar_title-bar" :style="{ height: `${titleBarHeight}px` }">
+			<view class="common-nav-bar_status-bar"></view>
+			<view class="common-nav-bar_title-bar">
 				<view class="common-nav-bar_title-bar_arrow" v-if="showBack" @click.stop="navBack">
 					<uni-icons type="back" size="28" :color="titleColor"></uni-icons>
 				</view>
@@ -42,13 +42,11 @@ const navBack = () => {
 				<view class="common-nav-bar_title-bar_menu"></view>
 			</view>
 		</view>
-		<view class="common-nav-bar_space" :style="{ height: `${navBarHeight}px` }"></view>
+		<view class="common-nav-bar_space"></view>
 	</view>
 </template>
 
 <style scoped lang="scss">
-@import '@/styles/var.scss';
-
 .common-nav-bar {
 	width: 750rpx;
 
@@ -57,15 +55,17 @@ const navBack = () => {
 		left: 0;
 		top: 0;
 		width: 100%;
-		background-color: $qfs-color-primary;
+		background-color: $uni-color-primary;
 	}
 
 	&_status-bar {
 		width: 100%;
+		height: v-bind(statusBarHeight_px);
 	}
 
 	&_title-bar {
 		width: 100%;
+		height: v-bind(titleBarHeight_px);
 		display: flex;
 		justify-content: space-between;
 		align-items: center;
@@ -84,6 +84,10 @@ const navBack = () => {
 			flex: 1;
 			font-weight: bold;
 		}
+	}
+
+	&_space {
+		height: v-bind(navBarHeight_px);
 	}
 }
 </style>

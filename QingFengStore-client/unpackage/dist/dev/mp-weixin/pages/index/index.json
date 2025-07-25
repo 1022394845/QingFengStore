@@ -2,6 +2,7 @@
   "navigationBarTitleText": "首页",
   "navigationStyle": "custom",
   "usingComponents": {
-    "common-nav-bar": "../../components/CommonNavBar"
+    "common-nav-bar": "../../components/CommonNavBar",
+    "common-search": "../../components/CommonSearch"
   }
 }

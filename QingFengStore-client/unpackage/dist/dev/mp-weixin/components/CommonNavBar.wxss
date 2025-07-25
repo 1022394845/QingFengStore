@@ -23,12 +23,16 @@
 }
 .common-nav-bar_status-bar.data-v-9362ca18 {
   width: 100%;
+  height: var(--23e2b970);
 }
 .common-nav-bar_title-bar.data-v-9362ca18 {
   width: 100%;
+  height: var(--5591a694);
   display: flex;
   justify-content: space-between;
   align-items: center;
+  padding: 0 32rpx;
+  font-size: 44rpx;
 }
 .common-nav-bar_title-bar_arrow.data-v-9362ca18, .common-nav-bar_title-bar_menu.data-v-9362ca18 {
   width: 80rpx;
@@ -39,5 +43,8 @@
 }
 .common-nav-bar_title-bar_text.data-v-9362ca18 {
   flex: 1;
-  text-align: center;
+  font-weight: bold;
+}
+.common-nav-bar_space.data-v-9362ca18 {
+  height: var(--103086c2);
 }
