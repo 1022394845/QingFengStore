@@ -1,0 +1,43 @@
+/* 颜色变量 */
+/* 行为相关颜色 */
+/* 文字基本颜色 */
+/* 背景颜色 */
+/* 边框颜色 */
+/* 尺寸变量 */
+/* 文字尺寸 */
+/* 图片尺寸 */
+/* Border Radius */
+/* 水平间距 */
+/* 垂直间距 */
+/* 透明度 */
+/* 文章场景相关 */
+.common-nav-bar.data-v-9362ca18 {
+  width: 750rpx;
+}
+.common-nav-bar_container.data-v-9362ca18 {
+  position: fixed;
+  left: 0;
+  top: 0;
+  width: 100%;
+  background-color: #bdaf8d;
+}
+.common-nav-bar_status-bar.data-v-9362ca18 {
+  width: 100%;
+}
+.common-nav-bar_title-bar.data-v-9362ca18 {
+  width: 100%;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+.common-nav-bar_title-bar_arrow.data-v-9362ca18, .common-nav-bar_title-bar_menu.data-v-9362ca18 {
+  width: 80rpx;
+  height: 100%;
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+}
+.common-nav-bar_title-bar_text.data-v-9362ca18 {
+  flex: 1;
+  text-align: center;
+}

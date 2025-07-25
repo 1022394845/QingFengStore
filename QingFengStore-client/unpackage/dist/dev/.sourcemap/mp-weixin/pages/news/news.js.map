@@ -1,0 +1,1 @@
+{"version":3,"file":"news.js","sources":["D:/HBuilderX/plugins/uniapp-cli-vite/uniPage:/cGFnZXMvbmV3cy9uZXdzLnZ1ZQ"],"sourcesContent":["import MiniProgramPage from 'E:/code/Web/project/uni-app/QingFengStore/QingFengStore-client/pages/news/news.vue'\nwx.createPage(MiniProgramPage)"],"names":[],"mappings":";;;;;;;AACA,GAAG,WAAW,eAAe;"}
