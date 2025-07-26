@@ -3,6 +3,7 @@ import { ref } from 'vue'
 import CommonNavBar from '@/components/CommonNavBar.vue'
 import CommonSearch from '@/components/CommonSearch.vue'
 import ScrollNotice from '@/components/ScrollNotice.vue'
+import CommonTitle from '@/components/CommonTitle.vue'
 
 // 菜单列表
 const menuList = ref([
@@ -42,6 +43,7 @@ const menuList = ref([
 		<CommonNavBar title="首页" titleColor="#ffffff"></CommonNavBar>
 		<CommonSearch placeholder="请输入商品名称"></CommonSearch>
 		<view class="wrapper">
+			<!-- 轮播图 -->
 			<view class="banner">
 				<swiper
 					class="banner_swiper"
@@ -69,7 +71,9 @@ const menuList = ref([
 					</swiper-item>
 				</swiper>
 			</view>
+			<!-- 公告 -->
 			<ScrollNotice></ScrollNotice>
+			<!-- 菜单 -->
 			<view class="menu">
 				<view
 					class="menu_item"
@@ -85,6 +89,14 @@ const menuList = ref([
 					</view>
 					<view class="menu_item_label">{{ item.label }}</view>
 				</view>
+			</view>
+			<!-- 抽奖 -->
+			<view class="prize">
+				<image class="prize_image" src="/static/home_xydcj.png" mode="aspectFill"></image>
+			</view>
+			<!-- 产品 -->
+			<view class="hot">
+				<CommonTitle name="热销产品"></CommonTitle>
 			</view>
 		</view>
 	</view>
@@ -155,6 +167,17 @@ const menuList = ref([
 			font-size: 32rpx;
 			text-align: center;
 		}
+	}
+}
+
+.prize {
+	margin-top: 50rpx;
+	width: 100%;
+	height: 188rpx;
+
+	&_image {
+		width: 100%;
+		height: 100%;
 	}
 }
 </style>
