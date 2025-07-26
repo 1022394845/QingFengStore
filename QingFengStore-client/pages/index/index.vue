@@ -1,13 +1,14 @@
 <script setup>
 import CommonNavBar from '@/components/CommonNavBar.vue'
 import CommonSearch from '@/components/CommonSearch.vue'
+import ScrollNotice from '@/components/ScrollNotice.vue'
 </script>
 
 <template>
 	<view class="container">
 		<CommonNavBar title="首页" titleColor="#ffffff"></CommonNavBar>
 		<CommonSearch placeholder="请输入商品名称"></CommonSearch>
-		<view class="wraper">
+		<view class="wrapper">
 			<view class="banner">
 				<swiper
 					class="banner_swiper"
@@ -35,6 +36,7 @@ import CommonSearch from '@/components/CommonSearch.vue'
 					</swiper-item>
 				</swiper>
 			</view>
+			<ScrollNotice style="margin-top: 20rpx"></ScrollNotice>
 			<view class="" v-for="item in 20">
 				{{ item }}
 			</view>
@@ -43,7 +45,7 @@ import CommonSearch from '@/components/CommonSearch.vue'
 </template>
 
 <style scoped lang="scss">
-.wraper {
+.wrapper {
 	position: relative;
 
 	&::before {
