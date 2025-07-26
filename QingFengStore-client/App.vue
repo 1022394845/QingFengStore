@@ -8,6 +8,8 @@ export default {
 
 <style>
 /*每个页面公共css */
+@import url('static/icon-font/iconfont.css');
+
 view {
 	box-sizing: border-box;
 }

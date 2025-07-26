@@ -1,4 +1,10 @@
-<script setup></script>
+<script setup>
+defineOptions({
+	options: {
+		styleIsolation: 'shared'
+	}
+})
+</script>
 
 <template>
 	<view class="scroll-notice">
@@ -36,6 +42,7 @@
 
 <style scoped lang="scss">
 .scroll-notice {
+	margin-top: 20rpx;
 	display: flex;
 	align-items: center;
 
