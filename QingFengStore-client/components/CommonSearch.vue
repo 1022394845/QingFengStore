@@ -38,8 +38,6 @@ const onSearch = () => {
 
 <style scoped lang="scss">
 .search-container {
-	z-index: 9999;
-
 	.search-input {
 		position: fixed;
 		top: v-bind(navBarHeight_px);
@@ -48,6 +46,7 @@ const onSearch = () => {
 		height: 90rpx;
 		padding: 10rpx 32rpx;
 		background-color: $uni-color-primary;
+		z-index: 9999;
 
 		:deep(.is-input-border) {
 			border-radius: 35rpx !important;

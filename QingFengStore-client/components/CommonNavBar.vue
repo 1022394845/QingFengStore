@@ -49,7 +49,6 @@ const navBack = () => {
 <style scoped lang="scss">
 .common-nav-bar {
 	width: 750rpx;
-	z-index: 9998;
 
 	&_container {
 		position: fixed;
@@ -57,6 +56,7 @@ const navBack = () => {
 		top: 0;
 		width: 100%;
 		background-color: $uni-color-primary;
+		z-index: 9998;
 	}
 
 	&_status-bar {
