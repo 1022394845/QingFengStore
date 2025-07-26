@@ -38,6 +38,8 @@ const onSearch = () => {
 
 <style scoped lang="scss">
 .search-container {
+	z-index: 9999;
+
 	.search-input {
 		position: fixed;
 		top: v-bind(navBarHeight_px);

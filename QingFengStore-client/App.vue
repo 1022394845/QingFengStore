@@ -11,4 +11,9 @@ export default {
 view {
 	box-sizing: border-box;
 }
+
+.wraper {
+	width: 100%;
+	padding: 20rpx 32rpx;
+}
 </style>
