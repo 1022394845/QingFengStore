@@ -28,7 +28,7 @@ const props = defineProps({
 
 <style scoped lang="scss">
 .common-title {
-	margin-top: 34rpx;
+	margin: 34rpx 0;
 	display: flex;
 	justify-content: space-between;
 	align-items: center;

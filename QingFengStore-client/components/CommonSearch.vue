@@ -60,6 +60,10 @@ const onSearch = () => {
 				font-size: 28rpx !important;
 			}
 		}
+
+		:deep(.uni-icons) {
+			font-size: 48rpx !important;
+		}
 	}
 
 	.search-space {

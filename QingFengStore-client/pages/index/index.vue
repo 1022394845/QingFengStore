@@ -4,6 +4,7 @@ import CommonNavBar from '@/components/CommonNavBar.vue'
 import CommonSearch from '@/components/CommonSearch.vue'
 import ScrollNotice from '@/components/ScrollNotice.vue'
 import CommonTitle from '@/components/CommonTitle.vue'
+import GoodsCard from '@/components/GoodsCard.vue'
 
 // 菜单列表
 const menuList = ref([
@@ -97,6 +98,9 @@ const menuList = ref([
 			<!-- 产品 -->
 			<view class="hot">
 				<CommonTitle name="热销产品"></CommonTitle>
+				<view class="hot_list">
+					<GoodsCard v-for="item in 6"></GoodsCard>
+				</view>
 			</view>
 		</view>
 	</view>
@@ -178,6 +182,14 @@ const menuList = ref([
 	&_image {
 		width: 100%;
 		height: 100%;
+	}
+}
+
+.hot {
+	&_list {
+		display: grid;
+		grid-template-columns: repeat(auto-fit, minmax(316rpx, 1fr));
+		gap: 30rpx;
 	}
 }
 </style>
