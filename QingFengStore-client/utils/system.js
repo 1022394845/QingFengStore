@@ -25,8 +25,8 @@ export const navBarHeight = statusBarHeight + titleBarHeight
 export const navBarHeight_px = `${navBarHeight}px`
 
 // 搜索框高度 rpx
-export const searchHeight = 90
-export const searchHeight_rpx = '90rpx'
+export const searchHeight = uni.rpx2px(90)
+export const searchHeight_px = `${searchHeight}px`
 
 // 视口容器高度 px
 export const containerHeight = SYSTEM_WINDOW_INFO.windowHeight - navBarHeight
@@ -37,5 +37,5 @@ export const tabBarHeight = SYSTEM_INFO.uniPlatform === 'web' ? 50 : 0
 export const tabBarHeight_px = `${tabBarHeight}px`
 
 // 结算栏高度 rpx
-export const settleBarHeight = 100
-export const settleBarHeight_rpx = '100rpx'
+export const settleBarHeight = uni.rpx2px(100)
+export const settleBarHeight_rpx = `${settleBarHeight}px`

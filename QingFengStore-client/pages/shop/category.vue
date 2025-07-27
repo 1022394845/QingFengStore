@@ -4,16 +4,70 @@ import {
 	searchHeight,
 	tabBarHeight,
 	tabBarHeight_px,
-	settleBarHeight
+	settleBarHeight,
+	navBarHeight
 } from '@/utils/system.js'
 import { formatPrice } from '@/utils/format.js'
+import { throttle } from '@/utils/throttle.js'
 import CommonNavBar from '@/components/CommonNavBar.vue'
 import CommonSearch from '@/components/CommonSearch.vue'
 import GoodsCard from '@/components/GoodsCard.vue'
+import { onMounted, ref } from 'vue'
 
-const wrapperHeight_px = `${
-	containerHeight - uni.rpx2px(searchHeight) - tabBarHeight - uni.rpx2px(settleBarHeight)
-}px`
+const wrapperHeight_px = `${containerHeight - searchHeight - tabBarHeight - settleBarHeight}px`
+
+// 分类
+const categoryList = ref([
+	{
+		id: '1',
+		label: '菜单1'
+	},
+	{
+		id: '2',
+		label: '菜单2'
+	},
+	{
+		id: '3',
+		label: '菜单3'
+	},
+	{
+		id: '4',
+		label: '菜单4'
+	}
+])
+
+const currentCategory = ref('')
+const currentCategoryOffset = ref(0)
+const getCategoryOffset = () => {
+	categoryList.value.forEach((item, index) => {
+		const query = uni.createSelectorQuery().in(this).select(`#group-${item.id}`)
+		query
+			.boundingClientRect(({ top }) => {
+				item.top = top - navBarHeight - searchHeight
+			})
+			.exec()
+	})
+}
+onMounted(() => {
+	getCategoryOffset()
+})
+
+let onChanging = false // 在手动切换时禁用滚动监测
+const onChangeCategory = (item) => {
+	onChanging = true
+	currentCategory.value = item.id
+	currentCategoryOffset.value = item.top
+	setTimeout(() => {
+		onChanging = false
+	}, 300)
+}
+
+const onScrollCategory = throttle((event) => {
+	if (onChanging) return
+	const scrollTop = event.detail.scrollTop
+	const result = categoryList.value.filter((item) => item.top <= scrollTop + 1)
+	if (result.length) currentCategory.value = result[result.length - 1].id
+})
 </script>
 
 <template>
@@ -22,15 +76,32 @@ const wrapperHeight_px = `${
 		<CommonSearch placeholder="请输入商品名称"></CommonSearch>
 		<view class="wrapper">
 			<scroll-view class="aside" scroll-y>
-				<view class="aside_item" v-for="(item, index) in 10" :class="{ active: index === 0 }">
-					菜单
+				<view
+					class="aside_item"
+					v-for="item in categoryList"
+					:key="item.id"
+					:class="{ active: item.id === currentCategory }"
+					@click="onChangeCategory(item)"
+				>
+					{{ item.label }}
 				</view>
 			</scroll-view>
-			<scroll-view class="main" scroll-y>
-				<view class="group" v-for="(group, index) in 3">
-					<view class="group_label">白酒{{ index }}</view>
+			<scroll-view
+				class="main"
+				scroll-y
+				:scroll-top="currentCategoryOffset"
+				scroll-with-animation
+				@scroll="onScrollCategory"
+			>
+				<view
+					class="group"
+					v-for="(group, index) in categoryList"
+					:key="group.id"
+					:id="`group-${group.id}`"
+				>
+					<view class="group_label">{{ group.label }}</view>
 					<view class="group_list">
-						<GoodsCard v-for="item in 3"></GoodsCard>
+						<GoodsCard v-for="item in index + 2"></GoodsCard>
 					</view>
 				</view>
 			</scroll-view>
@@ -108,9 +179,6 @@ const wrapperHeight_px = `${
 			}
 
 			&_label {
-				position: sticky;
-				top: 0;
-				left: 0;
 				margin-bottom: 10rpx;
 				background-color: #ffffff;
 				font-size: 30rpx;
