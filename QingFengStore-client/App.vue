@@ -17,6 +17,7 @@ view {
 .wrapper {
 	width: 100%;
 	padding: 20rpx 32rpx;
+	overflow: hidden;
 }
 
 .ellipsis {
