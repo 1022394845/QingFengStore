@@ -4,7 +4,7 @@ import CommonNavBar from '@/components/CommonNavBar.vue'
 import CommonSearch from '@/components/CommonSearch.vue'
 import ScrollNotice from '@/components/ScrollNotice.vue'
 import CommonTitle from '@/components/CommonTitle.vue'
-import GoodsCard from '@/components/GoodsCard.vue'
+import GoodsInfoCard from '@/components/GoodsInfoCard.vue'
 
 // 菜单列表
 const menuList = ref([
@@ -41,7 +41,7 @@ const menuList = ref([
 
 <template>
 	<view class="container">
-		<CommonNavBar title="首页" titleColor="#ffffff"></CommonNavBar>
+		<CommonNavBar title="清风商城" titleColor="#ffffff"></CommonNavBar>
 		<CommonSearch placeholder="请输入商品名称"></CommonSearch>
 		<view class="wrapper">
 			<!-- 轮播图 -->
@@ -99,7 +99,7 @@ const menuList = ref([
 			<view class="hot">
 				<CommonTitle name="热销产品"></CommonTitle>
 				<view class="hot_list">
-					<GoodsCard v-for="item in 6"></GoodsCard>
+					<GoodsInfoCard v-for="(item, index) in 6" :key="index"></GoodsInfoCard>
 				</view>
 			</view>
 		</view>
@@ -109,6 +109,7 @@ const menuList = ref([
 <style scoped lang="scss">
 .wrapper {
 	position: relative;
+	padding: 20rpx 32rpx;
 
 	&::before {
 		position: absolute;
@@ -139,6 +140,7 @@ const menuList = ref([
 			height: 100%;
 
 			&_image {
+				display: block;
 				width: 100%;
 				height: 100%;
 			}
@@ -180,6 +182,7 @@ const menuList = ref([
 	height: 188rpx;
 
 	&_image {
+		display: block;
 		width: 100%;
 		height: 100%;
 	}
