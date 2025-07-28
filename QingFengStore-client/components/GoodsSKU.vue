@@ -1,6 +1,7 @@
 <script setup>
-import { computed } from 'vue'
+import { computed, ref } from 'vue'
 import GoodsCard from '@/components/GoodsCard.vue'
+import NumberBox from '@/components/NumberBox.vue'
 
 const props = defineProps({
 	detail: {
@@ -8,14 +9,28 @@ const props = defineProps({
 		required: true
 	}
 })
-const currentGoodsSkuId = defineModel('currentGoodsSkuId', { type: String, default: '' })
+const emits = defineEmits(['close'])
 
+const currentGoodsSkuId = defineModel('currentGoodsSkuId', { type: String, default: '' })
 const onChangeSku = (id) => {
 	currentGoodsSkuId.value = id
 }
 const currentSkuInfo = computed(
 	() => props.detail.sku.find((item) => item._id === currentGoodsSkuId.value) || {}
 )
+
+// 选择数量
+const count = ref(1)
+
+// 加入购物车
+const onCar = () => {
+	emits('close')
+}
+
+// 立即购买
+const onBuy = () => {
+	emits('close')
+}
 </script>
 
 <template>
@@ -39,11 +54,12 @@ const currentSkuInfo = computed(
 		<!-- 步进器 -->
 		<view class="goods-count">
 			<view class="goods-count_label label">数量</view>
+			<NumberBox v-model="count"></NumberBox>
 		</view>
 		<!-- 操作 -->
 		<view class="goods-btn-group">
-			<view class="goods-btn car">加入购物车</view>
-			<view class="goods-btn buy">立即购买</view>
+			<view class="goods-btn car" @click="onCar">加入购物车</view>
+			<view class="goods-btn buy" @click="onBuy">立即购买</view>
 		</view>
 	</view>
 </template>
@@ -51,35 +67,45 @@ const currentSkuInfo = computed(
 <style scoped lang="scss">
 .goods-sku-container {
 	.label {
-		margin-top: 44rpx;
 		font-size: 32rpx;
 		font-weight: bold;
 		color: #333333;
 	}
 
-	.goods-sku_list {
-		margin-top: 20rpx;
-		display: flex;
-		flex-wrap: wrap;
-		gap: 28rpx;
+	.goods-sku {
+		margin-top: 44rpx;
 
-		&_item {
-			width: fit-content;
-			height: 40rpx;
-			padding: 0 20rpx;
+		&_list {
+			margin-top: 20rpx;
 			display: flex;
-			justify-content: center;
-			align-items: center;
-			font-size: 24rpx;
-			color: #666666;
-			background-color: #f4f4f4;
-			border-radius: 10rpx;
+			flex-wrap: wrap;
+			gap: 28rpx;
 
-			&.active {
-				color: #ffffff;
-				background-color: $uni-color-primary;
+			&_item {
+				width: fit-content;
+				height: 40rpx;
+				padding: 0 20rpx;
+				display: flex;
+				justify-content: center;
+				align-items: center;
+				font-size: 24rpx;
+				color: #666666;
+				background-color: #f4f4f4;
+				border-radius: 10rpx;
+
+				&.active {
+					color: #ffffff;
+					background-color: $uni-color-primary;
+				}
 			}
 		}
+	}
+
+	.goods-count {
+		margin-top: 44rpx;
+		display: flex;
+		justify-content: space-between;
+		align-items: center;
 	}
 
 	.goods-btn-group {

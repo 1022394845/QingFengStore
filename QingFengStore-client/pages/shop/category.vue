@@ -72,9 +72,12 @@ const getGoodsDetail = async (id) => {
 	currentGoodsDetail.value = data
 	currentGoodsSkuId.value = data?.sku?.[0]?._id || ''
 }
-const showSkuPop = (id) => {
+const openSkuPop = (id) => {
 	skuPopRef.value.open()
 	getGoodsDetail(id)
+}
+const closeSkuPop = () => {
+	skuPopRef.value.close()
 }
 </script>
 
@@ -114,7 +117,7 @@ const showSkuPop = (id) => {
 							:key="item._id"
 							:detail="item"
 							:config="0"
-							@onSelectBuy="(id) => showSkuPop(id)"
+							@onSelectBuy="(id) => openSkuPop(id)"
 						></GoodsCard>
 					</view>
 				</view>
@@ -143,6 +146,7 @@ const showSkuPop = (id) => {
 					<GoodsSKU
 						:detail="currentGoodsDetail"
 						v-model:currentGoodsSkuId="currentGoodsSkuId"
+						@close="closeSkuPop"
 					></GoodsSKU>
 				</view>
 			</uni-popup>
