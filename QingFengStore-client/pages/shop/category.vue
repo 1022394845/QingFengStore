@@ -71,7 +71,6 @@ const getGoodsDetail = async (id) => {
 	const { data = {} } = await getGoodsDetailAPI()
 	currentGoodsDetail.value = data
 	currentGoodsSkuId.value = data?.sku?.[0]?._id || ''
-	console.log(currentGoodsSkuId.value)
 }
 const showSkuPop = (id) => {
 	skuPopRef.value.open()
@@ -141,7 +140,10 @@ const showSkuPop = (id) => {
 			<!-- SKU弹出框 -->
 			<uni-popup ref="skuPopRef" type="bottom" border-radius="10px 10px 0 0">
 				<view class="sku-popup_container">
-					<GoodsSKU :detail="currentGoodsDetail" v-model="currentGoodsSkuId"></GoodsSKU>
+					<GoodsSKU
+						:detail="currentGoodsDetail"
+						v-model:currentGoodsSkuId="currentGoodsSkuId"
+					></GoodsSKU>
 				</view>
 			</uni-popup>
 		</view>

@@ -1,4 +1,5 @@
 <script setup>
+import { computed } from 'vue'
 import GoodsCard from '@/components/GoodsCard.vue'
 
 const props = defineProps({
@@ -7,16 +8,19 @@ const props = defineProps({
 		required: true
 	}
 })
-const currentGoodsSkuId = defineModel({ type: String, default: '' })
+const currentGoodsSkuId = defineModel('currentGoodsSkuId', { type: String, default: '' })
 
 const onChangeSku = (id) => {
 	currentGoodsSkuId.value = id
 }
+const currentSkuInfo = computed(
+	() => props.detail.sku.find((item) => item._id === currentGoodsSkuId.value) || {}
+)
 </script>
 
 <template>
 	<view class="goods-sku-container">
-		<GoodsCard :detail="detail" :config="1"></GoodsCard>
+		<GoodsCard :detail="detail" :sku="currentSkuInfo" :config="1"></GoodsCard>
 		<!-- SKU列表 -->
 		<view class="goods-sku">
 			<view class="goods-sku_label label">规格</view>

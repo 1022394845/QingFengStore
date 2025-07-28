@@ -1,10 +1,15 @@
 <script setup>
+import { computed } from 'vue'
 import { formatPrice } from '@/utils/format.js'
 
 const props = defineProps({
 	detail: {
 		type: Object,
 		required: true
+	},
+	sku: {
+		type: Object,
+		default: {}
 	},
 	config: {
 		// 0-商城列表 1-规格选择
@@ -13,6 +18,18 @@ const props = defineProps({
 	}
 })
 const emits = defineEmits(['onSelectBuy'])
+
+const info = computed(() => {
+	const bannerImg = props.detail?.goods_banner_img || props.detail?.goods_banner_imgs?.[0] || ''
+	const price = props.detail?.price || props.sku?.price || null
+	const market_price = props.detail?.market_price || props.sku?.market_price
+
+	return {
+		bannerImg,
+		price,
+		market_price
+	}
+})
 
 const onSelectBuy = () => {
 	emits('onSelectBuy', props.detail._id)
@@ -24,7 +41,7 @@ const onSelectBuy = () => {
 		<view class="goods-card_picture">
 			<image
 				class="goods-card_picture_image"
-				:src="detail.goods_banner_img"
+				:src="info.bannerImg"
 				mode="aspectFill"
 				lazy-load
 			></image>
@@ -39,11 +56,11 @@ const onSelectBuy = () => {
 						<view class="goods-card_info_bottom_left_price_new">
 							<view class="goods-card_info_bottom_left_price_new_unit">￥</view>
 							<view class="goods-card_info_bottom_left_price_new_text">
-								{{ formatPrice(detail.price) }}
+								{{ info.price ? formatPrice(info.price) : '暂无价格' }}
 							</view>
 						</view>
-						<view class="goods-card_info_bottom_left_price_old">
-							￥{{ formatPrice(detail.market_price) }}
+						<view class="goods-card_info_bottom_left_price_old" v-if="info.market_price">
+							￥{{ formatPrice(info.market_price) }}
 						</view>
 					</view>
 				</view>
