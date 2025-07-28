@@ -2,6 +2,7 @@
 import { computed, ref } from 'vue'
 import GoodsCard from '@/components/GoodsCard.vue'
 import NumberBox from '@/components/NumberBox.vue'
+import { useCartStore } from '@/store/cart'
 
 const props = defineProps({
 	detail: {
@@ -16,19 +17,34 @@ const onChangeSku = (id) => {
 	currentGoodsSkuId.value = id
 }
 const currentSkuInfo = computed(
-	() => props.detail.sku.find((item) => item._id === currentGoodsSkuId.value) || {}
+	() => props.detail.sku?.find((item) => item._id === currentGoodsSkuId.value) || {}
 )
 
 // 选择数量
 const count = ref(1)
 
+// 创建信息
+const createInfo = () => {
+	if (!currentGoodsSkuId.value) throw new Error('缺少商品规格参数')
+	return {
+		...props.detail,
+		sku_id: currentGoodsSkuId.value,
+		count: count.value
+	}
+}
+
+const cartStore = useCartStore()
 // 加入购物车
-const onCar = () => {
+const onCart = () => {
+	const data = createInfo()
+	cartStore.addGoods(data)
 	emits('close')
 }
 
 // 立即购买
 const onBuy = () => {
+	const res = createInfo()
+	console.log(res)
 	emits('close')
 }
 </script>
@@ -58,7 +74,7 @@ const onBuy = () => {
 		</view>
 		<!-- 操作 -->
 		<view class="goods-btn-group">
-			<view class="goods-btn car" @click="onCar">加入购物车</view>
+			<view class="goods-btn cart" @click="onCart">加入购物车</view>
 			<view class="goods-btn buy" @click="onBuy">立即购买</view>
 		</view>
 	</view>
@@ -122,7 +138,7 @@ const onBuy = () => {
 			color: #ffffff;
 			text-align: center;
 
-			&.car {
+			&.cart {
 				background-color: #ff9300;
 				border-radius: 40rpx 0 0 40rpx;
 			}

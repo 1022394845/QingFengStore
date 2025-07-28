@@ -9,12 +9,12 @@ import {
 } from '@/utils/system.js'
 import { formatPrice } from '@/utils/format.js'
 import { throttle } from '@/utils/throttle.js'
-import { onMounted, ref } from 'vue'
+import { getCurrentInstance, nextTick, onMounted, ref } from 'vue'
 import CommonNavBar from '@/components/CommonNavBar.vue'
 import CommonSearch from '@/components/CommonSearch.vue'
 import GoodsCard from '@/components/GoodsCard.vue'
 import GoodsSKU from '@/components/GoodsSKU.vue'
-import { getCategoryListAPI, getGoodsDetailAPI } from '../../apis/goods'
+import { getCategoryListAPI, getGoodsDetailAPI } from '@/apis/goods'
 
 const wrapperHeight_px = `${containerHeight - searchHeight - tabBarHeight - settleBarHeight}px`
 const skuPopupBottom_px = `${tabBarHeight + uni.rpx2px(40)}px`
@@ -28,15 +28,19 @@ const getCategoryList = async () => {
 onMounted(async () => {
 	await getCategoryList()
 	currentCategory.value = categoryList.value[0]._id
+	await nextTick()
 	getCategoryOffset()
 })
 
 const currentCategory = ref('')
 const currentCategoryOffset = ref(0)
+const instance = getCurrentInstance()
 const getCategoryOffset = () => {
 	categoryList.value.forEach((item, index) => {
-		const query = uni.createSelectorQuery().in(this).select(`#group-${item._id}`)
-		query
+		const query = uni
+			.createSelectorQuery()
+			.in(instance)
+			.select(`#group-${item._id}`)
 			.boundingClientRect(({ top }) => {
 				item.top = top - navBarHeight - searchHeight
 			})

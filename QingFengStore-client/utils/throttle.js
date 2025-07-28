@@ -54,7 +54,7 @@ export function throttle(func, delay = 100) {
 		clearTimeout(timeout)
 		isThrottled = false
 		lastArgs = lastThis = null
-	};
+	}
 
 	return wrapper
 }
