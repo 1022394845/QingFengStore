@@ -55,11 +55,13 @@ onMounted(() => {
 let onChanging = false // 在手动切换时禁用滚动监测
 const onChangeCategory = (item) => {
 	onChanging = true
+	onScrollCategory.disableLastCall()
 	currentCategory.value = item.id
 	currentCategoryOffset.value = item.top
 	setTimeout(() => {
 		onChanging = false
-	}, 300)
+		onScrollCategory.enableLastCall()
+	}, 500)
 }
 
 const onScrollCategory = throttle((event) => {
