@@ -1,15 +1,37 @@
 <script setup>
 import { formatPrice } from '@/utils/format.js'
+
+const props = defineProps({
+	detail: {
+		type: Object,
+		required: true
+	},
+	config: {
+		// 0-商城列表 1-规格选择
+		type: Number,
+		default: 0
+	}
+})
+const emits = defineEmits(['onSelectBuy'])
+
+const onSelectBuy = () => {
+	emits('onSelectBuy', props.detail._id)
+}
 </script>
 
 <template>
 	<view class="goods-card">
 		<view class="goods-card_picture">
-			<image class="goods-card_picture_image" src="/static/tmp_goods.jpg" mode="aspectFill"></image>
+			<image
+				class="goods-card_picture_image"
+				:src="detail.goods_banner_img"
+				mode="aspectFill"
+				lazy-load
+			></image>
 		</view>
 		<view class="goods-card_info">
 			<view class="goods-card_info_top">
-				<view class="goods-card_info_top_title ellipsis">商品名称</view>
+				<view class="goods-card_info_top_title ellipsis">{{ detail.name }}</view>
 			</view>
 			<view class="goods-card_info_bottom">
 				<view class="goods-card_info_bottom_left">
@@ -17,14 +39,22 @@ import { formatPrice } from '@/utils/format.js'
 						<view class="goods-card_info_bottom_left_price_new">
 							<view class="goods-card_info_bottom_left_price_new_unit">￥</view>
 							<view class="goods-card_info_bottom_left_price_new_text">
-								{{ formatPrice(5560) }}
+								{{ formatPrice(detail.price) }}
 							</view>
 						</view>
-						<view class="goods-card_info_bottom_left_price_old">￥{{ formatPrice(6680) }}</view>
+						<view class="goods-card_info_bottom_left_price_old">
+							￥{{ formatPrice(detail.market_price) }}
+						</view>
 					</view>
 				</view>
 				<view class="goods-card_info_bottom_right">
-					<view class="goods-card_info_bottom_right_buy">选购</view>
+					<view
+						class="goods-card_info_bottom_right_buy"
+						v-if="[0].includes(config)"
+						@click="onSelectBuy"
+					>
+						选购
+					</view>
 				</view>
 			</view>
 		</view>

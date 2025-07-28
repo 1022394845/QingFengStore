@@ -9,38 +9,33 @@ import {
 } from '@/utils/system.js'
 import { formatPrice } from '@/utils/format.js'
 import { throttle } from '@/utils/throttle.js'
+import { onMounted, ref } from 'vue'
 import CommonNavBar from '@/components/CommonNavBar.vue'
 import CommonSearch from '@/components/CommonSearch.vue'
 import GoodsCard from '@/components/GoodsCard.vue'
-import { onMounted, ref } from 'vue'
+import GoodsSKU from '@/components/GoodsSKU.vue'
+import { getCategoryListAPI, getGoodsDetailAPI } from '../../apis/goods'
 
 const wrapperHeight_px = `${containerHeight - searchHeight - tabBarHeight - settleBarHeight}px`
+const skuPopupBottom_px = `${tabBarHeight + uni.rpx2px(40)}px`
 
 // 分类
-const categoryList = ref([
-	{
-		id: '1',
-		label: '菜单1'
-	},
-	{
-		id: '2',
-		label: '菜单2'
-	},
-	{
-		id: '3',
-		label: '菜单3'
-	},
-	{
-		id: '4',
-		label: '菜单4'
-	}
-])
+const categoryList = ref([])
+const getCategoryList = async () => {
+	const { data = [] } = await getCategoryListAPI()
+	categoryList.value = data
+}
+onMounted(async () => {
+	await getCategoryList()
+	currentCategory.value = categoryList.value[0]._id
+	getCategoryOffset()
+})
 
 const currentCategory = ref('')
 const currentCategoryOffset = ref(0)
 const getCategoryOffset = () => {
 	categoryList.value.forEach((item, index) => {
-		const query = uni.createSelectorQuery().in(this).select(`#group-${item.id}`)
+		const query = uni.createSelectorQuery().in(this).select(`#group-${item._id}`)
 		query
 			.boundingClientRect(({ top }) => {
 				item.top = top - navBarHeight - searchHeight
@@ -48,15 +43,12 @@ const getCategoryOffset = () => {
 			.exec()
 	})
 }
-onMounted(() => {
-	getCategoryOffset()
-})
 
 let onChanging = false // 在手动切换时禁用滚动监测
 const onChangeCategory = (item) => {
 	onChanging = true
 	onScrollCategory.disableLastCall()
-	currentCategory.value = item.id
+	currentCategory.value = item._id
 	currentCategoryOffset.value = item.top
 	setTimeout(() => {
 		onChanging = false
@@ -68,8 +60,23 @@ const onScrollCategory = throttle((event) => {
 	if (onChanging) return
 	const scrollTop = event.detail.scrollTop
 	const result = categoryList.value.filter((item) => item.top <= scrollTop + 1)
-	if (result.length) currentCategory.value = result[result.length - 1].id
+	if (result.length) currentCategory.value = result[result.length - 1]._id
 })
+
+// SKU弹出框
+const skuPopRef = ref(null)
+const currentGoodsDetail = ref({})
+const currentGoodsSkuId = ref('')
+const getGoodsDetail = async (id) => {
+	const { data = {} } = await getGoodsDetailAPI()
+	currentGoodsDetail.value = data
+	currentGoodsSkuId.value = data?.sku?.[0]?._id || ''
+	console.log(currentGoodsSkuId.value)
+}
+const showSkuPop = (id) => {
+	skuPopRef.value.open()
+	getGoodsDetail(id)
+}
 </script>
 
 <template>
@@ -81,11 +88,11 @@ const onScrollCategory = throttle((event) => {
 				<view
 					class="aside_item"
 					v-for="item in categoryList"
-					:key="item.id"
-					:class="{ active: item.id === currentCategory }"
+					:key="item._id"
+					:class="{ active: item._id === currentCategory }"
 					@click="onChangeCategory(item)"
 				>
-					{{ item.label }}
+					{{ item.name }}
 				</view>
 			</scroll-view>
 			<scroll-view
@@ -97,15 +104,22 @@ const onScrollCategory = throttle((event) => {
 			>
 				<view
 					class="group"
-					v-for="(group, index) in categoryList"
-					:key="group.id"
-					:id="`group-${group.id}`"
+					v-for="group in categoryList"
+					:key="group._id"
+					:id="`group-${group._id}`"
 				>
-					<view class="group_label">{{ group.label }}</view>
+					<view class="group_name">{{ group.name }}</view>
 					<view class="group_list">
-						<GoodsCard v-for="item in index + 2"></GoodsCard>
+						<GoodsCard
+							v-for="item in group.goods"
+							:key="item._id"
+							:detail="item"
+							:config="0"
+							@onSelectBuy="(id) => showSkuPop(id)"
+						></GoodsCard>
 					</view>
 				</view>
+				<view class="nomore">暂无更多</view>
 			</scroll-view>
 			<!-- 结算栏 -->
 			<view class="settle-container">
@@ -124,6 +138,12 @@ const onScrollCategory = throttle((event) => {
 				</view>
 				<view class="settle-btn">去结算</view>
 			</view>
+			<!-- SKU弹出框 -->
+			<uni-popup ref="skuPopRef" type="bottom" border-radius="10px 10px 0 0">
+				<view class="sku-popup_container">
+					<GoodsSKU :detail="currentGoodsDetail" v-model="currentGoodsSkuId"></GoodsSKU>
+				</view>
+			</uni-popup>
 		</view>
 	</view>
 </template>
@@ -180,7 +200,7 @@ const onScrollCategory = throttle((event) => {
 				margin-top: 40rpx;
 			}
 
-			&_label {
+			&_name {
 				margin-bottom: 10rpx;
 				background-color: #ffffff;
 				font-size: 30rpx;
@@ -193,12 +213,20 @@ const onScrollCategory = throttle((event) => {
 				gap: 40rpx;
 			}
 		}
+
+		.nomore {
+			padding: 30rpx;
+			display: flex;
+			justify-content: center;
+			align-items: center;
+			font-size: 28rpx;
+			color: #888888;
+		}
 	}
 
 	.settle-container {
 		position: fixed;
 		bottom: v-bind(tabBarHeight_px);
-		z-index: 8000;
 		width: 100%;
 		height: 100rpx;
 		padding: 0 30rpx;
@@ -280,6 +308,13 @@ const onScrollCategory = throttle((event) => {
 			border-radius: 33rpx;
 			background-color: #ef5350;
 		}
+	}
+
+	.sku-popup_container {
+		min-height: 300rpx;
+		padding: 40rpx 32rpx v-bind(skuPopupBottom_px);
+		background-color: #ffffff;
+		border-radius: 20rpx 20rpx 0 0;
 	}
 }
 </style>

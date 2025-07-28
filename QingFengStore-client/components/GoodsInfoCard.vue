@@ -9,6 +9,7 @@ import { formatPrice } from '@/utils/format.js'
 				class="goods-info-card_item_image"
 				src="/static/tmp_goods.jpg"
 				mode="aspectFill"
+				lazy-load
 			></image>
 		</view>
 		<view class="goods-info-card_info">
