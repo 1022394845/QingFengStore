@@ -28,7 +28,7 @@ const createInfo = () => {
 	if (!currentGoodsSkuId.value) throw new Error('缺少商品规格参数')
 	return {
 		...props.detail,
-		sku_id: currentGoodsSkuId.value,
+		sku: { ...currentSkuInfo.value },
 		count: count.value
 	}
 }

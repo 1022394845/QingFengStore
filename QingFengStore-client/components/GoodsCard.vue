@@ -1,4 +1,5 @@
 <script setup>
+import NumberBox from '@/components/NumberBox.vue'
 import { computed } from 'vue'
 import { formatPrice } from '@/utils/format.js'
 
@@ -12,7 +13,7 @@ const props = defineProps({
 		default: {}
 	},
 	config: {
-		// 0-商城列表 1-规格选择
+		// 0-商城列表 1-规格选择 2-购物车列表
 		type: Number,
 		default: 0
 	}
@@ -49,6 +50,9 @@ const onSelectBuy = () => {
 		<view class="goods-card_info">
 			<view class="goods-card_info_top">
 				<view class="goods-card_info_top_title ellipsis">{{ detail.name }}</view>
+				<view class="goods-card_info_top_sku-tag ellipsis" v-if="config === 2 && sku.name">
+					{{ sku.name }}
+				</view>
 			</view>
 			<view class="goods-card_info_bottom">
 				<view class="goods-card_info_bottom_left">
@@ -72,6 +76,7 @@ const onSelectBuy = () => {
 					>
 						选购
 					</view>
+					<NumberBox v-if="[2].includes(config)" v-model="detail.count"></NumberBox>
 				</view>
 			</view>
 		</view>
@@ -109,6 +114,17 @@ const onSelectBuy = () => {
 			&_title {
 				font-size: 32rpx;
 				font-weight: bold;
+			}
+
+			&_sku-tag {
+				max-width: 100%;
+				width: fit-content;
+				margin-top: 8rpx;
+				padding: 6rpx 12rpx;
+				font-size: 24rpx;
+				color: #666666;
+				background-color: #f4f4f4;
+				border-radius: 4rpx;
 			}
 		}
 

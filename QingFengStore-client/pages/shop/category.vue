@@ -14,10 +14,12 @@ import CommonNavBar from '@/components/CommonNavBar.vue'
 import CommonSearch from '@/components/CommonSearch.vue'
 import GoodsCard from '@/components/GoodsCard.vue'
 import GoodsSKU from '@/components/GoodsSKU.vue'
+import GoodsCart from '@/components/GoodsCart.vue'
 import { getCategoryListAPI, getGoodsDetailAPI } from '@/apis/goods'
+import { useCartStore } from '../../store/cart'
 
 const wrapperHeight_px = `${containerHeight - searchHeight - tabBarHeight - settleBarHeight}px`
-const skuPopupBottom_px = `${tabBarHeight + uni.rpx2px(40)}px`
+const popupBottom_px = `${tabBarHeight + uni.rpx2px(40)}px`
 
 // 分类
 const categoryList = ref([])
@@ -83,6 +85,17 @@ const openSkuPop = (id) => {
 const closeSkuPop = () => {
 	skuPopRef.value.close()
 }
+
+// 购物车弹出框
+const cartPopRef = ref(null)
+const openCartPop = () => {
+	cartPopRef.value.open()
+}
+const closeCartPop = () => {
+	cartPopRef.value.close()
+}
+
+const cartStore = useCartStore()
 </script>
 
 <template>
@@ -130,28 +143,36 @@ const closeSkuPop = () => {
 			<!-- 结算栏 -->
 			<view class="settle-container">
 				<view class="settle-info">
-					<view class="settle-info_icon">
+					<view class="settle-info_icon" @click="openCartPop">
 						<view class="iconfont icon-caigou"></view>
-						<view class="settle-info_icon_tag">3</view>
+						<view class="settle-info_icon_tag" v-if="cartStore.cartTotalNum">
+							{{ cartStore.cartTotalNum }}
+						</view>
 					</view>
 					<view class="settle-info_text">
 						<view class="settle-info_text_note">合计</view>
 						<view class="settle-info_text_unit">￥</view>
 						<view class="settle-info_text_price">
-							{{ formatPrice(153300) }}
+							{{ formatPrice(cartStore.cartTotalPrice) }}
 						</view>
 					</view>
 				</view>
 				<view class="settle-btn">去结算</view>
 			</view>
 			<!-- SKU弹出框 -->
-			<uni-popup ref="skuPopRef" type="bottom" border-radius="10px 10px 0 0">
+			<uni-popup ref="skuPopRef" type="bottom" :safe-area="false">
 				<view class="sku-popup_container">
 					<GoodsSKU
 						:detail="currentGoodsDetail"
 						v-model:currentGoodsSkuId="currentGoodsSkuId"
 						@close="closeSkuPop"
 					></GoodsSKU>
+				</view>
+			</uni-popup>
+			<!-- 购物车弹出框 -->
+			<uni-popup ref="cartPopRef" type="bottom" :safe-area="false">
+				<view class="cart-popup_container">
+					<GoodsCart></GoodsCart>
 				</view>
 			</uni-popup>
 		</view>
@@ -320,11 +341,12 @@ const closeSkuPop = () => {
 		}
 	}
 
-	.sku-popup_container {
+	.sku-popup_container,
+	.cart-popup_container {
 		min-height: 300rpx;
-		padding: 40rpx 32rpx v-bind(skuPopupBottom_px);
+		padding: 40rpx 32rpx v-bind(popupBottom_px);
 		background-color: #ffffff;
-		border-radius: 20rpx 20rpx 0 0;
+		border-radius: 30rpx 30rpx 0 0;
 	}
 }
 </style>

@@ -48,9 +48,14 @@ const onSearch = () => {
 		background-color: $uni-color-primary;
 		z-index: 9999;
 
-		:deep(.is-input-border) {
-			border-radius: 35rpx !important;
-			border-color: $uni-color-primary !important;
+		.uni-easyinput {
+			height: 100%;
+
+			:deep(.uni-easyinput__content) {
+				height: 100%;
+				border-radius: 35rpx !important;
+				border: none !important;
+			}
 		}
 
 		:deep(.uni-easyinput__content-input) {
