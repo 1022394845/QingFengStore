@@ -11,13 +11,7 @@ const cartStore = useCartStore()
 			<view class="goods-cart_list_item" v-for="item in cartStore.cartList">
 				<GoodsCard :detail="item" :sku="item.sku" :config="2"></GoodsCard>
 			</view>
-			<view class="goods-cart_list_item">
-				<uni-load-more
-					status="noMore"
-					v-if="!cartStore.cartTotalNum"
-					:content-text="{ contentnomore: '没有更多数据' }"
-				/>
-			</view>
+			<view class="goods-cart_list_item nomore" v-if="!cartStore.cartTotalNum">购物车是空的</view>
 		</scroll-view>
 		<view class="goods-cart_buy-btn" v-if="cartStore.cartTotalNum">结算</view>
 	</view>
@@ -30,6 +24,13 @@ const cartStore = useCartStore()
 
 		&_item {
 			margin-bottom: 44rpx;
+
+			&.nomore {
+				margin: 30rpx auto 0;
+				font-size: 32rpx;
+				color: #aaaaaa;
+				text-align: center;
+			}
 		}
 	}
 
