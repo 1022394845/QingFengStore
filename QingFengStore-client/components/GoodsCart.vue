@@ -3,13 +3,28 @@ import { useCartStore } from '@/store/cart'
 import GoodsCard from '@/components/GoodsCard.vue'
 
 const cartStore = useCartStore()
+
+// 移除商品确认
+const onConfirmRemove = async (item) => {
+	await uni.showModal({
+		title: '温馨提示',
+		content: '你确认移除该商品吗',
+		confirmColor: '#bdaf8d'
+	})
+	cartStore.removeGoods(item)
+}
 </script>
 
 <template>
 	<view class="goods-cart-container">
 		<scroll-view class="goods-cart_list" scroll-y>
 			<view class="goods-cart_list_item" v-for="item in cartStore.cartList">
-				<GoodsCard :detail="item" :sku="item.sku" :config="2"></GoodsCard>
+				<GoodsCard
+					:detail="item"
+					:sku="item.sku"
+					:config="2"
+					@overMinus="onConfirmRemove(item)"
+				></GoodsCard>
 			</view>
 			<view class="goods-cart_list_item nomore" v-if="!cartStore.cartTotalNum">购物车是空的</view>
 		</scroll-view>

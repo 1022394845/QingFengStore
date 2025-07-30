@@ -18,7 +18,7 @@ const props = defineProps({
 		default: 0
 	}
 })
-const emits = defineEmits(['onSelectBuy'])
+const emits = defineEmits(['onSelectBuy', 'overMinus'])
 
 const info = computed(() => {
 	const bannerImg = props.detail?.goods_banner_img || props.detail?.goods_banner_imgs?.[0] || ''
@@ -34,6 +34,11 @@ const info = computed(() => {
 
 const onSelectBuy = () => {
 	emits('onSelectBuy', props.detail._id)
+}
+
+// 步进器超出阈值
+const overMinus = () => {
+	emits('overMinus')
 }
 </script>
 
@@ -76,7 +81,11 @@ const onSelectBuy = () => {
 					>
 						选购
 					</view>
-					<NumberBox v-if="[2].includes(config)" v-model="detail.count"></NumberBox>
+					<NumberBox
+						v-if="[2].includes(config)"
+						v-model="detail.count"
+						@overMinus="overMinus"
+					></NumberBox>
 				</view>
 			</view>
 		</view>

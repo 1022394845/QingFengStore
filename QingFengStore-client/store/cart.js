@@ -39,10 +39,31 @@ export const useCartStore = defineStore('cart', () => {
 		cartList.value.unshift(data)
 	}
 
+	/**
+	 * 移除购物车商品
+	 * @param {object} data - 商品信息
+	 * @returns {boolean} 操作结果 true-成功
+	 */
+	const removeGoods = (data) => {
+		const {
+			_id,
+			sku: { _id: sku_id }
+		} = data
+		for (let i = 0; i < cartList.value.length; i++) {
+			const item = cartList.value[i]
+			if (item._id === _id && item.sku._id === sku_id) {
+				cartList.value.splice(i, 1)
+				return true
+			}
+		}
+		return false // 未找到商品
+	}
+
 	return {
 		cartList,
 		cartTotalNum,
 		cartTotalPrice,
-		addGoods
+		addGoods,
+		removeGoods
 	}
 })
