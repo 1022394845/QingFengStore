@@ -4,9 +4,9 @@ import CommonShopBar from '@/components/CommonShopBar.vue'
 import { onMounted, ref } from 'vue'
 import { formatPrice } from '@/utils/format'
 import { getGoodsDetailAPI } from '@/apis/goods'
-import { shopBarHeight } from '@/utils/system'
+import { safeareaHeight, shopBarHeight } from '@/utils/system'
 
-const detailHeight_px = shopBarHeight + uni.rpx2px(30) + 'px'
+const detailHeight_px = safeareaHeight + shopBarHeight + uni.rpx2px(30) + 'px'
 
 const detail = ref({})
 const getDetail = async () => {

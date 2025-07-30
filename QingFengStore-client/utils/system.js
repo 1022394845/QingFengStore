@@ -12,6 +12,10 @@ const MENU_BUTTON_INFO = uni.getMenuButtonBoundingClientRect
 export const statusBarHeight = SYSTEM_WINDOW_INFO.statusBarHeight || 0
 export const statusBarHeight_px = `${statusBarHeight}px`
 
+// 安全区高度 px
+export const safeareaHeight = SYSTEM_WINDOW_INFO.safeAreaInsets.bottom || 0
+export const safeareaHeight_px = `${safeareaHeight}px`
+
 // 标题栏高度 px
 export const titleBarHeight =
 	!MENU_BUTTON_INFO.height || !MENU_BUTTON_INFO.top

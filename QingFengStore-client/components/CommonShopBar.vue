@@ -1,4 +1,8 @@
-<script setup></script>
+<script setup>
+import { safeareaHeight, safeareaHeight_px } from '@/utils/system'
+
+const shopBarHeight_px = safeareaHeight + uni.rpx2px(100) + 'px'
+</script>
 
 <template>
 	<view class="common-shop-bar">
@@ -29,8 +33,8 @@
 	position: fixed;
 	bottom: 0;
 	width: 100%;
-	height: 100rpx;
-	padding: 0 26rpx 0 48rpx;
+	height: v-bind(shopBarHeight_px);
+	padding: 0 26rpx v-bind(safeareaHeight_px) 48rpx;
 	display: flex;
 	gap: 40rpx;
 	align-items: center;
