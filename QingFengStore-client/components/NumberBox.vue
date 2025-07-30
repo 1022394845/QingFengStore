@@ -23,7 +23,7 @@ const onOverlimit = (type) => {
 </script>
 
 <template>
-	<uv-number-box v-model="count" integer :min="1" :max="999" @overlimit="onOverlimit">
+	<uv-number-box v-model="count" integer :min="1" :max="999" @overlimit="onOverlimit" @click.stop>
 		<template v-slot:minus>
 			<view class="minus btn">
 				<uv-icon name="minus" color="#bdaf8d" size="16rpx"></uv-icon>
