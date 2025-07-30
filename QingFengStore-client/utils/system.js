@@ -38,3 +38,7 @@ export const tabBarHeight_px = `${tabBarHeight}px`
 // 结算栏高度 rpx
 export const settleBarHeight = uni.rpx2px(100)
 export const settleBarHeight_px = `${settleBarHeight}px`
+
+// 购物栏高度 rpx
+export const shopBarHeight = uni.rpx2px(100)
+export const shopBarHeight_px = `${shopBarHeight}px`

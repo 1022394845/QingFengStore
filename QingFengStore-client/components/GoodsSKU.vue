@@ -133,10 +133,11 @@ const onBuy = () => {
 			flex: 1 1 0;
 			width: 100%;
 			height: 80rpx;
-			padding: 16rpx 0;
+			display: flex;
+			justify-content: center;
+			align-items: center;
 			font-size: 32rpx;
 			color: #ffffff;
-			text-align: center;
 
 			&.cart {
 				background-color: #ff9300;
