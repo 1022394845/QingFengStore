@@ -61,6 +61,7 @@ const onSearch = () => {
 
 		:deep(.uni-easyinput__content-input) {
 			height: 70rpx;
+			font-size: 28rpx !important;
 
 			.uni-input-placeholder {
 				font-size: 28rpx !important;
