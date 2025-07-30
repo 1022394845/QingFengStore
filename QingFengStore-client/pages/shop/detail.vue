@@ -1,21 +1,37 @@
 <script setup>
 import CommonNavBar from '@/components/CommonNavBar.vue'
 import CommonShopBar from '@/components/CommonShopBar.vue'
-import { onMounted, ref } from 'vue'
+import GoodsSKU from '@/components/GoodsSKU.vue'
+import { computed, onMounted, ref } from 'vue'
 import { formatPrice } from '@/utils/format'
 import { getGoodsDetailAPI } from '@/apis/goods'
 import { safeareaHeight, shopBarHeight } from '@/utils/system'
 
-const detailHeight_px = safeareaHeight + shopBarHeight + uni.rpx2px(30) + 'px'
+const detailHeight_px = `${safeareaHeight + shopBarHeight + uni.rpx2px(30)}px`
+const popupBottom_px = `${safeareaHeight + uni.rpx2px(40)}px`
 
 const detail = ref({})
 const getDetail = async () => {
-	const { data } = await getGoodsDetailAPI()
+	const { data = {} } = await getGoodsDetailAPI()
 	detail.value = data
+	currentGoodsSkuId.value = data.sku?.[0]._id
 }
 onMounted(() => {
 	getDetail()
 })
+
+// SKU弹出框
+const skuPopRef = ref(null)
+const currentGoodsSkuId = ref('')
+const openSkuPop = () => {
+	skuPopRef.value.open()
+}
+const closeSkuPop = () => {
+	skuPopRef.value.close()
+}
+const currentSkuInfo = computed(
+	() => detail.value.sku?.find((item) => item._id === currentGoodsSkuId.value) || {}
+)
 </script>
 
 <template>
@@ -34,7 +50,11 @@ onMounted(() => {
 					:duration="1000"
 					circular
 				>
-					<swiper-item class="banner_swiper_item" v-for="item in detail.goods_banner_imgs">
+					<swiper-item
+						class="banner_swiper_item"
+						v-for="item in detail.goods_banner_imgs"
+						:key="item"
+					>
 						<image class="banner_swiper_item_image" :src="item" mode="aspectFill"></image>
 					</swiper-item>
 				</swiper>
@@ -49,20 +69,25 @@ onMounted(() => {
 				<view class="detail_price">
 					<view class="detail_price_new">
 						<view class="detail_price_new_unit">￥</view>
-						<view class="detail_price_new_text">{{ formatPrice(18900) }}</view>
+						<view class="detail_price_new_text">
+							{{ formatPrice(currentSkuInfo.price || null) }}
+						</view>
 					</view>
-					<view class="detail_price_old">￥{{ formatPrice(22900) }}</view>
+					<view class="detail_price_old" v-if="currentSkuInfo.market_price">
+						￥{{ formatPrice(currentSkuInfo.market_price) }}
+					</view>
 				</view>
 				<!-- 服务 -->
-
 				<view class="detail_row servie">
 					<view class="detail_row_label">服务</view>
 					<view class="detail_row_content ellipsis">线下门店·快递发货·到店自取</view>
 				</view>
 				<!-- 规格 -->
-				<view class="detail_row sku">
+				<view class="detail_row sku" @click="openSkuPop">
 					<view class="detail_row_label">规格</view>
-					<view class="detail_row_content ellipsis">线下门店·快递发货·到店自取</view>
+					<view class="detail_row_content ellipsis" style="font-weight: bold">
+						{{ currentSkuInfo.name || '请选择产品规格' }}
+					</view>
 					<view class="detail_row_icon">
 						<uni-icons type="forward" size="36rpx" color="#999999"></uni-icons>
 					</view>
@@ -79,7 +104,17 @@ onMounted(() => {
 			</view>
 		</view>
 		<!-- 操作栏 -->
-		<CommonShopBar></CommonShopBar>
+		<CommonShopBar @openSku="openSkuPop"></CommonShopBar>
+		<!-- SKU弹出框 -->
+		<uni-popup ref="skuPopRef" type="bottom" :safe-area="false">
+			<view class="sku-popup_container">
+				<GoodsSKU
+					:detail="detail"
+					v-model:currentGoodsSkuId="currentGoodsSkuId"
+					@close="closeSkuPop"
+				></GoodsSKU>
+			</view>
+		</uni-popup>
 	</view>
 </template>
 
@@ -176,5 +211,12 @@ onMounted(() => {
 			margin-top: 50rpx;
 		}
 	}
+}
+
+.sku-popup_container {
+	min-height: 300rpx;
+	padding: 40rpx 32rpx v-bind(popupBottom_px);
+	background-color: #ffffff;
+	border-radius: 30rpx 30rpx 0 0;
 }
 </style>

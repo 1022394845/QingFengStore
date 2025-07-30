@@ -3,10 +3,13 @@ import { computed, unref } from 'vue'
 // 获取系统信息
 const SYSTEM_INFO = uni.getSystemInfoSync()
 const SYSTEM_WINDOW_INFO = uni.getWindowInfo()
-// 胶囊按钮
+// 胶囊按钮信息
 const MENU_BUTTON_INFO = uni.getMenuButtonBoundingClientRect
 	? uni.getMenuButtonBoundingClientRect()
 	: {}
+
+// 使用平台
+export const platform = SYSTEM_INFO.uniPlatform
 
 // 状态栏高度 px
 export const statusBarHeight = SYSTEM_WINDOW_INFO.statusBarHeight || 0
@@ -36,7 +39,7 @@ export const containerHeight = SYSTEM_WINDOW_INFO.windowHeight - navBarHeight
 export const containerHeight_px = `${containerHeight}px`
 
 // 标签栏高度 px
-export const tabBarHeight = SYSTEM_INFO.uniPlatform === 'web' ? 50 : 0
+export const tabBarHeight = platform === 'web' ? 50 : 0
 export const tabBarHeight_px = `${tabBarHeight}px`
 
 // 结算栏高度 rpx

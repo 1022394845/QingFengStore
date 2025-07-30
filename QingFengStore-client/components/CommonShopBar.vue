@@ -1,7 +1,23 @@
 <script setup>
-import { safeareaHeight, safeareaHeight_px } from '@/utils/system'
+import { platform, safeareaHeight, safeareaHeight_px } from '@/utils/system'
 
-const shopBarHeight_px = safeareaHeight + uni.rpx2px(100) + 'px'
+const shopBarHeight_px = `${safeareaHeight + uni.rpx2px(100)}px`
+
+// 联系客服
+const onContact = () => {
+	// 仅支持小程序联系客服
+	if (!platform.startsWith('mp')) {
+		uni.showToast({
+			title: '当前平台不支持联系客服',
+			icon: 'none'
+		})
+	}
+}
+
+const emits = defineEmits(['openSku'])
+const openSku = () => {
+	emits('openSku')
+}
 </script>
 
 <template>
@@ -12,6 +28,11 @@ const shopBarHeight_px = safeareaHeight + uni.rpx2px(100) + 'px'
 					<uni-icons type="chat" size="48rpx" color="#666666"></uni-icons>
 				</view>
 				<view class="common-shop-bar_menu_item_label">客服</view>
+				<button
+					class="common-shop-bar_menu_item_trigger"
+					open-type="contact"
+					@click="onContact"
+				></button>
 			</view>
 			<view class="common-shop-bar_menu_item">
 				<view class="common-shop-bar_menu_item_icon">
@@ -22,8 +43,8 @@ const shopBarHeight_px = safeareaHeight + uni.rpx2px(100) + 'px'
 			</view>
 		</view>
 		<view class="common-shop-bar_operation">
-			<view class="common-shop-bar_operation_btn cart">加入购物车</view>
-			<view class="common-shop-bar_operation_btn buy">立即购买</view>
+			<view class="common-shop-bar_operation_btn cart" @click="openSku">加入购物车</view>
+			<view class="common-shop-bar_operation_btn buy" @click="openSku">立即购买</view>
 		</view>
 	</view>
 </template>
@@ -50,6 +71,7 @@ const shopBarHeight_px = safeareaHeight + uni.rpx2px(100) + 'px'
 		color: #666666;
 
 		&_item {
+			position: relative;
 			text-align: center;
 
 			&_icon {
@@ -70,6 +92,15 @@ const shopBarHeight_px = safeareaHeight + uni.rpx2px(100) + 'px'
 					background-color: #ef5350;
 					border-radius: 50%;
 				}
+			}
+
+			&_trigger {
+				position: absolute;
+				left: 0;
+				top: 0;
+				width: 100%;
+				height: 100%;
+				opacity: 0;
 			}
 		}
 	}
