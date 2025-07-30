@@ -6,11 +6,12 @@ const cartStore = useCartStore()
 
 // 移除商品确认
 const onConfirmRemove = async (item) => {
-	await uni.showModal({
+	const { cancel } = await uni.showModal({
 		title: '温馨提示',
 		content: '你确认移除该商品吗',
 		confirmColor: '#bdaf8d'
 	})
+	if (cancel) return
 	cartStore.removeGoods(item)
 }
 </script>
