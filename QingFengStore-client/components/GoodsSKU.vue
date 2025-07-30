@@ -125,7 +125,7 @@ const onBuy = () => {
 	}
 
 	.goods-btn-group {
-		margin-top: 100rpx;
+		margin-top: 50rpx;
 		display: flex;
 		align-items: center;
 

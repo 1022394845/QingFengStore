@@ -5,7 +5,8 @@ import {
 	tabBarHeight,
 	tabBarHeight_px,
 	settleBarHeight,
-	navBarHeight
+	navBarHeight,
+	settleBarHeight_px
 } from '@/utils/system.js'
 import { formatPrice } from '@/utils/format.js'
 import { throttle } from '@/utils/throttle.js'
@@ -267,7 +268,7 @@ const onSearch = (newKeyword) => {
 		position: fixed;
 		bottom: v-bind(tabBarHeight_px);
 		width: 100%;
-		height: 100rpx;
+		height: v-bind(settleBarHeight_px);
 		padding: 0 30rpx;
 		display: flex;
 		align-items: center;
