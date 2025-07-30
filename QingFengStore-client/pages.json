@@ -41,6 +41,13 @@
 				"navigationBarTitleText": "搜索",
 				"navigationStyle": "custom"
 			}
+		},
+		{
+			"path": "pages/shop/detail",
+			"style": {
+				"navigationBarTitleText": "商品详情",
+				"navigationStyle": "custom"
+			}
 		}
 	],
 	"globalStyle": {

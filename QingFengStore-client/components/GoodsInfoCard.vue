@@ -1,9 +1,15 @@
 <script setup>
+import { routerTo } from '@/utils/router'
 import { formatPrice } from '@/utils/format.js'
+
+// 跳转详情也
+const checkDetail = () => {
+	routerTo('/pages/shop/detail')
+}
 </script>
 
 <template>
-	<view class="goods-info-card">
+	<view class="goods-info-card" @click="checkDetail">
 		<view class="goods-info-card_item">
 			<image
 				class="goods-info-card_item_image"

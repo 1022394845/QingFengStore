@@ -15,37 +15,35 @@ const detail = ref({
 <p style="font-size:15px;color:#555;line-height:1.8;">新能源专区内，<span style="font-style:italic;color:#2a9d8f;">钙钛矿太阳能电池</span>的转化效率突破31%，较传统硅基电池提升近40%。某企业负责人介绍：<span style="font-size:14px;color:#666;">"这款产品厚度仅0.3毫米，可直接附着在建筑玻璃表面，明年量产后面板成本将降低至每平方米80元。"</span></p>
 <p style="font-size:14px;color:#888;margin-top:30px;">展会将持续至7月20日，期间还将举办20场专业论坛及12场技术对接会。</p>`
 })
-
-const contentTagStyle = {
-	img: 'display: block; max-width: 100%; border: none'
-}
 </script>
 
 <template>
 	<view class="container">
 		<CommonNavBar title="资讯详情" titleColor="#ffffff"></CommonNavBar>
-		<view class="news_title">
-			{{ detail.title }}
-		</view>
-		<view class="news_info">
-			<view class="news_info_user ellipsis">{{ detail.user }}</view>
-			<view class="news_info_createTime">
-				{{ dayjs(detail.createTime).format('YYYY-MM-DD') }}
+		<view class="wrapper">
+			<view class="news_title">
+				{{ detail.title }}
 			</view>
-		</view>
-		<view class="news_content">
-			<uv-parse
-				:content="detail.content"
-				:tag-style="contentTagStyle"
-				selectable
-				lazyLoad
-			></uv-parse>
+			<view class="news_info">
+				<view class="news_info_user ellipsis">{{ detail.user }}</view>
+				<view class="news_info_createTime">
+					{{ dayjs(detail.createTime).format('YYYY-MM-DD') }}
+				</view>
+			</view>
+			<view class="news_content">
+				<uv-parse
+					:content="detail.content"
+					:tag-style="Object({ img: 'display: block; max-width: 100%; border: none' })"
+					selectable
+					lazyLoad
+				></uv-parse>
+			</view>
 		</view>
 	</view>
 </template>
 
 <style scoped lang="scss">
-.container {
+.wrapper {
 	width: 100%;
 	padding: 32rpx;
 

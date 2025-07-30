@@ -2,6 +2,7 @@
 import NumberBox from '@/components/NumberBox.vue'
 import { computed } from 'vue'
 import { formatPrice } from '@/utils/format.js'
+import { routerTo } from '@/utils/router'
 
 const props = defineProps({
 	detail: {
@@ -40,10 +41,15 @@ const onSelectBuy = () => {
 const overMinus = () => {
 	emits('overMinus')
 }
+
+// 跳转详情页
+const checkDetail = () => {
+	routerTo('/pages/shop/detail')
+}
 </script>
 
 <template>
-	<view class="goods-card">
+	<view class="goods-card" @click="checkDetail">
 		<view class="goods-card_picture">
 			<image
 				class="goods-card_picture_image"
@@ -77,7 +83,7 @@ const overMinus = () => {
 					<view
 						class="goods-card_info_bottom_right_buy"
 						v-if="[0].includes(config)"
-						@click="onSelectBuy"
+						@click.stop="onSelectBuy"
 					>
 						选购
 					</view>
