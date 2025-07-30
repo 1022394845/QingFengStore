@@ -1,4 +1,5 @@
 <script setup>
+import { routerBack, routerTo } from '@/utils/router'
 import { statusBarHeight_px, titleBarHeight_px, navBarHeight_px } from '@/utils/system.js'
 
 const props = defineProps({
@@ -9,19 +10,18 @@ const props = defineProps({
 	titleColor: {
 		type: String,
 		default: '#000000'
+	},
+	backUrl: {
+		type: String,
+		default: ''
 	}
 })
 
 // 是否展示返回按钮
-const showBack = getCurrentPages().length > 1
+const showBack = props.backUrl && getCurrentPages().length > 1
 const navBack = () => {
-	uni.navigateBack({
-		fail: () => {
-			uni.reLaunch({
-				url: '/pages/index/index'
-			})
-		}
-	})
+	if (props.backUrl) routerTo(props.backUrl, 'redirectTo')
+	else routerBack()
 }
 </script>
 
@@ -31,7 +31,7 @@ const navBack = () => {
 			<view class="common-nav-bar_status-bar"></view>
 			<view class="common-nav-bar_title-bar">
 				<view class="common-nav-bar_title-bar_arrow" v-if="showBack" @click.stop="navBack">
-					<uni-icons type="back" size="28" :color="titleColor"></uni-icons>
+					<uni-icons type="back" size="48rpx" :color="titleColor"></uni-icons>
 				</view>
 				<view
 					class="common-nav-bar_title-bar_text"

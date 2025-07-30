@@ -1,13 +1,14 @@
 <script setup>
 import CommonNavBar from '@/components/CommonNavBar.vue'
 import dayjs from 'dayjs'
+import { routerTo } from '@/utils/router'
 </script>
 
 <template>
 	<view class="container">
 		<CommonNavBar title="资讯" titleColor="#ffffff"></CommonNavBar>
 		<view class="news-list">
-			<view class="news-list_item" v-for="item in 3">
+			<view class="news-list_item" v-for="item in 3" @click="routerTo('/pages/news/detail')">
 				<view class="news-list_item_text">
 					<view class="news-list_item_text_title ellipsis-2">测试标题</view>
 					<view class="news-list_item_text_info">

@@ -4,7 +4,7 @@
  * @param {number} digit - 格式化位数，默认为2
  * @returns {string} 格式化后的价格字符串，如 "123.45"
  */
-export const formatPrice = (price = 0, digit = 2) => {
+export function formatPrice(price = 0, digit = 2) {
 	if (typeof price !== 'number') price = parseInt(price)
 	if (isNaN(price)) return '暂无价格'
 	return (price / 100).toFixed(digit)

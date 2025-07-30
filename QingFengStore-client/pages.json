@@ -27,6 +27,13 @@
 				"navigationBarTitleText": "分类",
 				"navigationStyle": "custom"
 			}
+		},
+		{
+			"path": "pages/news/detail",
+			"style": {
+				"navigationBarTitleText": "咨询详情",
+				"navigationStyle": "custom"
+			}
 		}
 	],
 	"globalStyle": {
