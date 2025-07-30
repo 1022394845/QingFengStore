@@ -1,6 +1,6 @@
 <script setup>
 import { ref } from 'vue'
-import { navBarHeight_px } from '@/utils/system.js'
+import { navBarHeight_px, searchHeight_px } from '@/utils/system.js'
 
 defineOptions({
 	options: {
@@ -44,8 +44,8 @@ const onSearch = () => {
 		top: v-bind(navBarHeight_px);
 		left: 0;
 		width: 100%;
-		height: 90rpx;
-		padding: 10rpx 32rpx;
+		height: v-bind(searchHeight_px);
+		padding: 10rpx 32rpx 20rpx;
 		background-color: $uni-color-primary;
 		z-index: 9999;
 

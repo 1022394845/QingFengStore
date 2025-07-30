@@ -28,7 +28,7 @@ export const navBarHeight = statusBarHeight + titleBarHeight
 export const navBarHeight_px = `${navBarHeight}px`
 
 // 搜索框高度 rpx
-export const searchHeight = uni.rpx2px(90)
+export const searchHeight = uni.rpx2px(100)
 export const searchHeight_px = `${searchHeight}px`
 
 // 视口容器高度 px
