@@ -15,7 +15,7 @@ export const statusBarHeight_px = `${statusBarHeight}px`
 // 标题栏高度 px
 export const titleBarHeight =
 	!MENU_BUTTON_INFO.height || !MENU_BUTTON_INFO.top
-		? 40
+		? uni.rpx2px(80)
 		: MENU_BUTTON_INFO.height + (MENU_BUTTON_INFO.top - statusBarHeight) * 2
 export const titleBarHeight_px = `${titleBarHeight}px`
 
@@ -37,4 +37,4 @@ export const tabBarHeight_px = `${tabBarHeight}px`
 
 // 结算栏高度 rpx
 export const settleBarHeight = uni.rpx2px(100)
-export const settleBarHeight_rpx = `${settleBarHeight}px`
+export const settleBarHeight_px = `${settleBarHeight}px`

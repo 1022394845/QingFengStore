@@ -110,28 +110,15 @@ const menuList = ref([
 .wrapper {
 	position: relative;
 	padding: 20rpx 32rpx;
-
-	&::before {
-		position: absolute;
-		left: 50%;
-		top: -320rpx;
-		transform: translateX(-50%);
-		content: '';
-		display: block;
-		width: 984rpx;
-		height: 522rpx;
-		border-radius: 50%;
-		background-color: $uni-color-primary;
-		z-index: -9999;
-	}
 }
 
 .banner {
 	width: 100%;
+	aspect-ratio: 686 / 352;
 
 	&_swiper {
 		width: 100%;
-		height: 352rpx;
+		height: 100%;
 		border-radius: 30rpx;
 		overflow: hidden;
 
@@ -179,7 +166,7 @@ const menuList = ref([
 .prize {
 	margin-top: 50rpx;
 	width: 100%;
-	height: 188rpx;
+	aspect-ratio: 686 / 185;
 
 	&_image {
 		display: block;
