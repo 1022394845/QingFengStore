@@ -5,6 +5,7 @@ import CommonSearch from '@/components/CommonSearch.vue'
 import ScrollNotice from '@/components/ScrollNotice.vue'
 import CommonTitle from '@/components/CommonTitle.vue'
 import GoodsInfoCard from '@/components/GoodsInfoCard.vue'
+import { routerTo } from '@/utils/router'
 
 // 菜单列表
 const menuList = ref([
@@ -37,12 +38,19 @@ const menuList = ref([
 		bgc2: '#ECFBFD'
 	}
 ])
+
+const onSearch = (newKeyword) => {
+	routerTo(`/pages/shop/search?keyword=${newKeyword}`)
+}
 </script>
 
 <template>
 	<view class="container">
 		<CommonNavBar title="清风商城" titleColor="#ffffff"></CommonNavBar>
-		<CommonSearch placeholder="请输入商品名称"></CommonSearch>
+		<CommonSearch
+			placeholder="请输入商品名称"
+			@search="(newKeyword) => onSearch(newKeyword)"
+		></CommonSearch>
 		<view class="wrapper">
 			<!-- 轮播图 -->
 			<view class="banner">

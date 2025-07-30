@@ -15,9 +15,10 @@ const props = defineProps({
 	}
 })
 
-const search = ref('')
+const search = defineModel({ type: String, default: '' })
+const emits = defineEmits(['search'])
 const onSearch = () => {
-	console.log(search.value)
+	if (search.value) emits('search', search.value)
 }
 </script>
 

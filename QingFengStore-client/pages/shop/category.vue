@@ -16,7 +16,8 @@ import GoodsCard from '@/components/GoodsCard.vue'
 import GoodsSKU from '@/components/GoodsSKU.vue'
 import GoodsCart from '@/components/GoodsCart.vue'
 import { getCategoryListAPI, getGoodsDetailAPI } from '@/apis/goods'
-import { useCartStore } from '../../store/cart'
+import { useCartStore } from '@/store/cart'
+import { routerTo } from '@/utils/router'
 
 const wrapperHeight_px = `${containerHeight - searchHeight - tabBarHeight - settleBarHeight}px`
 const popupBottom_px = `${tabBarHeight + uni.rpx2px(40)}px`
@@ -96,12 +97,19 @@ const closeCartPop = () => {
 }
 
 const cartStore = useCartStore()
+
+const onSearch = (newKeyword) => {
+	routerTo(`/pages/shop/search?keyword=${newKeyword}`)
+}
 </script>
 
 <template>
 	<view class="container">
 		<CommonNavBar title="商城" titleColor="#ffffff"></CommonNavBar>
-		<CommonSearch placeholder="请输入商品名称"></CommonSearch>
+		<CommonSearch
+			placeholder="请输入商品名称"
+			@search="(newKeyword) => onSearch(newKeyword)"
+		></CommonSearch>
 		<view class="wrapper">
 			<scroll-view class="aside" scroll-y>
 				<view

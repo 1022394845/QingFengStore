@@ -23,7 +23,7 @@ const contentTagStyle = {
 
 <template>
 	<view class="container">
-		<CommonNavBar title="资讯详情" titleColor="#ffffff" backUrl="/pages/news/news"></CommonNavBar>
+		<CommonNavBar title="资讯详情" titleColor="#ffffff"></CommonNavBar>
 		<view class="news_title">
 			{{ detail.title }}
 		</view>

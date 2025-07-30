@@ -18,7 +18,7 @@ const props = defineProps({
 })
 
 // 是否展示返回按钮
-const showBack = props.backUrl && getCurrentPages().length > 1
+const showBack = props.backUrl || getCurrentPages().length > 1
 const navBack = () => {
 	if (props.backUrl) routerTo(props.backUrl, 'redirectTo')
 	else routerBack()

@@ -34,6 +34,13 @@
 				"navigationBarTitleText": "咨询详情",
 				"navigationStyle": "custom"
 			}
+		},
+		{
+			"path": "pages/shop/search",
+			"style": {
+				"navigationBarTitleText": "搜索",
+				"navigationStyle": "custom"
+			}
 		}
 	],
 	"globalStyle": {
