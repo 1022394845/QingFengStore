@@ -2,6 +2,7 @@
 import CommonNavBar from '@/components/CommonNavBar.vue'
 import CommonShopBar from '@/components/CommonShopBar.vue'
 import GoodsSKU from '@/components/GoodsSKU.vue'
+import GoodsCart from '@/components/GoodsCart.vue'
 import { computed, onMounted, ref } from 'vue'
 import { formatPrice } from '@/utils/format'
 import { getGoodsDetailAPI } from '@/apis/goods'
@@ -23,15 +24,24 @@ onMounted(() => {
 // SKU弹出框
 const skuPopRef = ref(null)
 const currentGoodsSkuId = ref('')
+const currentSkuInfo = computed(
+	() => detail.value.sku?.find((item) => item._id === currentGoodsSkuId.value) || {}
+)
 const openSkuPop = () => {
 	skuPopRef.value.open()
 }
 const closeSkuPop = () => {
 	skuPopRef.value.close()
 }
-const currentSkuInfo = computed(
-	() => detail.value.sku?.find((item) => item._id === currentGoodsSkuId.value) || {}
-)
+
+// 购物车弹出框
+const cartPopRef = ref(null)
+const openCartPop = () => {
+	cartPopRef.value.open()
+}
+const closeCartPop = () => {
+	cartPopRef.value.close()
+}
 </script>
 
 <template>
@@ -104,7 +114,7 @@ const currentSkuInfo = computed(
 			</view>
 		</view>
 		<!-- 操作栏 -->
-		<CommonShopBar @openSku="openSkuPop"></CommonShopBar>
+		<CommonShopBar @openSku="openSkuPop" @openCart="openCartPop"></CommonShopBar>
 		<!-- SKU弹出框 -->
 		<uni-popup ref="skuPopRef" type="bottom" :safe-area="false">
 			<view class="sku-popup_container">
@@ -113,6 +123,12 @@ const currentSkuInfo = computed(
 					v-model:currentGoodsSkuId="currentGoodsSkuId"
 					@close="closeSkuPop"
 				></GoodsSKU>
+			</view>
+		</uni-popup>
+		<!-- 购物车弹出框 -->
+		<uni-popup ref="cartPopRef" type="bottom" :safe-area="false">
+			<view class="cart-popup_container">
+				<GoodsCart></GoodsCart>
 			</view>
 		</uni-popup>
 	</view>
@@ -213,7 +229,8 @@ const currentSkuInfo = computed(
 	}
 }
 
-.sku-popup_container {
+.sku-popup_container,
+.cart-popup_container {
 	min-height: 300rpx;
 	padding: 40rpx 32rpx v-bind(popupBottom_px);
 	background-color: #ffffff;

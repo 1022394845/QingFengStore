@@ -1,4 +1,5 @@
 <script setup>
+import { useCartStore } from '@/store/cart'
 import { platform, safeareaHeight, safeareaHeight_px } from '@/utils/system'
 
 const shopBarHeight_px = `${safeareaHeight + uni.rpx2px(100)}px`
@@ -14,9 +15,14 @@ const onContact = () => {
 	}
 }
 
-const emits = defineEmits(['openSku'])
+const cartStore = useCartStore()
+
+const emits = defineEmits(['openSku', 'openCart'])
 const openSku = () => {
 	emits('openSku')
+}
+const openCart = () => {
+	emits('openCart')
 }
 </script>
 
@@ -34,10 +40,12 @@ const openSku = () => {
 					@click="onContact"
 				></button>
 			</view>
-			<view class="common-shop-bar_menu_item">
+			<view class="common-shop-bar_menu_item" @click="openCart">
 				<view class="common-shop-bar_menu_item_icon">
 					<uni-icons type="cart" size="48rpx" color="#666666"></uni-icons>
-					<view class="common-shop-bar_menu_item_icon_tag">3</view>
+					<view class="common-shop-bar_menu_item_icon_tag" v-if="cartStore.cartTotalNum">
+						{{ cartStore.cartTotalNum }}
+					</view>
 				</view>
 				<view class="common-shop-bar_menu_item_label">购物车</view>
 			</view>
