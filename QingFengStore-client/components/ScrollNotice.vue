@@ -9,11 +9,7 @@ defineOptions({
 <template>
 	<view class="scroll-notice">
 		<view class="scroll-notice_prefix">
-			<image
-				class="scroll-notice_prefix_icon"
-				src="/static/notic_prefix.png"
-				mode="aspectFill"
-			></image>
+			<image class="image" src="/static/notic_prefix.png" mode="aspectFill"></image>
 		</view>
 		<view class="scroll-notice_list">
 			<swiper
@@ -34,7 +30,7 @@ defineOptions({
 				</swiper-item>
 			</swiper>
 		</view>
-		<view class="scroll-notice_suffix">
+		<view class="scroll-notice_suffix icon-container">
 			<uni-icons type="forward" color="#888888" size="32rpx"></uni-icons>
 		</view>
 	</view>
@@ -48,14 +44,10 @@ defineOptions({
 
 	&_prefix {
 		flex-shrink: 0;
+		width: 88rpx;
+		height: 40rpx;
 		display: flex;
 		align-items: center;
-
-		&_icon {
-			width: 88rpx;
-			height: 40rpx;
-			display: block;
-		}
 	}
 
 	&_list {

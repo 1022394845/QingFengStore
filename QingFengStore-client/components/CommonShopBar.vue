@@ -30,7 +30,7 @@ const openCart = () => {
 	<view class="common-shop-bar">
 		<view class="common-shop-bar_menu">
 			<view class="common-shop-bar_menu_item">
-				<view class="common-shop-bar_menu_item_icon">
+				<view class="common-shop-bar_menu_item_icon icon-container">
 					<uni-icons type="chat" size="48rpx" color="#666666"></uni-icons>
 				</view>
 				<view class="common-shop-bar_menu_item_label">客服</view>
@@ -41,7 +41,7 @@ const openCart = () => {
 				></button>
 			</view>
 			<view class="common-shop-bar_menu_item" @click="openCart">
-				<view class="common-shop-bar_menu_item_icon">
+				<view class="common-shop-bar_menu_item_icon icon-container">
 					<uni-icons type="cart" size="48rpx" color="#666666"></uni-icons>
 					<view class="common-shop-bar_menu_item_icon_tag" v-if="cartStore.cartTotalNum">
 						{{ cartStore.cartTotalNum }}

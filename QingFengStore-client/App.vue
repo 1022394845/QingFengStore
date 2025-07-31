@@ -19,6 +19,18 @@ view {
 	overflow: hidden;
 }
 
+.image {
+	display: block;
+	width: 100%;
+	height: 100%;
+}
+
+.icon-container {
+	display: flex;
+	justify-content: center;
+	align-items: center;
+}
+
 .ellipsis {
 	white-space: nowrap;
 	text-overflow: ellipsis;

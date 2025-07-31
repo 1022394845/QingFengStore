@@ -65,7 +65,7 @@ const closeCartPop = () => {
 						v-for="item in detail.goods_banner_imgs"
 						:key="item"
 					>
-						<image class="banner_swiper_item_image" :src="item" mode="aspectFill"></image>
+						<image class="image" :src="item" mode="aspectFill"></image>
 					</swiper-item>
 				</swiper>
 			</view>
@@ -98,7 +98,7 @@ const closeCartPop = () => {
 					<view class="detail_row_content ellipsis" style="font-weight: bold">
 						{{ currentSkuInfo.name || '请选择产品规格' }}
 					</view>
-					<view class="detail_row_icon">
+					<view class="detail_row_icon icon-container">
 						<uni-icons type="forward" size="36rpx" color="#999999"></uni-icons>
 					</view>
 				</view>
@@ -147,12 +147,6 @@ const closeCartPop = () => {
 			&_item {
 				width: 100%;
 				height: 100%;
-
-				&_image {
-					display: block;
-					width: 100%;
-					height: 100%;
-				}
 			}
 		}
 	}

@@ -152,7 +152,7 @@ const onSearch = (newKeyword) => {
 			<!-- 结算栏 -->
 			<view class="settle-container">
 				<view class="settle-info">
-					<view class="settle-info_icon" @click="openCartPop">
+					<view class="settle-info_icon icon-container" @click="openCartPop">
 						<view class="iconfont icon-caigou"></view>
 						<view class="settle-info_icon_tag" v-if="cartStore.cartTotalNum">
 							{{ cartStore.cartTotalNum }}

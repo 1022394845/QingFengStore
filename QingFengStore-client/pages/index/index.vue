@@ -65,18 +65,10 @@ const onSearch = (newKeyword) => {
 					circular
 				>
 					<swiper-item class="banner_swiper_item">
-						<image
-							class="banner_swiper_item_image"
-							src="/static/tmp_banner1.png"
-							mode="aspectFill"
-						></image>
+						<image class="image" src="/static/tmp_banner1.png" mode="aspectFill"></image>
 					</swiper-item>
 					<swiper-item class="banner_swiper_item">
-						<image
-							class="banner_swiper_item_image"
-							src="/static/tmp_banner2.jpg"
-							mode="aspectFill"
-						></image>
+						<image class="image" src="/static/tmp_banner2.jpg" mode="aspectFill"></image>
 					</swiper-item>
 				</swiper>
 			</view>
@@ -91,17 +83,17 @@ const onSearch = (newKeyword) => {
 					:style="{ color: item.color }"
 				>
 					<view
-						class="menu_item_icon"
+						class="menu_item_icon icon-container"
 						:style="{ background: `linear-gradient(to bottom,${item.bgc1},${item.bgc2})` }"
 					>
-						<text class="iconfont" :class="item.icon"></text>
+						<view class="iconfont" :class="item.icon"></view>
 					</view>
 					<view class="menu_item_label">{{ item.label }}</view>
 				</view>
 			</view>
 			<!-- 抽奖 -->
 			<view class="prize">
-				<image class="prize_image" src="/static/home_xydcj.png" mode="aspectFill"></image>
+				<image class="image" src="/static/home_xydcj.png" mode="aspectFill"></image>
 			</view>
 			<!-- 产品 -->
 			<view class="hot">
@@ -133,12 +125,6 @@ const onSearch = (newKeyword) => {
 		&_item {
 			width: 100%;
 			height: 100%;
-
-			&_image {
-				display: block;
-				width: 100%;
-				height: 100%;
-			}
 		}
 	}
 }
@@ -175,12 +161,6 @@ const onSearch = (newKeyword) => {
 	margin-top: 50rpx;
 	width: 100%;
 	aspect-ratio: 686 / 185;
-
-	&_image {
-		display: block;
-		width: 100%;
-		height: 100%;
-	}
 }
 
 .hot {

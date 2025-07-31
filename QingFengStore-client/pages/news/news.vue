@@ -18,12 +18,8 @@ import { routerTo } from '@/utils/router'
 						</view>
 					</view>
 				</view>
-				<view class="news-list_item_picture" v-if="true">
-					<image
-						class="news-list_item_picture_image"
-						src="/static/tmp_banner1.png"
-						mode="aspectFill"
-					></image>
+				<view class="news-list_item_image" v-if="true">
+					<image class="image" src="/static/tmp_banner1.png" mode="aspectFill"></image>
 				</view>
 			</view>
 			<view class="news-list_nomore">暂无更多资讯</view>
@@ -70,18 +66,12 @@ import { routerTo } from '@/utils/router'
 			}
 		}
 
-		&_picture {
+		&_image {
 			flex-shrink: 0;
 			height: 100%;
 			aspect-ratio: 16 / 9;
 			border-radius: 20rpx;
 			overflow: hidden;
-
-			&_image {
-				display: block;
-				width: 100%;
-				height: 100%;
-			}
 		}
 	}
 

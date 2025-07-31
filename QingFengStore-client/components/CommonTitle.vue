@@ -19,7 +19,7 @@ const props = defineProps({
 		</view>
 		<view class="common-title_right">
 			<view class="common-title_right_info">{{ info }}</view>
-			<view class="common-title_right_icon">
+			<view class="common-title_right_icon icon-container">
 				<uni-icons type="forward" size="28rpx" color="#A6A6A6"></uni-icons>
 			</view>
 		</view>

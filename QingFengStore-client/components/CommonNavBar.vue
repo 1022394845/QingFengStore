@@ -30,7 +30,11 @@ const navBack = () => {
 		<view class="common-nav-bar_container">
 			<view class="common-nav-bar_status-bar"></view>
 			<view class="common-nav-bar_title-bar">
-				<view class="common-nav-bar_title-bar_arrow" v-if="showBack" @click.stop="navBack">
+				<view
+					class="common-nav-bar_title-bar_arrow icon-container"
+					v-if="showBack"
+					@click.stop="navBack"
+				>
 					<uni-icons type="back" size="48rpx" :color="titleColor"></uni-icons>
 				</view>
 				<view

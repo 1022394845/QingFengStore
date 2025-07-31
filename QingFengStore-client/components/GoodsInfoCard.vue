@@ -10,13 +10,8 @@ const checkDetail = () => {
 
 <template>
 	<view class="goods-info-card" @click="checkDetail">
-		<view class="goods-info-card_item">
-			<image
-				class="goods-info-card_item_image"
-				src="/static/tmp_goods.jpg"
-				mode="aspectFill"
-				lazy-load
-			></image>
+		<view class="goods-info-card_image">
+			<image class="image" src="/static/tmp_goods.jpg" mode="aspectFill" lazy-load></image>
 		</view>
 		<view class="goods-info-card_info">
 			<view class="goods-info-card_info_title ellipsis">
@@ -38,17 +33,11 @@ const checkDetail = () => {
 	width: 100%;
 	height: fit-content;
 
-	&_item {
+	&_image {
 		width: 100%;
 		aspect-ratio: 1 / 1;
 		border-radius: 20rpx;
 		overflow: hidden;
-
-		&_image {
-			display: block;
-			width: 100%;
-			height: 100%;
-		}
 	}
 
 	&_info {

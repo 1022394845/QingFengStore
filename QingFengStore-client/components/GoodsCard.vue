@@ -50,13 +50,8 @@ const checkDetail = () => {
 
 <template>
 	<view class="goods-card" @click="checkDetail">
-		<view class="goods-card_picture">
-			<image
-				class="goods-card_picture_image"
-				:src="info.bannerImg"
-				mode="aspectFill"
-				lazy-load
-			></image>
+		<view class="goods-card_banner">
+			<image class="image" :src="info.bannerImg" mode="aspectFill" lazy-load></image>
 		</view>
 		<view class="goods-card_info">
 			<view class="goods-card_info_top">
@@ -104,15 +99,10 @@ const checkDetail = () => {
 	height: 180rpx;
 	display: flex;
 
-	&_picture {
+	&_banner {
 		flex-shrink: 0;
 		height: 100%;
 		aspect-ratio: 1 / 1;
-
-		&_image {
-			width: 100%;
-			height: 100%;
-		}
 	}
 
 	&_info {
