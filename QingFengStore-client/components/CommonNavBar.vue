@@ -43,6 +43,7 @@ const navBack = () => {
 				>
 					{{ title }}
 				</view>
+				<!-- 用于保证标题居中占位 -->
 				<view class="common-nav-bar_title-bar_menu"></view>
 			</view>
 		</view>
@@ -85,6 +86,11 @@ const navBack = () => {
 			display: flex;
 			align-items: center;
 		}
+
+		&_arrow {
+			margin-left: -30rpx;
+		}
+
 		&_text {
 			flex: 1;
 			font-weight: bold;

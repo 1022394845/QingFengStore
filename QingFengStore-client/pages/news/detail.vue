@@ -31,12 +31,7 @@ const detail = ref({
 				</view>
 			</view>
 			<view class="news_content">
-				<uv-parse
-					:content="detail.content"
-					:tag-style="Object({ img: 'display: block; max-width: 100%; border: none' })"
-					selectable
-					lazyLoad
-				></uv-parse>
+				<uv-parse :content="detail.content" selectable lazyLoad></uv-parse>
 			</view>
 		</view>
 	</view>

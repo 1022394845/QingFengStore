@@ -104,12 +104,7 @@ const closeCartPop = () => {
 				</view>
 				<!-- 详细信息 -->
 				<view class="detail_content">
-					<uv-parse
-						:content="detail.goods_desc"
-						:tag-style="Object({ img: 'display: block; max-width: 100%; border: none' })"
-						selectable
-						lazyLoad
-					></uv-parse>
+					<uv-parse :content="detail.goods_desc" selectable lazyLoad></uv-parse>
 				</view>
 			</view>
 		</view>
