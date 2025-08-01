@@ -74,7 +74,7 @@ const onSearch = () => {
 	}
 
 	.search-space {
-		height: 90rpx;
+		height: v-bind(searchHeight_px);
 	}
 }
 </style>
