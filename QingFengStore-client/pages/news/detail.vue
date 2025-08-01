@@ -19,7 +19,7 @@ const detail = ref({
 
 <template>
 	<view class="container">
-		<CommonNavBar title="资讯详情" titleColor="#ffffff"></CommonNavBar>
+		<CommonNavBar title="资讯详情" titleColor="#ffffff" :canBack="true"></CommonNavBar>
 		<view class="wrapper">
 			<view class="news_title">
 				{{ detail.title }}

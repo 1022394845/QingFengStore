@@ -11,17 +11,18 @@ const props = defineProps({
 		type: String,
 		default: '#000000'
 	},
-	backUrl: {
-		type: String,
-		default: ''
+	canBack: {
+		type: Boolean,
+		default: false
 	}
 })
 
 // 是否展示返回按钮
-const showBack = props.backUrl || getCurrentPages().length > 1
+const pageStackNum = getCurrentPages().length
+const showBack = pageStackNum > 1 || props.canBack
 const navBack = () => {
-	if (props.backUrl) routerTo(props.backUrl, 'redirectTo')
-	else routerBack()
+	if (pageStackNum > 1) routerBack()
+	else history.back()
 }
 </script>
 

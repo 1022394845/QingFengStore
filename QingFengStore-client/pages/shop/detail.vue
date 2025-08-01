@@ -46,7 +46,7 @@ const closeCartPop = () => {
 
 <template>
 	<view class="container">
-		<CommonNavBar title="商品详情" titleColor="#ffffff"></CommonNavBar>
+		<CommonNavBar title="商品详情" titleColor="#ffffff" :canBack="true"></CommonNavBar>
 		<view class="wrapper">
 			<!-- 轮播图 -->
 			<view class="banner">
