@@ -1,10 +1,6 @@
-<script>
-export default {
-	onLaunch: function () {
-		console.log('App Launch')
-	}
-}
-</script>
+<script setup></script>
+
+<template></template>
 
 <style>
 /*每个页面公共css */
