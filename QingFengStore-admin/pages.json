@@ -154,6 +154,13 @@
         "enablePullDownRefresh": false,
         "navigationBarTitleText": "实名认证"
     }
+},
+{
+	"path" : "pages/activity/news/list",
+	"style" : 
+	{
+		"navigationBarTitleText" : "新闻列表"
+	}
 }
 ],
 	"subPackages": [{
