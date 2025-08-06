@@ -147,22 +147,27 @@
 				"enablePullDownRefresh": false,
 				"navigationBarTitleText": "设置密码"
 			}
+		}, {
+			"path": "uni_modules/uni-id-pages/pages/userinfo/realname-verify/realname-verify",
+			"style": {
+				"enablePullDownRefresh": false,
+				"navigationBarTitleText": "实名认证"
+			}
+		},
+		{
+			"path": "pages/activity/news/list",
+			"style": {
+				"navigationBarTitleText": "新闻列表"
+			}
+		},
+		{
+			"path": "pages/activity/news/edit",
+			"style": {
+				"navigationBarTitleText": "新闻编辑",
+				"navigationStyle": "default"
+			}
 		}
-	,{
-    "path": "uni_modules/uni-id-pages/pages/userinfo/realname-verify/realname-verify",
-    "style": {
-        "enablePullDownRefresh": false,
-        "navigationBarTitleText": "实名认证"
-    }
-},
-{
-	"path" : "pages/activity/news/list",
-	"style" : 
-	{
-		"navigationBarTitleText" : "新闻列表"
-	}
-}
-],
+	],
 	"subPackages": [{
 			"root": "pages/system",
 			"pages": [{

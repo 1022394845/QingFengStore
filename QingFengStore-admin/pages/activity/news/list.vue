@@ -37,7 +37,7 @@ const onSearch = () => {
 				<button class="uni-button hide-on-phone" type="default" size="mini" @click="onSearch">
 					{{ $t('common.button.search') }}
 				</button>
-				<button class="uni-button" type="primary" size="mini" @click="routerTo('./add')">
+				<button class="uni-button" type="primary" size="mini" @click="routerTo('./edit')">
 					{{ $t('common.button.add') }}
 				</button>
 				<button class="uni-button" type="warn" size="mini" :disabled="true">
@@ -79,7 +79,7 @@ const onSearch = () => {
 					<el-button type="danger" text>{{ $t('common.button.delete') }}</el-button>
 				</el-table-column>
 			</el-table>
-			<el-pagination background layout="prev, pager, next" :total="1000" />
+			<el-pagination background layout="prev, pager, next" :total="newsList.length" />
 		</view>
 	</view>
 </template>
