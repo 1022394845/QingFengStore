@@ -84,5 +84,6 @@ export default {
 @import '@/common/uni-icons.css';
 @import '@/common/admin-icons.css';
 @import '@/common/theme.scss';
+@import '@/common/common-style.scss';
 @import '@/static/iconfont/iconfont.css';
 </style>

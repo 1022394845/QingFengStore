@@ -1,0 +1,25 @@
+// 公共全局样式
+
+// 分页
+.el-pagination {
+	justify-content: flex-end;
+	margin: 30px 0;
+
+	.btn-prev,
+	.btn-next {
+		// 样式覆写
+		background: var(--el-pagination-bg-color);
+		border: none;
+		border-radius: var(--el-pagination-border-radius);
+		box-sizing: border-box;
+		color: var(--el-pagination-button-color);
+		cursor: pointer;
+		font-size: var(--el-pagination-font-size);
+		height: var(--el-pagination-button-height);
+		justify-content: center;
+		line-height: var(--el-pagination-button-height);
+		min-width: var(--el-pagination-button-width);
+		padding: 0 4px;
+		text-align: center;
+	}
+}
