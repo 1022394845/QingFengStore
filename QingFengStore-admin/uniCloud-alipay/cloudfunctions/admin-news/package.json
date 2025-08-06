@@ -1,6 +1,8 @@
 {
   "name": "admin-news",
-  "dependencies": {},
+  "dependencies": {
+    "utils": "file:../common/utils"
+  },
   "extensions": {
     "uni-cloud-jql": {}
   }
