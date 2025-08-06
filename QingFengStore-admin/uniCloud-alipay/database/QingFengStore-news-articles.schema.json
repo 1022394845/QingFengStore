@@ -63,6 +63,7 @@
 			"bsonType": "int",
 			"title": "阅读数量",
 			"description": "阅读数量",
+			"defaultValue": 0,
 			"permission": {
 				"write": false
 			}
@@ -70,14 +71,16 @@
 		"is_sticky": {
 			"bsonType": "bool",
 			"title": "是否置顶",
-			"description": "是否置顶"
+			"description": "是否置顶",
+			"defaultValue": false
 		},
 		"avatar": {
 			"bsonType": "string",
 			"title": "封面大图",
 			"description": "缩略图地址",
 			"label": "封面大图",
-			"trim": "both"
+			"trim": "both",
+			"defaultValue": ""
 		},
 		"publish_date": {
 			"bsonType": "timestamp",

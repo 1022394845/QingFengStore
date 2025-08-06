@@ -15,6 +15,7 @@ node_modules/
 **/.eslintcache
 unpackage/dist/
 **/unpackage/dist/
+**/*.param.js
 
 # python
 *.pyc
