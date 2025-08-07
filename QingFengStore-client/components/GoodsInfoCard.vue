@@ -11,7 +11,13 @@ const checkDetail = () => {
 <template>
 	<view class="goods-info-card" @click="checkDetail">
 		<view class="goods-info-card_image">
-			<image class="image" src="/static/tmp_goods.jpg" mode="aspectFill" lazy-load></image>
+			<uv-image
+				class="image"
+				src="/static/tmp_goods.jpg"
+				observeLazyLoad
+				width="100%"
+				height="100%"
+			></uv-image>
 		</view>
 		<view class="goods-info-card_info">
 			<view class="goods-info-card_info_title ellipsis">

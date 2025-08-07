@@ -19,7 +19,13 @@ import { routerTo } from '@/utils/router'
 					</view>
 				</view>
 				<view class="news-list_item_image" v-if="true">
-					<image class="image" src="/static/tmp_banner1.png" mode="aspectFill"></image>
+					<uv-image
+						class="image"
+						src="/static/tmp_banner1.png"
+						observeLazyLoad
+						width="100%"
+						height="100%"
+					></uv-image>
 				</view>
 			</view>
 			<view class="news-list_nomore">暂无更多资讯</view>

@@ -51,7 +51,13 @@ const checkDetail = () => {
 <template>
 	<view class="goods-card" @click="checkDetail">
 		<view class="goods-card_banner">
-			<image class="image" :src="info.bannerImg" mode="aspectFill" lazy-load></image>
+			<uv-image
+				class="image"
+				:src="info.bannerImg"
+				observeLazyLoad
+				width="100%"
+				height="100%"
+			></uv-image>
 		</view>
 		<view class="goods-card_info">
 			<view class="goods-card_info_top">
