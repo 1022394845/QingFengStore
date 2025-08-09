@@ -34,7 +34,7 @@ const onSubmit = async () => {
 	if (fileList.value?.length) {
 		try {
 			await uploadRef.value.upload()
-			formData.value.avatar = fileList.value[0].url
+			formData.value.avatar = fileList.value[0].cloudUrl
 		} catch {
 			loading.value = false
 			return showMsg('封面上传失败，请重试', 'error')

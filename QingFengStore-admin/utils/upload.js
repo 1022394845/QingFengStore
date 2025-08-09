@@ -11,29 +11,35 @@ const cloudToHttps = (url) => {
 
 /**
  * 上传单张图片
- * @param {object} file 图片信息对象/路径
+ * @param {object} file 图片信息对象
  * @param {number} offset 区分同一时间上传的图片名偏移
  * @param {string} [rootPath] 图片上传存储根路径 默认admin
  */
 export function uploadImage(file, offset = 0, rootPath = 'admin') {
 	if (typeof file !== 'object') throw new Error('文件类型错误')
-	file.status = 1
+	file.status = 'uploading'
 	return uniCloud
 		.uploadFile({
-			filePath: file.path,
+			filePath: file.cropUrl || file.url,
 			cloudPath:
-				rootPath + '/' + dayjs().format('YYYYMMDD') + '/' + (Date.now() + offset) + file.suffix,
+				rootPath +
+				'/' +
+				dayjs().format('YYYYMMDD') +
+				'/' +
+				(Date.now() + offset) +
+				'.' +
+				(file.cropType || file.type),
 			onUploadProgress: ({ loaded, total }) => {
-				file.progress = Math.round((loaded * 100) / total)
+				file.percentage = Math.round((loaded * 100) / total)
 			}
 		})
 		.then(({ fileID }) => {
 			file.fileID = fileID
-			file.status = 2
-			file.url = cloudToHttps(fileID)
+			file.status = 'success'
+			file.cloudUrl = cloudToHttps(fileID)
 		})
 		.catch((error) => {
-			file.status = 3
+			file.status = 'exception'
 			throw error
 		})
 }

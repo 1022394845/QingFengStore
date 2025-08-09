@@ -12,14 +12,16 @@ export function showMsg(message, type = 'info', duration = 3000) {
 
 /**
  * 获取文件名后缀
- * @param {string} fileData 文件数据 通常为file.raw
+ * @param { string|object} fileData 文件类型/文件数据 通常为file.raw
  * @returns {string} 文件后缀 如jpg
  */
 export function getFileSuffix(fileData) {
 	// fileData.type: image/png
-	const type = fileData.type
+	let type = ''
+	if (typeof fileData === 'string') type = fileData
+	else type = fileData.type
 	if (!type) return ''
 	const gapIndex = type.lastIndexOf('/')
 	if (gapIndex === -1) return ''
-	return type.substring(gapIndex)
+	return type.substring(gapIndex + 1)
 }

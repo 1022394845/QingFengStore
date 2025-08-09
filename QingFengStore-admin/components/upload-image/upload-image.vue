@@ -44,6 +44,7 @@ const cropper = ref(null)
 const currentFile = ref(null)
 const openCropper = (file) => {
 	if (!file.url) return showMsg('未知错误，请稍后再试', 'error')
+	file.type = getFileSuffix(file.raw) // 获取文件后缀
 	currentFile.value = file
 	showModal.value = true
 }
@@ -55,24 +56,12 @@ const closeCropper = () => {
 const onCrop = async () => {
 	await cropper.value.getCropBlob((blob) => {
 		if (!currentFile.value.uid) return showMsg('未知错误，请稍后再试', 'error')
-		// 创建file文件
-		const filename = `cropper_result-${Date.now()}.webp` // 文件名 文件为webp格式
-		const newFile = new File([blob], filename, {
-			type: blob.type,
-			lastModified: Date.now()
-		})
-		// 构造原始文件格式
-		const data = {
-			name: newFile.name, // 文件名
-			percentage: 0, // 上传进度
-			raw: newFile, // 文件数据
-			size: newFile.size, // 文件大小
-			status: 'ready', // 状态
-			uid: currentFile.value.uid, // 原始文件uid
-			url: URL.createObjectURL(blob) // blog地址
-		}
-		// 将裁剪数据附加到原对象的属性上
-		fileList.value.find((item) => item.uid === data.uid).crop = data
+		// 将裁剪数据附加到原对象的属性crop上
+		const uid = currentFile.value.uid
+		const target = fileList.value.find((item) => item.uid === uid)
+		if (!target) return showMsg('未知错误，请稍后再试', 'error')
+		target.cropType = getFileSuffix(blob.type)
+		target.cropUrl = URL.createObjectURL(blob)
 	})
 	closeCropper()
 }
@@ -127,30 +116,12 @@ const onCropOp = (id) => {
 <template>
 	<view class="upload-image">
 		<!-- 文件容器 -->
-		<!-- <view class="upload-container">
-			<view class="upload-group">
-				<view
-					class="upload-group-item upload-group-add"
-					v-if="fileList?.length < limit"
-					@click="onSelect"
-				>
-					+
-				</view>
-				<view class="upload-group-item" v-for="(item, index) in fileList" :key="index">
-					<image class="image" :src="item.path" mode="aspectFill"></image>
-					<view class="upload-group-item-close" @click="onRemove(index)">×</view>
-					<view class="upload-group-item-progress" v-if="item.status === 1">
-						{{ item.progress }}%
-					</view>
-				</view>
-			</view>
-		</view> -->
 		<el-scrollbar class="upload-container" max-height="250px">
 			<el-upload
 				ref="uploadRef"
 				v-model:file-list="fileList"
 				list-type="picture-card"
-				:limit="10"
+				:limit="limit"
 				:auto-upload="false"
 				:width="width"
 				:ratio="ratio"
@@ -159,7 +130,7 @@ const onCropOp = (id) => {
 				<el-icon><Plus /></el-icon>
 				<template #file="{ file }">
 					<div class="image-container">
-						<img class="el-upload-list__item-thumbnail" :src="file.crop?.url || file.url" alt="" />
+						<img class="el-upload-list__item-thumbnail" :src="file.cropUrl || file.url" alt="" />
 						<span class="el-upload-list__item-actions">
 							<span class="el-upload-list__item-delete" @click="openCropper(file)">
 								<el-icon><Edit /></el-icon>
@@ -168,6 +139,13 @@ const onCropOp = (id) => {
 								<el-icon><Delete /></el-icon>
 							</span>
 						</span>
+						<div class="progress" v-if="file.status !== 'ready'">
+							<el-progress
+								type="circle"
+								:percentage="file.percentage"
+								:status="['success', 'exception'].includes(file.status) ? file.status : null"
+							/>
+						</div>
 					</div>
 				</template>
 			</el-upload>
@@ -230,8 +208,33 @@ const onCropOp = (id) => {
 		aspect-ratio: v-bind('props.ratio');
 
 		.image-container {
+			position: relative;
 			width: 100%;
 			height: 100%;
+
+			.progress {
+				position: absolute;
+				top: 0;
+				left: 0;
+				width: 100%;
+				height: 100%;
+				background-color: rgba(0, 0, 0, 0.7);
+				container-type: size;
+
+				.el-progress {
+					width: min(80cqw, 80cqh);
+					height: min(80cqw, 80cqh);
+
+					.el-progress-circle {
+						width: 100% !important;
+						height: 100% !important;
+					}
+
+					.el-progress__text {
+						color: #ffffff;
+					}
+				}
+			}
 		}
 	}
 
