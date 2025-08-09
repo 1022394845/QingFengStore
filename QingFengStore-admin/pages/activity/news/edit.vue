@@ -16,22 +16,45 @@ const rules = {
 }
 
 const formRef = ref(null)
+const uploadRef = ref(null)
 const loading = ref(false)
 const onSubmit = async () => {
 	if (!formRef.value) return showMsg('未知错误，请刷新页面重试', 'error')
+
+	loading.value = true
+	// 表单非空校验
 	try {
-		loading.value = true
 		await formRef.value.validate()
+	} catch {
+		loading.value = false
+		return showMsg('存在校验未通过字段', 'error')
+	}
+
+	// 封面上传
+	if (fileList.value?.length) {
+		try {
+			await uploadRef.value.upload()
+			formData.value.avatar = fileList.value[0].url
+		} catch {
+			loading.value = false
+			return showMsg('封面上传失败，请重试', 'error')
+		}
+	}
+
+	// 新增数据
+	try {
 		const { errCode, errMsg } = await newsCloudObj.add(formData.value)
 		if (errCode !== 0) return showMsg(errMsg, 'error')
 		showMsg('新增成功', 'success')
 		routerTo('./list')
 	} catch {
-		showMsg('存在校验未通过字段', 'error')
-	} finally {
 		loading.value = false
+		return showMsg('新增失败', 'error')
 	}
 }
+
+// 封面列表
+const fileList = ref([])
 </script>
 
 <template>
@@ -50,7 +73,13 @@ const onSubmit = async () => {
 						<el-input v-model="formData.title" />
 					</el-form-item>
 					<el-form-item label="封面" prop="avatar">
-						<el-input v-model="formData.avatar" />
+						<upload-image
+							ref="uploadRef"
+							v-model="fileList"
+							width="200px"
+							ratio="16 / 9"
+							:limit="1"
+						></upload-image>
 					</el-form-item>
 					<el-form-item label="内容" prop="content">
 						<el-input v-model="formData.content" type="textarea" />
@@ -81,5 +110,18 @@ const onSubmit = async () => {
 	justify-content: center;
 	align-items: center;
 	gap: 20px;
+}
+
+.avatar-container {
+	border: 1px dashed var(--el-border-color);
+	border-radius: 6px;
+	cursor: pointer;
+	position: relative;
+	overflow: hidden;
+	transition: var(--el-transition-duration-fast);
+
+	&:hover {
+		border-color: var(--el-color-primary);
+	}
 }
 </style>

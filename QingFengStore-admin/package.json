@@ -116,6 +116,8 @@
     }
   },
   "dependencies": {
-    "element-plus": "^2.10.5"
+    "@element-plus/icons-vue": "^2.3.2",
+    "element-plus": "^2.10.5",
+    "vue-cropper": "^1.1.4"
   }
 }

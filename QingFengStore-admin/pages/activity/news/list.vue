@@ -31,7 +31,7 @@ const onSearch = () => {
 					class="uni-search"
 					type="text"
 					v-model="query"
-					@confirm="search"
+					@confirm="onSearch"
 					:placeholder="$t('common.placeholder.query')"
 				/>
 				<button class="uni-button hide-on-phone" type="default" size="mini" @click="onSearch">
