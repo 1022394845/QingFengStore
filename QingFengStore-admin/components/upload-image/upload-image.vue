@@ -33,7 +33,13 @@ const onRemove = (file) => {
 }
 // 上传图片
 const upload = () => {
-	const result = fileList.value.map((file, index) => uploadImage(file, index))
+	const result = fileList.value.map((file, index) => {
+		if (file.status === 'success') {
+			// 已经成功上传，无需再传
+			return Promise.resolve(file)
+		}
+		return uploadImage(file, index)
+	})
 	return Promise.all(result)
 }
 defineExpose({ upload })

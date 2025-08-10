@@ -31,7 +31,7 @@ const onSubmit = async () => {
 	}
 
 	// 封面上传
-	if (fileList.value?.length) {
+	if (fileList.value.length) {
 		try {
 			await uploadRef.value.upload()
 			formData.value.avatar = fileList.value[0].cloudUrl

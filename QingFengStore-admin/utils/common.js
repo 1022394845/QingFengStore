@@ -12,7 +12,7 @@ export function showMsg(message, type = 'info', duration = 3000) {
 
 /**
  * 获取文件名后缀
- * @param { string|object} fileData 文件类型/文件数据 通常为file.raw
+ * @param {string|{type:string}} fileData 文件类型/文件数据 通常为file.raw
  * @returns {string} 文件后缀 如jpg
  */
 export function getFileSuffix(fileData) {
