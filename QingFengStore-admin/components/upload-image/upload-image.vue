@@ -1,5 +1,5 @@
 <script setup>
-import { nextTick, ref } from 'vue'
+import { nextTick, onBeforeMount, ref } from 'vue'
 import { getFileSuffix, showMsg } from '@/utils/common.js'
 import { uploadImage } from '@/utils/upload'
 import { VueCropper } from 'vue-cropper'
@@ -52,7 +52,16 @@ const openCropper = (file) => {
 	if (!file.url) return showMsg('未知错误，请稍后再试', 'error')
 	file.type = getFileSuffix(file.raw) // 获取文件后缀
 	currentFile.value = file
-	showModal.value = true
+	nextTick(() => {
+		showModal.value = true
+		if (props.ratio) {
+			// 设置截图框默认比例
+			setCropRatio(props.ratio)
+			nextTick(() => {
+				cropper.value.goAutoCrop()
+			})
+		}
+	})
 }
 const closeCropper = () => {
 	showModal.value = false
@@ -74,6 +83,7 @@ const onCrop = async () => {
 
 // 裁剪操作
 const currentCropOp = ref(1)
+
 const cropOpList = [
 	{ id: 1, type: 'icon', icon: 'FullScreen', content: '' },
 	{ id: 2, type: 'text', content: '1 / 1' },

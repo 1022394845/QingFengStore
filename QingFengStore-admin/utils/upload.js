@@ -23,10 +23,6 @@ function cloudToHttps(cloudUrl) {
 	return parts.join('/')
 }
 
-console.log(
-	httpsToCloud('https://env-00jxtt1yph9m.normal.cloudstatic.cn/admin/20250810/1754794796603.jpeg')
-)
-
 /**
  * 将https链接转化为支付宝云fileId 注意：仅支持将fileId转化成url的逆向转化
  * @param {string} httpsUrl 图片https地址

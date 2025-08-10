@@ -2,7 +2,7 @@
 import { ref } from 'vue'
 import { routerBack, routerTo } from '@/utils/router.js'
 import { showMsg } from '@/utils/common.js'
-const newsCloudObj = uniCloud.importObject('admin-news')
+const newsCloudObj = uniCloud.importObject('admin-news', { customUI: true })
 
 const formData = ref({
 	title: '',
