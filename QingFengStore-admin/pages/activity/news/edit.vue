@@ -82,7 +82,7 @@ const fileList = ref([])
 						></upload-image>
 					</el-form-item>
 					<el-form-item label="内容" prop="content">
-						<el-input v-model="formData.content" type="textarea" />
+						<rich-text-editor v-model="formData.content"></rich-text-editor>
 					</el-form-item>
 					<el-form-item label="推荐" prop="is_sticky">
 						<el-switch v-model="formData.is_sticky"></el-switch>
