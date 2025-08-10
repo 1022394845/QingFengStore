@@ -17,6 +17,7 @@ const rules = {
 
 const formRef = ref(null)
 const uploadRef = ref(null)
+const richTextEditorRef = ref(null)
 const loading = ref(false)
 const onSubmit = async () => {
 	if (!formRef.value) return showMsg('未知错误，请刷新页面重试', 'error')
@@ -40,6 +41,9 @@ const onSubmit = async () => {
 			return showMsg('封面上传失败，请重试', 'error')
 		}
 	}
+
+	// 删除内容中不存在但上传的云端图片
+	richTextEditorRef.value.removeRedundantImage()
 
 	// 新增数据
 	try {
@@ -82,7 +86,7 @@ const fileList = ref([])
 						></upload-image>
 					</el-form-item>
 					<el-form-item label="内容" prop="content">
-						<rich-text-editor v-model="formData.content"></rich-text-editor>
+						<rich-text-editor ref="richTextEditorRef" v-model="formData.content"></rich-text-editor>
 					</el-form-item>
 					<el-form-item label="推荐" prop="is_sticky">
 						<el-switch v-model="formData.is_sticky"></el-switch>

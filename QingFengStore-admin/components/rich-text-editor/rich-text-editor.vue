@@ -3,7 +3,7 @@ import '@wangeditor/editor/dist/css/style.css'
 import { onBeforeUnmount, ref, shallowRef, onMounted } from 'vue'
 import { Editor, Toolbar } from '@wangeditor/editor-for-vue'
 import { DomEditor } from '@wangeditor/editor'
-import { FileToUploadObject, uploadImage } from '@/utils/upload'
+import { FileToUploadObject, httpsToCloud, removeImage, uploadImage } from '@/utils/upload'
 import { showMsg } from '@/utils/common'
 import { ElLoading } from 'element-plus'
 
@@ -12,6 +12,8 @@ const editorRef = shallowRef()
 
 // 内容 HTML
 const content = defineModel({ type: String, default: '' })
+// 上传图片fileID集合
+let uploadedFileSet = new Set()
 
 const toolbarConfig = {
 	excludeKeys: ['group-video', 'fullScreen']
@@ -38,6 +40,15 @@ const editorConfig = {
 					loading.close()
 				}
 			}
+		},
+		// 插入图片
+		insertImage: {
+			// 插入回调
+			onInsertedImage(imageNode) {
+				if (imageNode === null) return
+				const { src } = imageNode
+				uploadedFileSet.add(httpsToCloud(src))
+			}
 		}
 	}
 }
@@ -54,6 +65,25 @@ const handleCreated = (editor) => {
 }
 
 const mode = 'default' // 编辑器模式
+
+// 提交数据时删除内容中不存在但上传的云端图片
+const removeRedundantImage = () => {
+	// 获取最终内容存在的文件fileId集合
+	const currentFileList = editorRef.value
+		.getElemsByType('image')
+		.map((item) => httpsToCloud(item.src))
+	const currentFileSet = new Set(currentFileList)
+
+	// 获取需要云端删除的fileId列表
+	const needRemoveFileIds = []
+	for (const item of uploadedFileSet) {
+		// 在uploadedSet中存在，而currentSet中不存在
+		if (!currentFileSet.has(item)) needRemoveFileIds.push(item)
+	}
+
+	return removeImage(needRemoveFileIds)
+}
+defineExpose({ removeRedundantImage })
 </script>
 
 <template>
@@ -74,7 +104,6 @@ const mode = 'default' // 编辑器模式
 				@onCreated="handleCreated"
 			/>
 		</div>
-		{{ content }}
 	</view>
 </template>
 
