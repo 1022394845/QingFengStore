@@ -47,8 +47,11 @@ module.exports = {
 
 			const currentSize = (page - 1) * pageSize // 忽略条数
 
+			const query = keyword ? `${new RegExp(keyword, 'i')}.test(title)` : null // 搜索关键词
+
 			const listTemp = dbJQL
 				.collection('QingFengStore-news-articles')
+				.where(query)
 				.orderBy('publish_date desc')
 				.skip(currentSize)
 				.limit(pageSize)

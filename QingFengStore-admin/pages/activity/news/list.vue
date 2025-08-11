@@ -1,7 +1,7 @@
 <script setup>
 import { routerTo } from '@/utils/router.js'
 import { dayjs } from 'element-plus'
-import { onMounted, ref } from 'vue'
+import { nextTick, onMounted, ref } from 'vue'
 import { showMsg } from '@/utils/common'
 const newsCloudObj = uniCloud.importObject('admin-news', { customUI: true })
 
@@ -13,12 +13,16 @@ const pageInfo = ref({
 	total: 0
 })
 const loading = ref(false)
+const tableRef = ref(null)
 const getNewsList = async () => {
 	try {
 		loading.value = true
 		const { total, data } = await newsCloudObj.list(pageInfo.value, query.value)
 		pageInfo.value.total = total
 		newsList.value = data
+		nextTick(() => {
+			tableRef.value.setScrollTop(0) // 滚动至表格顶部
+		})
 	} catch {
 		showMsg('获取数据失败，请刷新重试', 'error')
 	} finally {
@@ -32,7 +36,10 @@ onMounted(() => {
 // 搜索
 const query = ref('')
 const onSearch = () => {
-	console.log(query.value)
+	// 重置分页
+	pageInfo.value.page = 1
+	pageInfo.value.total = 0
+	getNewsList()
 }
 </script>
 
@@ -44,7 +51,7 @@ const onSearch = () => {
 				<input
 					class="uni-search"
 					type="text"
-					v-model="query"
+					v-model.trim="query"
 					@confirm="onSearch"
 					:placeholder="$t('common.placeholder.query')"
 				/>
@@ -61,6 +68,7 @@ const onSearch = () => {
 		</view>
 		<view class="uni-container">
 			<el-table
+				ref="tableRef"
 				:data="newsList"
 				v-loading="loading"
 				stripe
