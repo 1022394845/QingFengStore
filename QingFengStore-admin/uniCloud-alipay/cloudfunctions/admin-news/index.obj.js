@@ -42,7 +42,7 @@ module.exports = {
 			const { errCode, errMsg, data, count } = await dbJQL
 				.collection(listTemp, userTemp)
 				.field(
-					'_id, arrayElemAt(user_id, 0) as user, title,avatar, view_count, article_status, is_sticky, publish_date'
+					'_id, arrayElemAt(user_id, 0) as user, title, avatar, view_count, article_status, is_sticky, publish_date'
 				)
 				.get({ getCount: true })
 
@@ -126,6 +126,34 @@ module.exports = {
 
 			if (errCode !== 0) return result({ errCode, errMsg: 'fail', type: '删除', custom: errMsg })
 			return result({ errCode: 0, errMsg: 'success', data: { deleted }, type: '删除' })
+		} catch {
+			return defaultError
+		}
+	},
+
+	/**
+	 * 获取资讯详情
+	 * @param {string} id 资讯id
+	 * @returns {object} 资讯信息
+	 */
+	async detail(id) {
+		if (!id) return result({ errCode: 400, errMsg: 'error', type: '请求', custom: '参数不可为空' })
+
+		try {
+			const dataTemp = dbJQL
+				.collection('QingFengStore-news-articles')
+				.where(`_id == "${id}"`)
+				.getTemp()
+			const userTemp = dbJQL.collection('uni-id-users').field('_id, nickname').getTemp()
+			const { errCode, errMsg, data, count } = await dbJQL
+				.collection(dataTemp, userTemp)
+				.field(
+					'_id, arrayElemAt(user_id, 0) as user, title, avatar, content, view_count, article_status, is_sticky, publish_date'
+				)
+				.get({ getOne: true })
+
+			if (errCode !== 0) return result({ errCode, errMsg: 'fail', type: '获取', custom: errMsg })
+			return result({ errCode: 0, errMsg: 'success', data, type: '获取' })
 		} catch {
 			return defaultError
 		}

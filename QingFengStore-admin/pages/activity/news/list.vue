@@ -232,7 +232,9 @@ const onChangeIsSticky = async (row) => {
 				</el-table-column>
 				<el-table-column label="操作" width="150" align="center" fixed="right">
 					<template #default="{ row }">
-						<el-button type="primary" text>{{ $t('common.button.edit') }}</el-button>
+						<el-button type="primary" text @click="routerTo(`./edit?id=${row._id}`)">
+							{{ $t('common.button.edit') }}
+						</el-button>
 						<el-button type="danger" text style="margin-left: 0" @click="onDelete(row._id)">
 							{{ $t('common.button.delete') }}
 						</el-button>

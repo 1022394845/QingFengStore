@@ -1,5 +1,6 @@
 <script setup>
 import { ref } from 'vue'
+import { onLoad } from '@dcloudio/uni-app'
 import { routerBack, routerTo } from '@/utils/router.js'
 import { showMsg } from '@/utils/common.js'
 const newsCloudObj = uniCloud.importObject('admin-news', { customUI: true })
@@ -18,6 +19,7 @@ const rules = {
 const formRef = ref(null)
 const uploadRef = ref(null)
 const richTextEditorRef = ref(null)
+const fileList = ref([]) // 封面列表
 const loading = ref(false)
 const onSubmit = async () => {
 	if (!formRef.value) return showMsg('未知错误，请刷新页面重试', 'error')
@@ -35,7 +37,10 @@ const onSubmit = async () => {
 	if (fileList.value.length) {
 		try {
 			await uploadRef.value.upload()
-			formData.value.avatar = fileList.value[0].cloudUrl
+			if (!fileList.value[0].exist) {
+				// 封面为重新上传的图片
+				formData.value.avatar = fileList.value[0].cloudUrl
+			}
 		} catch {
 			loading.value = false
 			return showMsg('封面上传失败，请重试', 'error')
@@ -45,25 +50,62 @@ const onSubmit = async () => {
 	// 删除内容中不存在但上传的云端图片
 	richTextEditorRef.value.removeRedundantImage()
 
-	// 新增数据
+	// 新增/更新数据
 	try {
-		const { errCode, errMsg } = await newsCloudObj.add(formData.value)
-		if (errCode !== 0) return showMsg(errMsg, 'error')
-		showMsg('新增成功', 'success')
+		dataLoading.value = true
+		if (formData.value._id) {
+			// 更新
+			const { errCode, errMsg } = await newsCloudObj.update(formData.value)
+			if (errCode !== 0) throw new Error('edit')
+			showMsg('修改成功', 'success')
+		} else {
+			// 新增
+			const { errCode, errMsg } = await newsCloudObj.add(formData.value)
+			if (errCode !== 0) throw new Error('add')
+			showMsg('新增成功', 'success')
+		}
 		routerTo('./list')
-	} catch {
+	} catch (err) {
 		loading.value = false
-		return showMsg('新增失败', 'error')
+		showMsg(`${err.message === 'edit' ? '修改' : '新增'}失败`, 'error')
+	} finally {
+		dataLoading.value = true
 	}
 }
 
-// 封面列表
-const fileList = ref([])
+// 编辑数据回显
+const dataLoading = ref(false)
+onLoad(async (e) => {
+	if (!e.id) return
+
+	try {
+		dataLoading.value = true
+		const { errCode, data } = await newsCloudObj.detail(e.id)
+
+		if (errCode !== 0) throw new Error()
+		const { _id, title = '', avatar = '', content = '', is_sticky = false } = data
+		formData.value = { _id, title, avatar, content, is_sticky }
+		// 封面列表处理
+		fileList.value.push({
+			url: avatar,
+			status: 'success', // 避免被重复上传
+			exist: true // 无需显示进度条
+		})
+		dataLoading.value = false
+	} catch {
+		showMsg('获取数据失败，请刷新页面重试')
+	}
+})
+
+// 移除编辑时初始的avatar
+const onRemoveAvatar = () => {
+	formData.value.avatar = ''
+}
 </script>
 
 <template>
 	<view class="uni-container">
-		<el-row>
+		<el-row v-loading="dataLoading">
 			<el-col :span="20" :offset="2">
 				<el-form
 					ref="formRef"
@@ -83,6 +125,7 @@ const fileList = ref([])
 							width="200px"
 							ratio="16 / 9"
 							:limit="1"
+							@remove="onRemoveAvatar"
 						></upload-image>
 					</el-form-item>
 					<el-form-item label="内容" prop="content">
@@ -97,7 +140,7 @@ const fileList = ref([])
 								{{ $t('common.button.back') }}
 							</el-button>
 							<el-button type="primary" size="large" @click="onSubmit" :loading="loading">
-								{{ $t('common.button.add') }}
+								{{ formData._id ? $t('common.button.edit') : $t('common.button.add') }}
 							</el-button>
 						</view>
 					</el-form-item>

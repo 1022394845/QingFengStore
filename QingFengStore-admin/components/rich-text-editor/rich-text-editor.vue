@@ -97,7 +97,7 @@ defineExpose({ removeRedundantImage })
 				:mode="mode"
 			/>
 			<Editor
-				style="height: 500px; overflow-y: hidden"
+				style="min-height: 300px; max-height: 500px; overflow-y: auto"
 				v-model="content"
 				:defaultConfig="editorConfig"
 				:mode="mode"

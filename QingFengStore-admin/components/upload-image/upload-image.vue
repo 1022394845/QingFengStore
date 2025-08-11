@@ -1,6 +1,6 @@
 <script setup>
 import { nextTick, onBeforeMount, ref } from 'vue'
-import { getFileSuffix, showMsg } from '@/utils/common.js'
+import { getFileSuffix, isHttpUrl, showMsg, urlToBlob } from '@/utils/common.js'
 import { uploadImage } from '@/utils/upload'
 import { VueCropper } from 'vue-cropper'
 import 'vue-cropper/dist/index.css'
@@ -23,6 +23,8 @@ const props = defineProps({
 	}
 })
 
+const emits = defineEmits(['remove'])
+
 const fileList = defineModel()
 const uploadRef = ref(null)
 
@@ -30,6 +32,7 @@ const uploadRef = ref(null)
 const onRemove = (file) => {
 	if (!fileList.value) return showMsg('未知错误，请刷新页面重试', 'error')
 	uploadRef.value.handleRemove(file)
+	emits('remove')
 }
 // 上传图片
 const upload = () => {
@@ -48,14 +51,28 @@ defineExpose({ upload })
 const showModal = ref(false)
 const cropper = ref(null)
 const currentFile = ref(null)
-const openCropper = (file) => {
+const currentImage = ref(null)
+const openCropper = async (file) => {
 	if (!file.url) return showMsg('未知错误，请稍后再试', 'error')
-	file.type = getFileSuffix(file.raw) // 获取文件后缀
+	file.type = getFileSuffix(file.raw || file.url) // 获取文件后缀
 	currentFile.value = file
+	currentImage.value = file.url
+
+	try {
+		if (isHttpUrl(file.url)) {
+			// 网络地址避免跨域
+			const blob = await urlToBlob(file.url)
+			currentImage.value = URL.createObjectURL(blob)
+		}
+	} catch {
+		return showMsg('获取图片失败，请刷新重试', 'error')
+	}
+
 	nextTick(() => {
 		showModal.value = true
 		if (props.ratio) {
 			// 设置截图框默认比例
+			currentCropOp.value = cropOpList.find((item) => item.content === props.ratio)?.id || 1
 			setCropRatio(props.ratio)
 			nextTick(() => {
 				cropper.value.goAutoCrop()
@@ -77,13 +94,15 @@ const onCrop = async () => {
 		if (!target) return showMsg('未知错误，请稍后再试', 'error')
 		target.cropType = getFileSuffix(blob.type)
 		target.cropUrl = URL.createObjectURL(blob)
+		// 重置文件状态
+		if (target.exist) delete target.exist
+		target.status = 'ready'
 	})
 	closeCropper()
 }
 
 // 裁剪操作
 const currentCropOp = ref(1)
-
 const cropOpList = [
 	{ id: 1, type: 'icon', icon: 'FullScreen', content: '' },
 	{ id: 2, type: 'text', content: '1 / 1' },
@@ -155,7 +174,7 @@ const onCropOp = (id) => {
 								<el-icon><Delete /></el-icon>
 							</span>
 						</span>
-						<div class="progress" v-if="file.status !== 'ready'">
+						<div class="progress" v-if="!file.exist && file.status !== 'ready'">
 							<el-progress
 								type="circle"
 								:percentage="file.percentage"
@@ -174,7 +193,7 @@ const onCropOp = (id) => {
 					<view class="cropper">
 						<vue-cropper
 							ref="cropper"
-							:img="currentFile.url"
+							:img="currentImage"
 							:outputSize="1"
 							:outputType="'webp'"
 							:autoCrop="true"
