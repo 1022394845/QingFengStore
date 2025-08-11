@@ -1,7 +1,7 @@
 <script setup>
 import { nextTick, onBeforeMount, ref } from 'vue'
-import { getFileSuffix, isHttpUrl, showMsg, urlToBlob } from '@/utils/common.js'
-import { uploadImage } from '@/utils/upload'
+import { getFileSuffix, showMsg } from '@/utils/common.js'
+import { isHttpUrl, urlToBlob, uploadImage } from '@/utils/network.js'
 import { VueCropper } from 'vue-cropper'
 import 'vue-cropper/dist/index.css'
 

@@ -3,7 +3,7 @@ import '@wangeditor/editor/dist/css/style.css'
 import { onBeforeUnmount, ref, shallowRef, onMounted } from 'vue'
 import { Editor, Toolbar } from '@wangeditor/editor-for-vue'
 import { DomEditor } from '@wangeditor/editor'
-import { FileToUploadObject, httpsToCloud, removeImage, uploadImage } from '@/utils/upload'
+import { FileToUploadObject, httpsToCloud, removeImage, uploadImage } from '@/utils/network.js'
 import { showMsg } from '@/utils/common'
 import { ElLoading } from 'element-plus'
 

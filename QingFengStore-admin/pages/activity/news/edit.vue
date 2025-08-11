@@ -86,11 +86,13 @@ onLoad(async (e) => {
 		const { _id, title = '', avatar = '', content = '', is_sticky = false } = data
 		formData.value = { _id, title, avatar, content, is_sticky }
 		// 封面列表处理
-		fileList.value.push({
-			url: avatar,
-			status: 'success', // 避免被重复上传
-			exist: true // 无需显示进度条
-		})
+		if (avatar) {
+			fileList.value.push({
+				url: avatar,
+				status: 'success', // 避免被重复上传
+				exist: true // 无需显示进度条
+			})
+		}
 		dataLoading.value = false
 	} catch {
 		showMsg('获取数据失败，请刷新页面重试')

@@ -1,6 +1,5 @@
-// 客户端直传
 import { dayjs } from 'element-plus'
-import { getFileSuffix, showMsg } from './common'
+import { getFileSuffix } from './common.js'
 
 const cloudFileIdSuffix = '.normal.cloudstatic.cn'
 
@@ -62,7 +61,6 @@ export function FileToUploadObject(file) {
 		// Blob对象
 		data.url = file
 	} else {
-		showMsg('文件类型错误', 'error')
 		throw new Error('文件类型错误')
 	}
 	return data
@@ -76,7 +74,6 @@ export function FileToUploadObject(file) {
  */
 export function uploadImage(file, offset = 0, rootPath = 'admin') {
 	if (typeof file !== 'object') {
-		showMsg('文件类型错误', 'error')
 		throw new Error('文件类型错误')
 	}
 	file.status = 'uploading'
@@ -122,4 +119,41 @@ export async function removeImage(fileIds) {
 	// 客户端无法直接操作，采用云对象移除
 	const uploadCloudObj = uniCloud.importObject('admin-upload')
 	return await uploadCloudObj.remove(fileIds)
+}
+
+/**
+ * 判断字符串是否为网络url地址
+ * @param {string} url 字符串
+ * @returns {boolean} 是-true
+ */
+export function isHttpUrl(url) {
+	return url.startsWith('https://') || url.startsWith('http://')
+}
+
+/**
+ * 将图片URL转换为Blob对象
+ * @param {string} url 图片的URL地址
+ * @returns {Promise<Blob>} 包含Blob对象的Promise
+ */
+export function urlToBlob(url) {
+	return new Promise((resolve, reject) => {
+		// 使用fetch API获取资源
+		fetch(url, {
+			mode: 'cors', // 处理跨域
+			cache: 'no-store' // 不缓存
+		})
+			.then((response) => {
+				if (!response.ok) {
+					throw new Error(`请求失败，状态码: ${response.status}`)
+				}
+				// 将响应转换为Blob对象
+				return response.blob()
+			})
+			.then((blob) => {
+				resolve(blob)
+			})
+			.catch((error) => {
+				reject(new Error(`转换失败: ${error.message}`))
+			})
+	})
 }
