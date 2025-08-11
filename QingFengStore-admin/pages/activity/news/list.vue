@@ -1,6 +1,6 @@
 <script setup>
 import { routerTo } from '@/utils/router.js'
-import { dayjs } from 'element-plus'
+import { dayjs, ElMessageBox } from 'element-plus'
 import { nextTick, onMounted, ref } from 'vue'
 import { showMsg } from '@/utils/common'
 const newsCloudObj = uniCloud.importObject('admin-news', { customUI: true })
@@ -17,12 +17,10 @@ const tableRef = ref(null)
 const getNewsList = async () => {
 	try {
 		loading.value = true
-		const { total, data } = await newsCloudObj.list(pageInfo.value, query.value)
+		const { errCode, total, data } = await newsCloudObj.list(pageInfo.value, query.value)
+		if (errCode !== 0) throw new Error()
 		pageInfo.value.total = total
 		newsList.value = data
-		nextTick(() => {
-			tableRef.value.setScrollTop(0) // 滚动至表格顶部
-		})
 	} catch {
 		showMsg('获取数据失败，请刷新重试', 'error')
 	} finally {
@@ -33,13 +31,73 @@ onMounted(() => {
 	getNewsList()
 })
 
+// 重置分页
+const resetPage = () => {
+	pageInfo.value.page = 1
+	getNewsList()
+}
+
 // 搜索
 const query = ref('')
 const onSearch = () => {
-	// 重置分页
-	pageInfo.value.page = 1
-	pageInfo.value.total = 0
-	getNewsList()
+	resetPage()
+}
+
+// 删除
+let deleteIds = []
+const batchDeletedisabled = ref(true)
+const onSelectionChange = (selection) => {
+	deleteIds = selection
+	batchDeletedisabled.value = selection.length === 0
+}
+// 删除确认
+const confirmDelete = async () => {
+	return ElMessageBox.confirm('确认删除数据吗？', '警告', {
+		confirmButtonText: '确认',
+		cancelButtonText: '取消',
+		type: 'warning',
+		center: true,
+		'show-close': false
+	})
+}
+// 批量删除
+const onBatchDelete = async () => {
+	await confirmDelete() // 弹出框确认操作
+
+	try {
+		loading.value = true
+		const ids = deleteIds.map((item) => item._id)
+		const {
+			errCode,
+			data: { deleted }
+		} = await newsCloudObj.remove(ids)
+		if (errCode !== 0) throw new Error()
+		showMsg(`成功删除${deleted}条数据`, 'success')
+		resetPage() // 重置分页
+	} catch {
+		loading.value = false
+		showMsg('删除失败，请刷新重试', 'error')
+	}
+}
+// 单项删除
+const onDelete = async (id) => {
+	await confirmDelete() // 弹出框确认操作
+
+	try {
+		loading.value = true
+		const {
+			errCode,
+			data: { deleted }
+		} = await newsCloudObj.remove(id)
+		if (errCode !== 0) throw new Error()
+		showMsg(`删除成功`, 'success')
+		// 删除非第一页的最后一条数据，回退页码
+		if (newsList.value.length === 1 && pageInfo.value.page > 1) pageInfo.value.page--
+		getNewsList()
+	} catch {
+		loading.value = false
+		showMsg('删除失败，请刷新重试', 'error')
+	}
 }
 </script>
 
@@ -61,7 +119,13 @@ const onSearch = () => {
 				<button class="uni-button" type="primary" size="mini" @click="routerTo('./edit')">
 					{{ $t('common.button.add') }}
 				</button>
-				<button class="uni-button" type="warn" size="mini" :disabled="true">
+				<button
+					class="uni-button"
+					type="warn"
+					size="mini"
+					:disabled="batchDeletedisabled"
+					@click="onBatchDelete"
+				>
 					{{ $t('common.button.batchDelete') }}
 				</button>
 			</view>
@@ -74,6 +138,7 @@ const onSearch = () => {
 				stripe
 				style="width: 100%"
 				:row-style="{ height: '120px' }"
+				@selection-change="onSelectionChange"
 			>
 				<el-table-column type="selection" width="55" />
 				<el-table-column prop="title" label="标题" show-overflow-tooltip />
@@ -115,10 +180,12 @@ const onSearch = () => {
 					</template>
 				</el-table-column>
 				<el-table-column label="操作" width="150" align="center" fixed="right">
-					<el-button type="primary" text>{{ $t('common.button.edit') }}</el-button>
-					<el-button type="danger" text style="margin-left: 0">
-						{{ $t('common.button.delete') }}
-					</el-button>
+					<template #default="{ row }">
+						<el-button type="primary" text>{{ $t('common.button.edit') }}</el-button>
+						<el-button type="danger" text style="margin-left: 0" @click="onDelete(row._id)">
+							{{ $t('common.button.delete') }}
+						</el-button>
+					</template>
 				</el-table-column>
 			</el-table>
 			<el-pagination
