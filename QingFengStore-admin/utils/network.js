@@ -157,3 +157,17 @@ export function urlToBlob(url) {
 			})
 	})
 }
+
+/**
+ * 通过OSS处理获取图片缩略图
+ * @param {string} url 图片原URL
+ * @param {number} [width] 缩略图宽度px
+ * @param {number} [height] 缩略图高度px
+ * @returns {string} 缩略图URL
+ */
+export function getResizeImage(url, width = 100, height = 100) {
+	if (!url) return null
+	if (width < 1 || width > 16384 || height < 1 || height > 16384) return null // OSS规定范围
+	const suffix = `?x-oss-process=image/resize,m_fill,w_${width},h_${height}`
+	return url + suffix
+}

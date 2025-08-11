@@ -2,7 +2,9 @@
 import { routerTo } from '@/utils/router.js'
 import { dayjs, ElMessageBox } from 'element-plus'
 import { nextTick, onMounted, ref } from 'vue'
-import { showMsg } from '@/utils/common'
+import { showMsg, emptyImageUrl } from '@/utils/common.js'
+import { getResizeImage } from '@/utils/network.js'
+import emptyImage from '@/static/noImage.png'
 const newsCloudObj = uniCloud.importObject('admin-news', { customUI: true })
 
 // 资讯列表
@@ -135,6 +137,8 @@ const onChangeIsSticky = async (row) => {
 		return false
 	}
 }
+
+console.log(getResizeImage())
 </script>
 
 <template>
@@ -181,12 +185,11 @@ const onChangeIsSticky = async (row) => {
 				<el-table-column prop="image" label="缩略图" width="184" align="center">
 					<template #default="{ row }">
 						<el-image
-							v-if="row.avatar"
-							:src="row.avatar"
+							:src="getResizeImage(row.avatar, 160, 90) || emptyImage"
 							fit="cover"
 							style="height: 90px; display: block"
 							lazy
-							:preview-src-list="[row.avatar]"
+							:preview-src-list="row.avatar ? [row.avatar] : undefined"
 							preview-teleported
 						/>
 					</template>

@@ -1,4 +1,7 @@
 import { ElMessage } from 'element-plus'
+
+export const emptyImageUrl = 'static/noImage.png'
+
 /**
  * 操作提示
  * @param {string} message 提示内容
