@@ -99,6 +99,42 @@ const onDelete = async (id) => {
 		showMsg('删除失败，请刷新重试', 'error')
 	}
 }
+
+// 改变文章状态
+const onChangeArticleStatus = async (row) => {
+	try {
+		row.articleStatusLoading = true
+		const { _id, article_status } = row
+		const newStatus = article_status ? 0 : 1
+		const { errCode } = await newsCloudObj.update({ _id, article_status: newStatus })
+		if (errCode !== 0) throw new Error()
+		row.articleStatusLoading = false
+		showMsg(`更改成功`, 'success')
+		return true
+	} catch {
+		row.articleStatusLoading = false
+		showMsg('更改失败，请稍后再试', 'error')
+		return false
+	}
+}
+
+// 改变文章推荐状态
+const onChangeIsSticky = async (row) => {
+	try {
+		row.isStickyLoading = true
+		const { _id, is_sticky } = row
+		const newStatus = is_sticky ? false : true
+		const { errCode } = await newsCloudObj.update({ _id, is_sticky: newStatus })
+		if (errCode !== 0) throw new Error()
+		row.isStickyLoading = false
+		showMsg(`更改成功`, 'success')
+		return true
+	} catch {
+		row.isStickyLoading = false
+		showMsg('更改失败，请稍后再试', 'error')
+		return false
+	}
+}
 </script>
 
 <template>
@@ -169,9 +205,24 @@ const onDelete = async (id) => {
 					align="center"
 					show-overflow-tooltip
 				/>
-				<el-table-column prop="status" label="是否推荐" width="80" align="center">
+				<el-table-column prop="article_status" label="是否可见" width="80" align="center">
 					<template #default="{ row }">
-						<el-switch v-model="row.status" />
+						<el-switch
+							v-model="row.article_status"
+							:active-value="1"
+							:inactive-value="0"
+							:loading="row.articleStatusLoading"
+							:before-change="() => onChangeArticleStatus(row)"
+						/>
+					</template>
+				</el-table-column>
+				<el-table-column prop="is_sticky" label="是否推荐" width="80" align="center">
+					<template #default="{ row }">
+						<el-switch
+							v-model="row.is_sticky"
+							:loading="row.isStickyLoading"
+							:before-change="() => onChangeIsSticky(row)"
+						/>
 					</template>
 				</el-table-column>
 				<el-table-column prop="publish_date" label="发布时间" width="100" align="center">
