@@ -10,13 +10,19 @@
       <!-- #endif -->
       <!-- #ifndef H5 || (APP-PLUS && VUE2) -->
       <!-- 表格中的图片，使用 rich-text 防止大小不正确 -->
-      <rich-text v-if="n.name==='img'&&n.t" :style="'display:'+n.t" :nodes="[{attrs:{style:n.attrs.style,src:n.attrs.src},name:'img'}]" :data-i="i" @tap.stop="imgTap" />
+      <rich-text v-if="n.name==='img'&&n.t" :style="'display:'+n.t" :nodes="[{attrs:{style:n.attrs.style||'',src:n.attrs.src},name:'img'}]" :data-i="i" @tap.stop="imgTap" />
       <!-- #endif -->
-      <!-- #ifndef H5 || APP-PLUS -->
-      <image v-else-if="n.name==='img'" :id="n.attrs.id" :class="'_img '+n.attrs.class" :style="(ctrl[i]===-1?'display:none;':'')+'width:'+(ctrl[i]||1)+'px;height:1px;'+n.attrs.style" :src="n.attrs.src" :mode="!n.h?'widthFix':(!n.w?'heightFix':'')" :lazy-load="opts[0]" :webp="n.webp" :show-menu-by-longpress="opts[3]&&!n.attrs.ignore" :image-menu-prevent="!opts[3]||n.attrs.ignore" :data-i="i" @load="imgLoad" @error="mediaError" @tap.stop="imgTap" @longpress="imgLongTap" />
+      <!-- #ifdef APP-HARMONY -->
+      <image v-else-if="n.name==='img'" :id="n.attrs.id" :class="'_img '+n.attrs.class" :style="(ctrl[i]===-1?'display:none;':'')+'width:'+ctrl[i]+'px;'+n.attrs.style" :src="n.attrs.src||(ctrl.load?n.attrs['data-src']:'')" :mode="!n.h?'widthFix':(!n.w?'heightFix':(n.m||'scaleToFill'))" :data-i="i" @load="imgLoad" @error="mediaError" @tap.stop="imgTap" @longpress="imgLongTap" />
+      <!-- #endif -->
+      <!-- #ifndef H5 || APP-PLUS || MP-KUAISHOU -->
+      <image v-else-if="n.name==='img'" :id="n.attrs.id" :class="'_img '+n.attrs.class" :style="(ctrl[i]===-1?'display:none;':'')+'width:'+(ctrl[i]||1)+'px;height:1px;'+n.attrs.style" :src="n.attrs.src" :mode="!n.h?'widthFix':(!n.w?'heightFix':(n.m||'scaleToFill'))" :lazy-load="opts[0]" :webp="n.webp" :show-menu-by-longpress="opts[3]&&!n.attrs.ignore" :image-menu-prevent="!opts[3]||n.attrs.ignore" :data-i="i" @load="imgLoad" @error="mediaError" @tap.stop="imgTap" @longpress="imgLongTap" />
+      <!-- #endif -->
+      <!-- #ifdef MP-KUAISHOU -->
+      <image v-else-if="n.name==='img'" :id="n.attrs.id" :class="'_img '+n.attrs.class" :style="(ctrl[i]===-1?'display:none;':'')+n.attrs.style" :src="n.attrs.src" :lazy-load="opts[0]" :data-i="i" @load="imgLoad" @error="mediaError" @tap.stop="imgTap"></image>
       <!-- #endif -->
       <!-- #ifdef APP-PLUS && VUE3 -->
-      <image v-else-if="n.name==='img'" :id="n.attrs.id" :class="'_img '+n.attrs.class" :style="(ctrl[i]===-1?'display:none;':'')+'width:'+(ctrl[i]||1)+'px;'+n.attrs.style" :src="n.attrs.src||(ctrl.load?n.attrs['data-src']:'')" :mode="!n.h?'widthFix':(!n.w?'heightFix':'')" :data-i="i" @load="imgLoad" @error="mediaError" @tap.stop="imgTap" @longpress="imgLongTap" />
+      <image v-else-if="n.name==='img'" :id="n.attrs.id" :class="'_img '+n.attrs.class" :style="(ctrl[i]===-1?'display:none;':'')+'width:'+(ctrl[i]||1)+'px;'+n.attrs.style" :src="n.attrs.src||(ctrl.load?n.attrs['data-src']:'')" :mode="!n.h?'widthFix':(!n.w?'heightFix':(n.m||''))" :data-i="i" @load="imgLoad" @error="mediaError" @tap.stop="imgTap" @longpress="imgLongTap" />
       <!-- #endif -->
       <!-- 文本 -->
       <!-- #ifdef MP-WEIXIN -->
@@ -32,7 +38,7 @@
       </view>
       <!-- 视频 -->
       <!-- #ifdef APP-PLUS -->
-      <view v-else-if="n.html" :id="n.attrs.id" :class="'_video '+n.attrs.class" :style="n.attrs.style" v-html="n.html" @vplay.stop="play" />
+      <view v-else-if="n.html" :id="n.attrs.id" :class="'_video '+n.attrs.class" :style="n.attrs.style" v-html="n.html" :data-i="i" @vplay.stop="play" />
       <!-- #endif -->
       <!-- #ifndef APP-PLUS -->
       <video v-else-if="n.name==='video'" :id="n.attrs.id" :class="n.attrs.class" :style="n.attrs.style" :autoplay="n.attrs.autoplay" :controls="n.attrs.controls" :loop="n.attrs.loop" :muted="n.attrs.muted" :object-fit="n.attrs['object-fit']" :poster="n.attrs.poster" :src="n.src[ctrl[i]||0]" :data-i="i" @play="play" @error="mediaError" />
@@ -139,13 +145,13 @@ export default {
   },
   components: {
 
-    // #ifndef (H5 || APP-PLUS) && VUE3
+    // #ifndef ((H5 || APP-PLUS) && VUE3) || APP-HARMONY
     node
     // #endif
   },
   mounted () {
     this.$nextTick(() => {
-      for (this.root = this.$parent; this.root.$options.name !== 'uv-parse'; this.root = this.root.$parent);
+      for (this.root = this.$parent; this.root.$options.name !== 'mp-html'; this.root = this.root.$parent);
     })
     // #ifdef H5 || APP-PLUS
     if (this.opts[0]) {
@@ -184,7 +190,15 @@ export default {
      * @param {Event} e
      */
     play (e) {
-      this.root.$emit('play')
+      const i = e.currentTarget.dataset.i
+      const node = this.childs[i]
+      this.root.$emit('play', {
+        source: node.name,
+        attrs: {
+          ...node.attrs,
+          src: node.src[this.ctrl[i] || 0]
+        }
+      })
       // #ifndef APP-PLUS
       if (this.root.pauseVideo) {
         let flag = false
@@ -227,7 +241,14 @@ export default {
       // #ifdef H5 || APP-PLUS
       node.attrs.src = node.attrs.src || node.attrs['data-src']
       // #endif
+      // #ifndef APP-HARMONY
       this.root.$emit('imgtap', node.attrs)
+      // #endif
+      // #ifdef APP-HARMONY
+      this.root.$emit('imgtap', {
+        ...node.attrs
+      })
+      // #endif
       // 自动预览图片
       if (this.root.previewImg) {
         uni.previewImage({
@@ -402,7 +423,52 @@ export default {
   }
 }
 </script>
-<style>
+<style>/deep/ .hl-code,/deep/ .hl-pre{color:#ccc;background:0 0;font-family:Consolas,Monaco,'Andale Mono','Ubuntu Mono',monospace;font-size:1em;text-align:left;white-space:pre;word-spacing:normal;word-break:normal;word-wrap:normal;line-height:1.5;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-hyphens:none;-moz-hyphens:none;-ms-hyphens:none;hyphens:none}/deep/ .hl-pre{padding:1em;margin:.5em 0;overflow:auto}/deep/ .hl-pre{background:#2d2d2d}/deep/ .hl-block-comment,/deep/ .hl-cdata,/deep/ .hl-comment,/deep/ .hl-doctype,/deep/ .hl-prolog{color:#999}/deep/ .hl-punctuation{color:#ccc}/deep/ .hl-attr-name,/deep/ .hl-deleted,/deep/ .hl-namespace,/deep/ .hl-tag{color:#e2777a}/deep/ .hl-function-name{color:#6196cc}/deep/ .hl-boolean,/deep/ .hl-function,/deep/ .hl-number{color:#f08d49}/deep/ .hl-class-name,/deep/ .hl-constant,/deep/ .hl-property,/deep/ .hl-symbol{color:#f8c555}/deep/ .hl-atrule,/deep/ .hl-builtin,/deep/ .hl-important,/deep/ .hl-keyword,/deep/ .hl-selector{color:#cc99cd}/deep/ .hl-attr-value,/deep/ .hl-char,/deep/ .hl-regex,/deep/ .hl-string,/deep/ .hl-variable{color:#7ec699}/deep/ .hl-entity,/deep/ .hl-operator,/deep/ .hl-url{color:#67cdcc}/deep/ .hl-bold,/deep/ .hl-important{font-weight:700}/deep/ .hl-italic{font-style:italic}/deep/ .hl-entity{cursor:help}/deep/ .hl-inserted{color:green}/deep/ .hl-pre {
+  position: relative;
+}
+/deep/ .hl-code {
+  overflow: auto;
+  display: block;
+}/deep/ .hl-language {
+  font-size: 12px;
+  font-weight: 600;
+  position: absolute;
+  right: 8px;
+  text-align: right;
+  top: 3px;
+}
+/deep/ .hl-pre {
+  padding-top: 1.5em;
+}/deep/ .hl-pre {
+  font-size: 14px;
+  padding-left: 3.8em;
+  counter-reset: linenumber;
+}
+/deep/ .line-numbers-rows {
+  position: absolute;
+  pointer-events: none;
+  top: 1.5em;
+  font-size: 100%;
+  left: 0;
+  width: 3em; /* works for line-numbers below 1000 lines */
+  letter-spacing: -1px;
+  border-right: 1px solid #999;
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+}
+/deep/ .line-numbers-rows .span {
+  display: block;
+  counter-increment: linenumber;
+} 
+/deep/ .line-numbers-rows .span:before {
+  content: counter(linenumber);
+  color: #999;
+  display: block;
+  padding-right: 0.8em;
+  text-align: right;
+}
 /* a 标签默认效果 */
 ._a {
   padding: 1.5px 0 1.5px 0;

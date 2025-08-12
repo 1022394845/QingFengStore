@@ -1,15 +1,13 @@
 <script setup>
 import CommonNavBar from '@/components/CommonNavBar.vue'
 import dayjs from 'dayjs'
-import hljs from 'highlight.js' // 代码块高亮
-import 'highlight.js/styles/atom-one-dark.css'
-import { nextTick, onMounted, ref } from 'vue'
+import { getCurrentInstance, nextTick, onMounted, ref } from 'vue'
 import { onLoad } from '@dcloudio/uni-app'
 const newsCloudObj = uniCloud.importObject('client-news', { customUI: true })
 
 let newsId = null
-const contentRef = ref(null)
 const detail = ref({})
+const instance = getCurrentInstance()
 const getDetail = async (id) => {
 	try {
 		uni.showLoading({
@@ -20,13 +18,6 @@ const getDetail = async (id) => {
 
 		if (errCode !== 0) throw new Error()
 		detail.value = data
-		nextTick(() => {
-			// 高亮代码块
-			const query = document.querySelectorAll('code') || []
-			query.forEach((item) => {
-				hljs.highlightElement(item)
-			})
-		})
 	} catch {
 		uni.showToast({
 			title: '获取失败',
@@ -70,13 +61,8 @@ onMounted(() => {
 					</view>
 				</view>
 			</view>
-			<view class="news_content" ref="contentRef">
-				<uv-parse
-					:content="detail.content"
-					selectable
-					lazyLoad
-					:tagStyle="{ p: 'line-height: 1.5em;' }"
-				></uv-parse>
+			<view class="news_content">
+				<mp-html :content="detail.content" lazy-load selectable />
 			</view>
 		</view>
 	</view>
