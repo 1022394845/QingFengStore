@@ -1,5 +1,4 @@
 <script setup>
-import '@wangeditor/editor/dist/css/style.css'
 import { onBeforeUnmount, ref, shallowRef, onMounted } from 'vue'
 import { Editor, Toolbar } from '@wangeditor/editor-for-vue'
 import { DomEditor } from '@wangeditor/editor'
@@ -97,7 +96,7 @@ defineExpose({ removeRedundantImage })
 				:mode="mode"
 			/>
 			<Editor
-				style="min-height: 300px; max-height: 500px; overflow-y: auto"
+				style="height: 400px; overflow-y: auto"
 				v-model="content"
 				:defaultConfig="editorConfig"
 				:mode="mode"

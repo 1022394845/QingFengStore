@@ -1,6 +1,5 @@
 import { ElMessage } from 'element-plus'
-
-export const emptyImageUrl = 'static/noImage.png'
+import { isHttpUrl } from './network.js'
 
 /**
  * 操作提示

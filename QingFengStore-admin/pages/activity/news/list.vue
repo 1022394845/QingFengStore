@@ -2,7 +2,7 @@
 import { routerTo } from '@/utils/router.js'
 import { dayjs, ElMessageBox } from 'element-plus'
 import { nextTick, onMounted, ref } from 'vue'
-import { showMsg, emptyImageUrl } from '@/utils/common.js'
+import { showMsg } from '@/utils/common.js'
 import { getResizeImage } from '@/utils/network.js'
 import emptyImage from '@/static/noImage.png'
 const newsCloudObj = uniCloud.importObject('admin-news', { customUI: true })
@@ -137,8 +137,6 @@ const onChangeIsSticky = async (row) => {
 		return false
 	}
 }
-
-console.log(getResizeImage())
 </script>
 
 <template>
