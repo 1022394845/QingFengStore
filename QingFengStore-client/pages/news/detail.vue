@@ -1,10 +1,14 @@
 <script setup>
 import CommonNavBar from '@/components/CommonNavBar.vue'
 import dayjs from 'dayjs'
-import { ref } from 'vue'
+import hljs from 'highlight.js' // 代码块高亮
+import 'highlight.js/styles/atom-one-dark.css'
+import { nextTick, onMounted, ref } from 'vue'
 import { onLoad } from '@dcloudio/uni-app'
 const newsCloudObj = uniCloud.importObject('client-news', { customUI: true })
 
+let newsId = null
+const contentRef = ref(null)
 const detail = ref({})
 const getDetail = async (id) => {
 	try {
@@ -14,8 +18,15 @@ const getDetail = async (id) => {
 
 		const { errCode, data } = await newsCloudObj.detail(id)
 
-		detail.value = data
 		if (errCode !== 0) throw new Error()
+		detail.value = data
+		nextTick(() => {
+			// 高亮代码块
+			const query = document.querySelectorAll('code') || []
+			query.forEach((item) => {
+				hljs.highlightElement(item)
+			})
+		})
 	} catch {
 		uni.showToast({
 			title: '获取失败',
@@ -27,7 +38,10 @@ const getDetail = async (id) => {
 }
 
 onLoad((e) => {
-	if (e.id) getDetail(e.id)
+	if (e.id) newsId = e.id
+})
+onMounted(() => {
+	getDetail(newsId)
 })
 </script>
 
@@ -44,8 +58,13 @@ onLoad((e) => {
 					{{ dayjs(detail.publish_date).format('YYYY-MM-DD HH:mm') }}
 				</view>
 			</view>
-			<view class="news_content">
-				<uv-parse :content="detail.content" selectable lazyLoad></uv-parse>
+			<view class="news_content" ref="contentRef">
+				<uv-parse
+					:content="detail.content"
+					selectable
+					lazyLoad
+					:tagStyle="{ p: 'line-height: 1.5em;' }"
+				></uv-parse>
 			</view>
 		</view>
 	</view>
