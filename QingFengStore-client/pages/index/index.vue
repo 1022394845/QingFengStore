@@ -1,11 +1,12 @@
 <script setup>
-import { ref } from 'vue'
+import { onMounted, ref } from 'vue'
 import CommonNavBar from '@/components/CommonNavBar.vue'
 import CommonSearch from '@/components/CommonSearch.vue'
 import ScrollNotice from '@/components/ScrollNotice.vue'
 import CommonTitle from '@/components/CommonTitle.vue'
 import GoodsInfoCard from '@/components/GoodsInfoCard.vue'
 import { routerTo } from '@/utils/router'
+const newsCloudObj = uniCloud.importObject('client-news', { customUI: true })
 
 // 菜单列表
 const menuList = ref([
@@ -42,6 +43,22 @@ const menuList = ref([
 const onSearch = (newKeyword) => {
 	routerTo(`/pages/shop/search?keyword=${newKeyword}`)
 }
+
+// 公告列表
+const noticeList = ref([])
+const getNoticeList = async () => {
+	try {
+		const { errCode, data } = await newsCloudObj.sticky()
+
+		if (errCode !== 0) throw new Error()
+		noticeList.value = data
+	} catch {
+		noticeList.value = [{ _id: 0, title: '获取失败' }]
+	}
+}
+onMounted(() => {
+	getNoticeList()
+})
 </script>
 
 <template>
@@ -73,7 +90,7 @@ const onSearch = (newKeyword) => {
 				</swiper>
 			</view>
 			<!-- 公告 -->
-			<ScrollNotice></ScrollNotice>
+			<ScrollNotice v-model="noticeList"></ScrollNotice>
 			<!-- 菜单 -->
 			<view class="menu">
 				<view

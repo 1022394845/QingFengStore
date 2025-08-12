@@ -1,9 +1,17 @@
 <script setup>
+import { routerTo } from '../utils/router'
+
 defineOptions({
 	options: {
 		styleIsolation: 'shared'
 	}
 })
+
+const noticleList = defineModel()
+
+const checkDetail = (id) => {
+	routerTo(`/pages/news/detail?id=${id}`)
+}
 </script>
 
 <template>
@@ -20,13 +28,13 @@ defineOptions({
 				:duration="1000"
 				circular
 			>
-				<swiper-item class="scroll-notice_list_swiper_item">
-					<view class="scroll-notice_list_swiper_item_content ellipsis">公告内容</view>
-				</swiper-item>
-				<swiper-item class="scroll-notice_list_swiper_item">
-					<view class="scroll-notice_list_swiper_item_content ellipsis">
-						公告内容公告内容公告内容公告内容公告内容公告内容公告内容公告内容
-					</view>
+				<swiper-item
+					class="scroll-notice_list_swiper_item"
+					v-for="item in noticleList"
+					:key="item._id"
+					@click="checkDetail(item._id)"
+				>
+					<view class="scroll-notice_list_swiper_item_content ellipsis">{{ item.title }}</view>
 				</swiper-item>
 			</swiper>
 		</view>
