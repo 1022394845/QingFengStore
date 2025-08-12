@@ -41,6 +41,7 @@ const upload = () => {
 			// 已经成功上传，无需再传
 			return Promise.resolve(file)
 		}
+		file.percentage = 0 // 上传失败重置进度
 		return uploadImage(file, index)
 	})
 	return Promise.all(result)
