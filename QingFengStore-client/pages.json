@@ -8,7 +8,7 @@
 			}
 		},
 		{
-			"path": "pages/news/news",
+			"path": "pages/news/list",
 			"style": {
 				"navigationBarTitleText": "资讯",
 				"navigationStyle": "custom"
@@ -75,7 +75,7 @@
 			},
 			{
 				"text": "资讯",
-				"pagePath": "pages/news/news",
+				"pagePath": "pages/news/list",
 				"iconPath": "/static/icon/tab_ico_news.png",
 				"selectedIconPath": "/static/icon/tab_ico_news_a.png"
 			},

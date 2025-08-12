@@ -99,6 +99,7 @@ const navBack = () => {
 	}
 
 	&_space {
+		width: 100%;
 		height: v-bind(navBarHeight_px);
 	}
 }
