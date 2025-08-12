@@ -1,5 +1,7 @@
 // 资讯
 let dbJQL = uniCloud.databaseForJQL()
+let db = uniCloud.database()
+let dbCmd = db.command
 const { result } = require('utils')
 const defaultError = result({ errCode: 500, errMsg: 'error', type: '服务器' })
 
@@ -76,6 +78,12 @@ module.exports = {
 
 			if (errCode !== 0 || !data)
 				return result({ errCode, errMsg: 'fail', type: '获取', custom: errMsg })
+
+			// 文章阅读数自增
+			db.collection('QingFengStore-news-articles')
+				.doc(id)
+				.update({ view_count: dbCmd.inc(1) })
+
 			return result({ errCode: 0, errMsg: 'success', data, type: '获取' })
 		} catch {
 			return defaultError

@@ -53,9 +53,21 @@ onMounted(() => {
 				{{ detail.title }}
 			</view>
 			<view class="news_info">
-				<view class="news_info_user ellipsis">{{ detail.user?.nickname || '未知用户' }}</view>
-				<view class="news_info_createTime">
-					{{ dayjs(detail.publish_date).format('YYYY-MM-DD HH:mm') }}
+				<view id="row1">
+					<view class="news_info_user ellipsis">{{ detail.user?.nickname || '未知用户' }}</view>
+					<view class="news_info_publish-date">
+						{{ dayjs(detail.publish_date).format('YYYY-MM-DD HH:mm') }}
+					</view>
+				</view>
+				<view id="row2">
+					<view class="news_info_view-count">
+						<view class="news_info_view-count_icon">
+							<uni-icons type="eye" size="28rpx" color="#AAAAAA"></uni-icons>
+						</view>
+						<view class="news_info_view-count_text ellipsis">
+							{{ detail.view_count }}
+						</view>
+					</view>
 				</view>
 			</view>
 			<view class="news_content" ref="contentRef">
@@ -86,14 +98,29 @@ onMounted(() => {
 
 		&_info {
 			margin-top: 24rpx;
-			display: flex;
-			gap: 20rpx;
-			align-items: center;
-			font-size: 28rpx;
-			color: #aaaaaa;
+			line-height: 1.5em;
+			border-bottom: 1rpx solid $uni-border-color;
 
-			&_createTime {
-				flex-shrink: 0;
+			#row1 {
+				display: flex;
+				gap: 20rpx;
+				align-items: center;
+				font-size: 28rpx;
+				color: #aaaaaa;
+
+				.news_info_publish-date {
+					flex-shrink: 0;
+				}
+			}
+
+			#row2 {
+				.news_info_view-count {
+					display: flex;
+					gap: 10rpx;
+					align-items: center;
+					font-size: 28rpx;
+					color: #aaaaaa;
+				}
 			}
 		}
 
