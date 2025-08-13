@@ -31,22 +31,22 @@ onMounted(() => {
 	getGoodsList()
 })
 
-// 修改分类状态
+// 修改上架状态
 const onChangeStatus = async (row) => {
-	// try {
-	// 	row.statusLoading = true
-	// 	const { _id, status } = row
-	// 	const newStatus = status ? false : true
-	// 	const { errCode } = await categoriesCloudObj.update({ _id, status: newStatus })
-	// 	if (errCode !== 0) throw new Error()
-	// 	row.statusLoading = false
-	// 	showMsg(`更改成功`, 'success')
-	// 	return true
-	// } catch {
-	// 	row.statusLoading = false
-	// 	showMsg('更改失败，请稍后再试', 'error')
-	// 	return false
-	// }
+	try {
+		row.statusLoading = true
+		const { _id, is_on_sale } = row
+		const newStatus = is_on_sale ? false : true
+		const { errCode } = await goodsCloudObj.update({ _id, is_on_sale: newStatus })
+		if (errCode !== 0) throw new Error()
+		row.statusLoading = false
+		showMsg(`更改成功`, 'success')
+		return true
+	} catch {
+		row.statusLoading = false
+		showMsg('更改失败，请稍后再试', 'error')
+		return false
+	}
 }
 
 // 删除
