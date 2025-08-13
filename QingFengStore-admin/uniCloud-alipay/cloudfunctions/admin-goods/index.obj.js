@@ -28,15 +28,24 @@ module.exports = {
 
 			const query = category_id ? `category_id == "${category_id}"` : {} // 筛选分类
 
-			// 商品id 商品名称 缩略图 商品销量 是否上架 更新时间
-			const { errCode, errMsg, data, count } = await dbJQL
+			const listTemp = dbJQL
 				.collection('QingFengStore-mall-goods')
 				.where(query)
 				.orderBy('last_modify_date desc, total_sell_count desc')
 				.skip(currentSize)
 				.limit(pageSize)
+				.getTemp()
+			// 获取对应分类名称
+			const categoriesTemp = dbJQL
+				.collection('QingFengStore-mall-categories')
+				.field('_id, name')
+				.getTemp()
+
+			// 商品id 商品名称 缩略图 商品销量 是否上架 更新时间
+			const { errCode, errMsg, data, count } = await dbJQL
+				.collection(listTemp, categoriesTemp)
 				.field(
-					'_id, category_id, name, goods_thumb, total_sell_count, is_on_sale, last_modify_date'
+					'_id, arrayElemAt(category_id, 0) as category, name, goods_thumb, total_sell_count, is_on_sale, last_modify_date'
 				)
 				.get({ getCount: true })
 

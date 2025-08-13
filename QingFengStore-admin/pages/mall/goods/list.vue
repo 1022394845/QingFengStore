@@ -145,6 +145,13 @@ const onDelete = async (id) => {
 					</template>
 				</el-table-column>
 				<el-table-column
+					prop="category.name"
+					label="商品分类"
+					width="120"
+					align="center"
+					show-overflow-tooltip
+				/>
+				<el-table-column
 					prop="total_sell_count"
 					label="商品销量"
 					width="90"
