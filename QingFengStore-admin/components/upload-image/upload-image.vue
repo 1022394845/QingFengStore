@@ -30,9 +30,9 @@ const uploadRef = ref(null)
 
 // 移除图片
 const onRemove = (file) => {
-	if (!fileList.value) return showMsg('未知错误，请刷新页面重试', 'error')
+	if (!uploadRef.value) return showMsg('未知错误，请刷新页面重试', 'error')
 	uploadRef.value.handleRemove(file)
-	emits('remove')
+	emits('remove', file.url)
 }
 // 上传图片
 const upload = () => {

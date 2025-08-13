@@ -1,4 +1,5 @@
 <script setup>
+import { onLoad } from '@dcloudio/uni-app'
 import { onMounted, ref } from 'vue'
 import { routerTo, routerBack } from '@/utils/router.js'
 import { showMsg } from '@/utils/common.js'
@@ -41,12 +42,9 @@ const onSubmit = async () => {
 	if (fileList.value.length) {
 		try {
 			await uploadRef.value.upload()
-
-			formData.value.goods_banner_imgs = []
-
-			fileList.value.forEach((item) => {
-				formData.value.goods_banner_imgs.push(item.exist ? item.url : item.cloudUrl)
-			})
+			formData.value.goods_banner_imgs = fileList.value.map((item) =>
+				item.exist ? item.url : item.cloudUrl
+			)
 
 			// 缩略图默认为第一张展示图片
 			formData.value.goods_thumb = formData.value.goods_banner_imgs[0]
@@ -105,6 +103,46 @@ const skuInputVisible = ref(false)
 const onAddSku = () => {
 	console.log(skuInput.value.trim())
 }
+
+// 编辑数据回显
+onLoad(async (e) => {
+	if (!e.id) return
+
+	try {
+		dataLoading.value = true
+		const { errCode, data } = await goodsCloudObj.detail(e.id)
+
+		if (errCode !== 0) throw new Error()
+		const {
+			_id,
+			category_id,
+			name = '',
+			goods_banner_imgs = [],
+			goods_desc = '',
+			is_on_sale = false
+		} = data
+		formData.value = { _id, category_id, name, goods_banner_imgs, goods_desc, is_on_sale }
+		// 展示图片列表处理
+		if (goods_banner_imgs.length) {
+			goods_banner_imgs.forEach((item) => {
+				fileList.value.push({
+					url: item,
+					status: 'success', // 避免被重复上传
+					exist: true // 无需显示进度条
+				})
+			})
+		}
+		dataLoading.value = false
+	} catch {
+		showMsg('获取数据失败，请刷新页面重试')
+	}
+})
+
+// 移除编辑时初始的展示图片
+const onRemoveImage = (url) => {
+	const index = formData.value.goods_banner_imgs.findIndex((item) => item === url)
+	if (index !== -1) formData.value.goods_banner_imgs.splice(index, 1)
+}
 </script>
 
 <template>
@@ -144,6 +182,7 @@ const onAddSku = () => {
 							width="200px"
 							ratio="1 / 1"
 							:limit="5"
+							@remove="(url) => onRemoveImage(url)"
 						></upload-image>
 					</el-form-item>
 					<el-form-item label="商品规格" prop="goods_sku">

@@ -41,7 +41,7 @@ module.exports = {
 				.field('_id, name')
 				.getTemp()
 
-			// 商品id 商品名称 缩略图 商品销量 是否上架 更新时间
+			// 商品id 商品分类 商品名称 缩略图 商品销量 是否上架 更新时间
 			const { errCode, errMsg, data, count } = await dbJQL
 				.collection(listTemp, categoriesTemp)
 				.field(
@@ -134,6 +134,29 @@ module.exports = {
 
 			if (errCode !== 0) return result({ errCode, errMsg: 'fail', type: '删除', custom: errMsg })
 			return result({ errCode: 0, errMsg: 'success', data: { deleted }, type: '删除' })
+		} catch {
+			return defaultError
+		}
+	},
+
+	/**
+	 * 获取商品详情
+	 * @param {string} id 商品id
+	 * @returns {object} 资讯信息
+	 */
+	async detail(id) {
+		if (!id) return result({ errCode: 400, errMsg: 'error', type: '请求', custom: '参数不可为空' })
+
+		try {
+			// 商品id 分类id 商品名称 展示图片 商品详情 上架状态
+			const { errCode, errMsg, data, count } = await dbJQL
+				.collection('QingFengStore-mall-goods')
+				.where(`_id == "${id}"`)
+				.field('_id, category_id, name, goods_banner_imgs, goods_desc, is_on_sale')
+				.get({ getOne: true })
+
+			if (errCode !== 0) return result({ errCode, errMsg: 'fail', type: '获取', custom: errMsg })
+			return result({ errCode: 0, errMsg: 'success', data, type: '获取' })
 		} catch {
 			return defaultError
 		}
