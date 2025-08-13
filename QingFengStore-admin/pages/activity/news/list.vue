@@ -86,10 +86,7 @@ const onDelete = async (id) => {
 
 	try {
 		loading.value = true
-		const {
-			errCode,
-			data: { deleted }
-		} = await newsCloudObj.remove(id)
+		const { errCode } = await newsCloudObj.remove(id)
 		if (errCode !== 0) throw new Error()
 		showMsg(`删除成功`, 'success')
 		// 删除非第一页的最后一条数据，回退页码

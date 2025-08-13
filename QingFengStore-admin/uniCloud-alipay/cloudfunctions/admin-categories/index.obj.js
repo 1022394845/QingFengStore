@@ -70,5 +70,36 @@ module.exports = {
 		} catch (err) {
 			return defaultError
 		}
+	},
+
+	/**
+	 * 删除分类
+	 * @param {string[]|string} ids 删除id数组/单个id
+	 * @returns {number} deleted 成功删除个数
+	 */
+	async remove(ids = []) {
+		if (typeof ids === 'string') {
+			// 参数为单个id
+			if (!ids)
+				return result({ errCode: 400, errMsg: 'error', type: '请求', custom: '参数不可为空' })
+			ids = [ids]
+		}
+		if (!Array.isArray(ids))
+			return result({ errCode: 400, errMsg: 'error', type: '请求', custom: '参数类型错误' })
+		// 数组不可为空
+		if (!ids.length)
+			return result({ errCode: 400, errMsg: 'error', type: '请求', custom: '参数不可为空' })
+
+		try {
+			const { errCode, errMsg, deleted } = await dbJQL
+				.collection('QingFengStore-mall-categories')
+				.where(`_id in ${JSON.stringify(ids)}`)
+				.remove()
+
+			if (errCode !== 0) return result({ errCode, errMsg: 'fail', type: '删除', custom: errMsg })
+			return result({ errCode: 0, errMsg: 'success', data: { deleted }, type: '删除' })
+		} catch {
+			return defaultError
+		}
 	}
 }

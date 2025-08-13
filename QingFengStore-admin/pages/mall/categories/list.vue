@@ -113,6 +113,58 @@ const onChangeStatus = async (row) => {
 		return false
 	}
 }
+
+// 删除
+let deleteIds = []
+const batchDeletedisabled = ref(true)
+const onSelectionChange = (selection) => {
+	deleteIds = selection
+	batchDeletedisabled.value = selection.length === 0
+}
+// 删除确认
+const confirmDelete = async () => {
+	return ElMessageBox.confirm('确认删除分类吗？', '警告', {
+		confirmButtonText: '确认',
+		cancelButtonText: '取消',
+		type: 'warning',
+		center: true,
+		'show-close': false
+	})
+}
+// 批量删除
+const onBatchDelete = async () => {
+	await confirmDelete() // 弹出框确认操作
+
+	try {
+		loading.value = true
+		const ids = deleteIds.map((item) => item._id)
+		const {
+			errCode,
+			data: { deleted }
+		} = await categoriesCloudObj.remove(ids)
+		if (errCode !== 0) throw new Error()
+		showMsg(`成功删除${deleted}条分类`, 'success')
+		getCategoryList()
+	} catch {
+		loading.value = false
+		showMsg('删除失败，请刷新重试', 'error')
+	}
+}
+// 单项删除
+const onDelete = async (id) => {
+	await confirmDelete() // 弹出框确认操作
+
+	try {
+		loading.value = true
+		const { errCode } = await categoriesCloudObj.remove(id)
+		if (errCode !== 0) throw new Error()
+		showMsg(`删除成功`, 'success')
+		getCategoryList()
+	} catch {
+		loading.value = false
+		showMsg('删除失败，请刷新重试', 'error')
+	}
+}
 </script>
 
 <template>
@@ -123,13 +175,25 @@ const onChangeStatus = async (row) => {
 				<button class="uni-button" type="primary" size="mini" @click="onAdd">
 					{{ $t('common.button.add') }}
 				</button>
-				<button class="uni-button" type="warn" size="mini" :disabled="true">
+				<button
+					class="uni-button"
+					type="warn"
+					size="mini"
+					:disabled="batchDeletedisabled"
+					@click="onBatchDelete"
+				>
 					{{ $t('common.button.batchDelete') }}
 				</button>
 			</view>
 		</view>
 		<view class="uni-container">
-			<el-table :data="categoryList" v-loading="loading" stripe style="width: 100%">
+			<el-table
+				:data="categoryList"
+				v-loading="loading"
+				stripe
+				style="width: 100%"
+				@selection-change="onSelectionChange"
+			>
 				<el-table-column type="selection" width="55" />
 				<el-table-column prop="name" label="分类名称" show-overflow-tooltip />
 				<el-table-column prop="status" label="是否启用" width="80" align="center">
@@ -151,7 +215,7 @@ const onChangeStatus = async (row) => {
 						<el-button type="primary" text @click="onEdit(row)">
 							{{ $t('common.button.edit') }}
 						</el-button>
-						<el-button type="danger" text style="margin-left: 0">
+						<el-button type="danger" text style="margin-left: 0" @click="onDelete(row._id)">
 							{{ $t('common.button.delete') }}
 						</el-button>
 					</template>
