@@ -167,9 +167,9 @@ const onDelete = async (id) => {
 						/>
 					</template>
 				</el-table-column>
-				<el-table-column prop="last_modify_date" label="更新时间" width="100" align="center">
+				<el-table-column prop="last_modify_date" label="更新时间" width="140" align="center">
 					<template #default="{ row }">
-						{{ dayjs(row.last_modify_date).format('YYYY-MM-DD') }}
+						{{ dayjs(row.last_modify_date).format('YYYY-MM-DD HH:mm') }}
 					</template>
 				</el-table-column>
 				<el-table-column label="操作" width="150" align="center" fixed="right">
