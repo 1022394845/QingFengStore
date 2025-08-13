@@ -15,7 +15,6 @@ const pageInfo = ref({
 	total: 0
 })
 const loading = ref(false)
-const tableRef = ref(null)
 const getNewsList = async () => {
 	try {
 		loading.value = true
@@ -170,7 +169,6 @@ const onChangeIsSticky = async (row) => {
 		</view>
 		<view class="uni-container">
 			<el-table
-				ref="tableRef"
 				:data="newsList"
 				v-loading="loading"
 				stripe

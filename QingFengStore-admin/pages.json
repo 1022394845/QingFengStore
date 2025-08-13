@@ -166,6 +166,13 @@
 				"navigationBarTitleText": "新闻编辑",
 				"navigationStyle": "default"
 			}
+		},
+		{
+			"path" : "pages/mall/categories/list",
+			"style" : 
+			{
+				"navigationBarTitleText" : "分类"
+			}
 		}
 	],
 	"subPackages": [{
