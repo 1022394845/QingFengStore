@@ -3,7 +3,7 @@ import { onMounted, ref } from 'vue'
 import { showMsg } from '@/utils/common.js'
 import { routerTo } from '@/utils/router.js'
 import { getResizeImage } from '@/utils/network.js'
-import { ElLoading, dayjs } from 'element-plus'
+import { ElLoading, ElMessageBox, dayjs } from 'element-plus'
 import emptyImage from '@/static/noImage.png'
 const goodsCloudObj = uniCloud.importObject('admin-goods', { customUI: true })
 
@@ -58,7 +58,7 @@ const onSelectionChange = (selection) => {
 }
 // 删除确认
 const confirmDelete = async () => {
-	return ElMessageBox.confirm('确认删除分类吗？', '警告', {
+	return ElMessageBox.confirm('确认删除商品吗？该操作会同时删除商品的所有规格信息！', '警告', {
 		confirmButtonText: '确认',
 		cancelButtonText: '取消',
 		type: 'warning',
@@ -70,35 +70,35 @@ const confirmDelete = async () => {
 const onBatchDelete = async () => {
 	await confirmDelete() // 弹出框确认操作
 
-	// try {
-	// 	loading.value = true
-	// 	const ids = deleteIds.map((item) => item._id)
-	// 	const {
-	// 		errCode,
-	// 		data: { deleted }
-	// 	} = await categoriesCloudObj.remove(ids)
-	// 	if (errCode !== 0) throw new Error()
-	// 	showMsg(`成功删除${deleted}条分类`, 'success')
-	// 	getCategoryList()
-	// } catch {
-	// 	loading.value = false
-	// 	showMsg('删除失败，请刷新重试', 'error')
-	// }
+	try {
+		loading.value = true
+		const ids = deleteIds.map((item) => item._id)
+		const {
+			errCode,
+			data: { deleted }
+		} = await goodsCloudObj.remove(ids)
+		if (errCode !== 0) throw new Error()
+		showMsg(`成功删除${deleted}件商品`, 'success')
+		getGoodsList()
+	} catch {
+		loading.value = false
+		showMsg('删除失败，请刷新重试', 'error')
+	}
 }
 // 单项删除
 const onDelete = async (id) => {
 	await confirmDelete() // 弹出框确认操作
 
-	// try {
-	// 	loading.value = true
-	// 	const { errCode } = await categoriesCloudObj.remove(id)
-	// 	if (errCode !== 0) throw new Error()
-	// 	showMsg(`删除成功`, 'success')
-	// 	getCategoryList()
-	// } catch {
-	// 	loading.value = false
-	// 	showMsg('删除失败，请刷新重试', 'error')
-	// }
+	try {
+		loading.value = true
+		const { errCode } = await goodsCloudObj.remove(id)
+		if (errCode !== 0) throw new Error()
+		showMsg(`删除成功`, 'success')
+		getGoodsList()
+	} catch {
+		loading.value = false
+		showMsg('删除失败，请刷新重试', 'error')
+	}
 }
 </script>
 
@@ -182,7 +182,7 @@ const onDelete = async (id) => {
 				v-model:current-page="pageInfo.page"
 				:page-size="pageInfo.pageSize"
 				:total="pageInfo.total"
-				@current-change="getCategoryList"
+				@current-change="getGoodsList"
 			/>
 		</view>
 	</view>
