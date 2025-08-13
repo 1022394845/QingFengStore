@@ -30,21 +30,43 @@ module.exports = {
 
 	/**
 	 * 新增分类
-	 * @param {string} name 分类名称
-	 * @param {number} [sort] 分类排序
-	 * @param {boolean} [status] 分类状态
+	 * @param {object} data 分类信息
+	 * @param {string} data.name 分类名称
+	 * @param {number} [data.sort] 分类排序
+	 * @param {boolean} [data.status] 分类状态
 	 * @returns {string} id 新增分类id
 	 */
-	async add(name, sort = 0, status = true) {
-		if (!name) result({ errCode: 400, errMsg: 'error', type: '请求', custom: '分类名称不可为空' })
-
+	async add(data = {}) {
 		try {
-			const { errCode, id } = await dbJQL
-				.collection('QingFengStore-mall-categories')
-				.add({ name, sort, status })
+			const { errCode, id } = await dbJQL.collection('QingFengStore-mall-categories').add(data)
 
 			if (errCode !== 0) return result({ errCode, errMsg: 'fail', type: '新增', custom: errMsg })
 			return result({ errCode: 0, errMsg: 'success', data: { id }, type: '新增' })
+		} catch (err) {
+			return defaultError
+		}
+	},
+
+	/**
+	 * 修改分类
+	 * @param {object} data 分类信息
+	 * @param {string} data._id 资讯id
+	 * @param {string} [data.name] 分类名称
+	 * @param {number} [data.sort] 分类排序
+	 * @param {boolean} [data.status] 分类状态
+	 * @returns {number} updated 成功修改个数(无变化为0)
+	 */
+	async update(data = {}) {
+		if (!data._id) result({ errCode: 400, errMsg: 'error', type: '请求', custom: '分类id不可为空' })
+
+		try {
+			const { errCode, errMsg, updated } = await dbJQL
+				.collection('QingFengStore-mall-categories')
+				.doc(data._id)
+				.update(data)
+
+			if (errCode !== 0) return result({ errCode, errMsg: 'fail', type: '修改', custom: errMsg })
+			return result({ errCode: 0, errMsg: 'success', data: { updated }, type: '修改' })
 		} catch (err) {
 			return defaultError
 		}
