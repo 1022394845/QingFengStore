@@ -168,10 +168,22 @@
 			}
 		},
 		{
-			"path" : "pages/mall/categories/list",
-			"style" : 
-			{
-				"navigationBarTitleText" : "分类"
+			"path": "pages/mall/categories/list",
+			"style": {
+				"navigationBarTitleText": "分类"
+			}
+		},
+		{
+			"path": "pages/mall/goods/list",
+			"style": {
+				"navigationBarTitleText": "商品"
+			}
+		},
+		{
+			"path": "pages/mall/goods/edit",
+			"style": {
+				"navigationBarTitleText": "商品编辑",
+				"navigationStyle": "default"
 			}
 		}
 	],

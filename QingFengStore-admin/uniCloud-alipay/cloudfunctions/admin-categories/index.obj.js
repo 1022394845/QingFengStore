@@ -42,7 +42,7 @@ module.exports = {
 
 			if (errCode !== 0) return result({ errCode, errMsg: 'fail', type: '新增', custom: errMsg })
 			return result({ errCode: 0, errMsg: 'success', data: { id }, type: '新增' })
-		} catch (err) {
+		} catch {
 			return defaultError
 		}
 	},
@@ -67,7 +67,7 @@ module.exports = {
 
 			if (errCode !== 0) return result({ errCode, errMsg: 'fail', type: '修改', custom: errMsg })
 			return result({ errCode: 0, errMsg: 'success', data: { updated }, type: '修改' })
-		} catch (err) {
+		} catch {
 			return defaultError
 		}
 	},

@@ -27,7 +27,7 @@ module.exports = {
 
 			const currentSize = (page - 1) * pageSize // 忽略条数
 
-			const query = keyword ? `${new RegExp(keyword, 'i')}.test(title)` : null // 搜索关键词
+			const query = keyword ? `${new RegExp(keyword, 'i')}.test(title)` : {} // 搜索关键词
 
 			const listTemp = dbJQL
 				.collection('QingFengStore-news-articles')
@@ -48,7 +48,7 @@ module.exports = {
 
 			if (errCode !== 0) return result({ errCode, errMsg: 'fail', type: '获取', custom: errMsg })
 			return result({ errCode: 0, errMsg: 'success', data, total: count, type: '获取' })
-		} catch (err) {
+		} catch {
 			return defaultError
 		}
 	},
@@ -69,7 +69,7 @@ module.exports = {
 
 			if (errCode !== 0) return result({ errCode, errMsg: 'fail', type: '新增', custom: errMsg })
 			return result({ errCode: 0, errMsg: 'success', data: { id }, type: '新增' })
-		} catch (err) {
+		} catch {
 			return defaultError
 		}
 	},
@@ -95,7 +95,7 @@ module.exports = {
 
 			if (errCode !== 0) return result({ errCode, errMsg: 'fail', type: '修改', custom: errMsg })
 			return result({ errCode: 0, errMsg: 'success', data: { updated }, type: '修改' })
-		} catch (err) {
+		} catch {
 			return defaultError
 		}
 	},

@@ -20,16 +20,17 @@ const formRef = ref(null)
 const uploadRef = ref(null)
 const richTextEditorRef = ref(null)
 const fileList = ref([]) // 封面列表
-const loading = ref(false)
+const btnLoading = ref(false) // 按钮加载
+const dataLoading = ref(false) // 页面数据加载
 const onSubmit = async () => {
 	if (!formRef.value) return showMsg('未知错误，请刷新页面重试', 'error')
 
-	loading.value = true
+	btnLoading.value = true
 	// 表单非空校验
 	try {
 		await formRef.value.validate()
 	} catch {
-		loading.value = false
+		btnLoading.value = false
 		return showMsg('存在校验未通过字段', 'error')
 	}
 
@@ -42,7 +43,7 @@ const onSubmit = async () => {
 				formData.value.avatar = fileList.value[0].cloudUrl
 			}
 		} catch {
-			loading.value = false
+			btnLoading.value = false
 			return showMsg('封面上传失败，请重试', 'error')
 		}
 	}
@@ -66,15 +67,14 @@ const onSubmit = async () => {
 		}
 		routerTo('./list')
 	} catch (err) {
-		loading.value = false
 		showMsg(`${err.message === 'edit' ? '修改' : '新增'}失败`, 'error')
 	} finally {
-		dataLoading.value = true
+		btnLoading.value = false
+		dataLoading.value = false
 	}
 }
 
 // 编辑数据回显
-const dataLoading = ref(false)
 onLoad(async (e) => {
 	if (!e.id) return
 
@@ -141,7 +141,7 @@ const onRemoveAvatar = () => {
 							<el-button size="large" @click="routerBack()">
 								{{ $t('common.button.back') }}
 							</el-button>
-							<el-button type="primary" size="large" @click="onSubmit" :loading="loading">
+							<el-button type="primary" size="large" @click="onSubmit" :loading="btnLoading">
 								{{ formData._id ? $t('common.button.edit') : $t('common.button.add') }}
 							</el-button>
 						</view>

@@ -1,0 +1,9 @@
+{
+  "name": "admin-goods",
+  "dependencies": {
+    "utils": "file:../common/utils"
+  },
+  "extensions": {
+    "uni-cloud-jql": {}
+  }
+}
