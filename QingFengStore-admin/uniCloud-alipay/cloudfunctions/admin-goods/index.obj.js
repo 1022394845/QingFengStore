@@ -158,6 +158,7 @@ module.exports = {
 				.collection('QingFengStore-mall-sku')
 				.where(`goods_id == "${id}"`)
 				.field('_id, goods_id, sku_name, is_on_sale')
+				.orderBy('create_date')
 				.getTemp()
 
 			// 整体请求

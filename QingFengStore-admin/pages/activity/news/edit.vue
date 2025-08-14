@@ -80,13 +80,13 @@ onLoad(async (e) => {
 
 	try {
 		dataLoading.value = true
-		const { errCode, data } = await newsCloudObj.detail(e.id)
 
+		const { errCode, data } = await newsCloudObj.detail(e.id)
 		if (errCode !== 0) throw new Error()
-		const { _id, title = '', avatar = '', content = '', is_sticky = false } = data
-		formData.value = { _id, title, avatar, content, is_sticky }
+		formData.value = { ...data }
 		// 封面列表处理
-		if (avatar) uploadRef.value.init(avatar)
+		if (data.avatar) uploadRef.value.init(data.avatar)
+
 		dataLoading.value = false
 	} catch {
 		showMsg('获取数据失败，请刷新页面重试')

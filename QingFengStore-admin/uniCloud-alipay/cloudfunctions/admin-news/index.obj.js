@@ -145,7 +145,7 @@ module.exports = {
 				.where(`_id == "${id}"`)
 				.getTemp()
 			const userTemp = dbJQL.collection('uni-id-users').field('_id, nickname').getTemp()
-			const { errCode, errMsg, data, count } = await dbJQL
+			const { errCode, errMsg, data } = await dbJQL
 				.collection(dataTemp, userTemp)
 				.field(
 					'_id, arrayElemAt(user_id, 0) as user, title, avatar, content, view_count, article_status, is_sticky, publish_date'

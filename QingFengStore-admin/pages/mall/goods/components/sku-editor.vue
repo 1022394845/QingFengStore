@@ -9,12 +9,15 @@ let sku_id = null
 /**
  * 开启sku编辑框
  * @param {string} goodsId 商品id 必传
- * @param {string} [id] 编辑sku传递id
+ * @param {string} [skuId] 编辑sku传递id
  */
-const open = (goodsId, id) => {
+const open = (goodsId, skuId) => {
 	if (!goodsId) return showMsg('请先新建商品，再添加规格信息', 'error')
 	goods_id = goodsId
-	if (id) sku_id = id
+	if (skuId) {
+		sku_id = skuId
+		getDetail(skuId)
+	}
 	if (formRef.value) formRef.value.resetFields()
 	fileList.value = []
 	dialogVisible.value = true
@@ -24,6 +27,8 @@ const open = (goodsId, id) => {
  */
 const close = () => {
 	dialogVisible.value = false
+	loading.value = false
+	dataLoading.value = false
 }
 defineExpose({ open, close })
 
@@ -43,6 +48,7 @@ const formRef = ref(null)
 const uploadRef = ref(null)
 const fileList = ref([]) // 展示图片列表
 const loading = ref(false)
+const dataLoading = ref(false)
 const onSubmit = async () => {
 	if (!goods_id) return showMsg('获取商品id异常，请刷新重试', 'error')
 	if (!formRef.value) return showMsg('未知错误，请刷新页面重试', 'error')
@@ -76,6 +82,8 @@ const onSubmit = async () => {
 
 	// 新增/更新sku
 	try {
+		dataLoading.value = true
+
 		if (formData.value._id) {
 			// 更新
 			const { errCode, errMsg } = await skuCloudObj.update(formData.value)
@@ -93,6 +101,25 @@ const onSubmit = async () => {
 		showMsg(`${err.message === 'edit' ? '修改' : '新增'}失败`, 'error')
 	} finally {
 		loading.value = false
+		dataLoading.value = false
+	}
+}
+
+// 编辑数据回显
+const getDetail = async (id) => {
+	if (!id) return showMsg('获取规格id异常，请刷新重试', 'error')
+
+	try {
+		dataLoading.value = true
+
+		const { errCode, data } = await skuCloudObj.detail(id)
+		if (errCode !== 0) throw new Error()
+		formData.value = { ...data }
+		if (data.sku_thumb) uploadRef.value.init(data.sku_thumb)
+
+		dataLoading.value = false
+	} catch {
+		return showMsg('获取规格信息失败，请关闭界面重试', 'error')
 	}
 }
 </script>
@@ -101,7 +128,7 @@ const onSubmit = async () => {
 	<view class="sku-editor">
 		<el-dialog v-model="dialogVisible" title="规格编辑" center>
 			<template #default>
-				<el-row>
+				<el-row v-loading="dataLoading">
 					<el-col :span="20" :offset="2">
 						<el-form
 							ref="formRef"

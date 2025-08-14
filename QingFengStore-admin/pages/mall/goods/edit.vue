@@ -105,6 +105,10 @@ const onAddSku = () => {
 	if (!goods_id) return showMsg('获取商品id异常，请刷新重试', 'error')
 	if (skuEditorRef.value) skuEditorRef.value.open(goods_id)
 }
+const onEditSku = (id) => {
+	if (!goods_id) return showMsg('获取商品id异常，请刷新重试', 'error')
+	if (skuEditorRef.value) skuEditorRef.value.open(goods_id, id)
+}
 
 // 编辑数据回显
 onLoad(async (e) => {
@@ -144,7 +148,7 @@ const onRemoveImage = (url) => {
 
 <template>
 	<view class="uni-container">
-		<el-row>
+		<el-row v-loading="dataLoading">
 			<el-col :span="20" :offset="2">
 				<el-form
 					ref="formRef"
@@ -194,6 +198,7 @@ const onRemoveImage = (url) => {
 									:type="sku.is_on_sale ? 'success' : 'info'"
 									size="small"
 									class="sku-item"
+									@click="onEditSku(sku._id)"
 								>
 									{{ sku.sku_name }}
 								</el-button>

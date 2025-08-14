@@ -35,6 +35,29 @@ module.exports = {
 			console.log(err)
 			return defaultError
 		}
+	},
+
+	/**
+	 * 获取sku详情
+	 * @param {string} id sku_id
+	 * @returns {object} sku信息
+	 */
+	async detail(id) {
+		if (!id) return result({ errCode: 400, errMsg: 'error', type: '请求', custom: '参数不可为空' })
+
+		try {
+			// sku_id goods_id sku名称 缩略图 出售价格 市场价格 库存数
+			const { errCode, errMsg, data } = await dbJQL
+				.collection('QingFengStore-mall-sku')
+				.doc(id)
+				.field('_id, goods_id, sku_name, sku_thumb, price, market_price, stock, is_on_sale')
+				.get({ getOne: true })
+
+			if (errCode !== 0) return result({ errCode, errMsg: 'fail', type: '获取', custom: errMsg })
+			return result({ errCode: 0, errMsg: 'success', data, type: '获取' })
+		} catch {
+			return defaultError
+		}
 	}
 
 	// /**
@@ -92,29 +115,6 @@ module.exports = {
 
 	// 		if (errCode !== 0) return result({ errCode, errMsg: 'fail', type: '删除', custom: errMsg })
 	// 		return result({ errCode: 0, errMsg: 'success', data: { deleted }, type: '删除' })
-	// 	} catch {
-	// 		return defaultError
-	// 	}
-	// },
-
-	// /**
-	//  * 获取商品详情
-	//  * @param {string} id 商品id
-	//  * @returns {object} 资讯信息
-	//  */
-	// async detail(id) {
-	// 	if (!id) return result({ errCode: 400, errMsg: 'error', type: '请求', custom: '参数不可为空' })
-
-	// 	try {
-	// 		// 商品id 分类id 商品名称 展示图片 商品详情 上架状态
-	// 		const { errCode, errMsg, data, count } = await dbJQL
-	// 			.collection('QingFengStore-mall-goods')
-	// 			.where(`_id == "${id}"`)
-	// 			.field('_id, category_id, name, goods_banner_imgs, goods_desc, is_on_sale')
-	// 			.get({ getOne: true })
-
-	// 		if (errCode !== 0) return result({ errCode, errMsg: 'fail', type: '获取', custom: errMsg })
-	// 		return result({ errCode: 0, errMsg: 'success', data, type: '获取' })
 	// 	} catch {
 	// 		return defaultError
 	// 	}
