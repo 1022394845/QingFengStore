@@ -76,6 +76,8 @@ const onSubmit = async () => {
 		}
 	}
 
+	dataLoading.value = true
+
 	// 将价格转为以分为单位
 	const { price, market_price } = formData.value
 	if (price) formData.value.price = Math.round(price * 100)
@@ -83,8 +85,6 @@ const onSubmit = async () => {
 
 	// 新增/更新sku
 	try {
-		dataLoading.value = true
-
 		if (formData.value._id) {
 			// 更新
 			const { errCode, errMsg } = await skuCloudObj.update(formData.value)
@@ -97,7 +97,9 @@ const onSubmit = async () => {
 			if (errCode !== 0) throw new Error('add')
 			showMsg('新增成功', 'success')
 		}
+
 		close()
+		sku_id = null // 清除缓存sku_id
 	} catch (err) {
 		showMsg(`${err.message === 'edit' ? '修改' : '新增'}失败`, 'error')
 	} finally {
@@ -115,6 +117,9 @@ const getDetail = async (id) => {
 
 		const { errCode, data } = await skuCloudObj.detail(id)
 		if (errCode !== 0) throw new Error()
+		// 将价格转为以元为单位
+		if (data.price) data.price = (parseFloat(data.price) / 100).toFixed(2)
+		if (data.market_price) data.market_price = (parseFloat(data.market_price) / 100).toFixed(2)
 		formData.value = { ...data }
 		if (data.sku_thumb) uploadRef.value.init(data.sku_thumb)
 
@@ -122,6 +127,11 @@ const getDetail = async (id) => {
 	} catch {
 		return showMsg('获取规格信息失败，请关闭界面重试', 'error')
 	}
+}
+
+// 移除编辑时初始的缩略图
+const onRemoveImage = () => {
+	formData.value.sku_thumb = null
 }
 </script>
 
@@ -148,7 +158,7 @@ const getDetail = async (id) => {
 									width="100px"
 									ratio="1 / 1"
 									:limit="1"
-									@remove="() => {}"
+									@remove="onRemoveImage"
 								></upload-image>
 							</el-form-item>
 							<el-form-item label="出售价格" prop="price">

@@ -79,8 +79,7 @@
 			"title": "封面大图",
 			"description": "缩略图地址",
 			"label": "封面大图",
-			"trim": "both",
-			"defaultValue": ""
+			"trim": "both"
 		},
 		"publish_date": {
 			"bsonType": "timestamp",

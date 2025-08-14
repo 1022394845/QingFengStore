@@ -58,36 +58,37 @@ module.exports = {
 		} catch {
 			return defaultError
 		}
+	},
+
+	/**
+	 * 修改sku信息
+	 * @param {object} data sku信息
+	 * @param {string} data._id sku_id
+	 * @param {string} data.goods_id 商品id
+	 * @param {string} [data.sku_name] sku名称
+	 * @param {number} [data.price] sku价格
+	 * @param {string} data.[sku_thumb] sku缩略图
+	 * @param {number} [data.market_price] sku市场价
+	 * @param {number} [data.stock] sku库存 默认为0
+	 * @param {boolean} [data.is_on_sale] sku是否上架 默认为不上架false
+	 * @returns {number} updated 成功修改个数(无变化为0)
+	 */
+	async update(data = {}) {
+		if (!data._id)
+			return result({ errCode: 400, errMsg: 'error', type: '请求', custom: '规格id不可为空' })
+
+		try {
+			const { errCode, errMsg, updated } = await dbJQL
+				.collection('QingFengStore-mall-sku')
+				.doc(data._id)
+				.update({ ...data, update_date: Date.now() })
+
+			if (errCode !== 0) return result({ errCode, errMsg: 'fail', type: '修改', custom: errMsg })
+			return result({ errCode: 0, errMsg: 'success', data: { updated }, type: '修改' })
+		} catch {
+			return defaultError
+		}
 	}
-
-	// /**
-	//  * 修改商品
-	//  * @param {object} data 商品信息
-	//  * @param {string} data._id 商品id
-	//  * @param {string} [data.name] 商品名称
-	//  * @param {string} [data.category_id] 商品分类id
-	//  * @param {string} [data.goods_desc] 商品详情
-	//  * @param {array} [data.goods_banner_imgs] 商品展示图
-	//  * @param {string} [data.goods_thumb] 商品缩略图 默认为第一张展示图
-	//  * @param {boolean} [data.is_on_sale] 商品是否上架 默认为不上架false
-	//  * @returns {number} updated 成功修改个数(无变化为0)
-	//  */
-	// async update(data = {}) {
-	// 	if (!data._id)
-	// 		return result({ errCode: 400, errMsg: 'error', type: '请求', custom: '商品id不可为空' })
-
-	// 	try {
-	// 		const { errCode, errMsg, updated } = await dbJQL
-	// 			.collection('QingFengStore-mall-goods')
-	// 			.doc(data._id)
-	// 			.update({ ...data, last_modify_date: Date.now() })
-
-	// 		if (errCode !== 0) return result({ errCode, errMsg: 'fail', type: '修改', custom: errMsg })
-	// 		return result({ errCode: 0, errMsg: 'success', data: { updated }, type: '修改' })
-	// 	} catch {
-	// 		return defaultError
-	// 	}
-	// },
 
 	// /**
 	//  * 删除商品

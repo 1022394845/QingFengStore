@@ -7,7 +7,7 @@ const newsCloudObj = uniCloud.importObject('admin-news', { customUI: true })
 
 const formData = ref({
 	title: '',
-	avatar: '',
+	avatar: null,
 	content: '',
 	is_sticky: false
 })
@@ -95,7 +95,7 @@ onLoad(async (e) => {
 
 // 移除编辑时初始的avatar
 const onRemoveAvatar = () => {
-	formData.value.avatar = ''
+	formData.value.avatar = null
 }
 </script>
 
