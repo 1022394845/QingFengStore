@@ -4,7 +4,6 @@
 		"goods_id",
 		"sku_name",
 		"price",
-		"stock"
 	],
 	"properties": {
 		"_id": {
@@ -20,6 +19,13 @@
 			"description": "SKU名称",
 			"trim": "both"
 		},
+		"sku_thumb": {
+			"bsonType": "string",
+			"description": "规格缩略图，用于在商品选择规格中预览显示",
+			"title": "缩略图地址",
+			"pattern": "^(http://|https://|/|./|@/)\\S",
+			"trim": "both"
+		},
 		"price": {
 			"bsonType": "int",
 			"description": "价格，以分为单位，避免浮点计算的精度问题"
@@ -32,6 +38,12 @@
 			"bsonType": "int",
 			"description": "库存",
 			"defaultValue": 0
+		},
+		"is_on_sale": {
+			"bsonType": "bool",
+			"description": "是否上架销售",
+			"title": "是否上架",
+			"defaultValue": false
 		},
 		"create_date": {
 			"bsonType": "timestamp",

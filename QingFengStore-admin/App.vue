@@ -86,4 +86,11 @@ export default {
 @import '@/common/theme.scss';
 @import '@/common/common-style.scss';
 @import '@/static/iconfont/iconfont.css';
+
+.ellipsis {
+	white-space: nowrap;
+	text-overflow: ellipsis;
+	overflow: hidden;
+	word-break: break-all;
+}
 </style>

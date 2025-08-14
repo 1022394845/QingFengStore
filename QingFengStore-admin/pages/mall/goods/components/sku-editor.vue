@@ -1,0 +1,180 @@
+<script setup>
+import { ref } from 'vue'
+import { showMsg } from '@/utils/common.js'
+const skuCloudObj = uniCloud.importObject('admin-sku', { customUI: true })
+
+const dialogVisible = ref(false)
+let goods_id = null
+let sku_id = null
+/**
+ * 开启sku编辑框
+ * @param {string} goodsId 商品id 必传
+ * @param {string} [id] 编辑sku传递id
+ */
+const open = (goodsId, id) => {
+	if (!goodsId) return showMsg('请先新建商品，再添加规格信息', 'error')
+	goods_id = goodsId
+	if (id) sku_id = id
+	if (formRef.value) formRef.value.resetFields()
+	fileList.value = []
+	dialogVisible.value = true
+}
+/**
+ * 关闭sku编辑框
+ */
+const close = () => {
+	dialogVisible.value = false
+}
+defineExpose({ open, close })
+
+const formData = ref({
+	sku_name: '',
+	sku_thumb: null,
+	price: 0.0,
+	market_price: null,
+	stock: 0
+})
+const rules = {
+	sku_name: [{ required: true, message: '请输入规格名称', trigger: 'blur' }],
+	price: [{ required: true, message: '请输入出售价格', trigger: 'blur' }]
+}
+
+const formRef = ref(null)
+const uploadRef = ref(null)
+const fileList = ref([]) // 展示图片列表
+const loading = ref(false)
+const onSubmit = async () => {
+	if (!goods_id) return showMsg('获取商品id异常，请刷新重试', 'error')
+	if (!formRef.value) return showMsg('未知错误，请刷新页面重试', 'error')
+
+	// 表单非空校验
+	try {
+		await formRef.value.validate()
+	} catch {
+		loading.value = false
+		return showMsg('存在校验未通过字段', 'error')
+	}
+
+	// 缩略图上传
+	if (fileList.value.length) {
+		try {
+			await uploadRef.value.upload()
+			if (!fileList.value[0].exist) {
+				// 封面为重新上传的图片
+				formData.value.sku_thumb = fileList.value[0].cloudUrl
+			}
+		} catch {
+			loading.value = false
+			return showMsg('缩略图上传失败，请重试', 'error')
+		}
+	}
+
+	// 将价格转为以分为单位
+	const { price, market_price } = formData.value
+	if (price) formData.value.price = Math.round(price * 100)
+	if (market_price) formData.value.market_price = Math.round(market_price * 100)
+
+	// 新增/更新sku
+	try {
+		if (formData.value._id) {
+			// 更新
+			const { errCode, errMsg } = await skuCloudObj.update(formData.value)
+			if (errCode !== 0) throw new Error('edit')
+			showMsg('修改成功', 'success')
+		} else {
+			// 新增
+			formData.value.goods_id = goods_id
+			const { errCode, errMsg } = await skuCloudObj.add(formData.value)
+			if (errCode !== 0) throw new Error('add')
+			showMsg('新增成功', 'success')
+		}
+		close()
+	} catch (err) {
+		showMsg(`${err.message === 'edit' ? '修改' : '新增'}失败`, 'error')
+	} finally {
+		loading.value = false
+	}
+}
+</script>
+
+<template>
+	<view class="sku-editor">
+		<el-dialog v-model="dialogVisible" title="规格编辑" center>
+			<template #default>
+				<el-row>
+					<el-col :span="20" :offset="2">
+						<el-form
+							ref="formRef"
+							:model="formData"
+							:rules="rules"
+							label-width="auto"
+							scroll-to-error
+						>
+							<el-form-item label="规格名称" prop="sku_name">
+								<el-input v-model="formData.sku_name" />
+							</el-form-item>
+							<el-form-item label="规格展示" prop="sku_thumb">
+								<upload-image
+									ref="uploadRef"
+									v-model="fileList"
+									width="100px"
+									ratio="1 / 1"
+									:limit="1"
+									@remove="() => {}"
+								></upload-image>
+							</el-form-item>
+							<el-form-item label="出售价格" prop="price">
+								<el-input-number
+									v-model="formData.price"
+									:precision="2"
+									:step="0.1"
+									:min="0"
+									controls-position="right"
+								/>
+							</el-form-item>
+							<el-form-item label="市场价格" prop="market_price">
+								<el-input-number
+									v-model="formData.market_price"
+									:precision="2"
+									:step="0.1"
+									:min="0"
+									controls-position="right"
+								/>
+							</el-form-item>
+							<el-form-item label="库存数量" prop="stock">
+								<el-input-number
+									v-model="formData.stock"
+									:precision="0"
+									:min="0"
+									controls-position="right"
+								/>
+							</el-form-item>
+							<el-form-item label="是否上架" prop="is_on_sale">
+								<el-switch v-model="formData.is_on_sale"></el-switch>
+							</el-form-item>
+						</el-form>
+					</el-col>
+				</el-row>
+			</template>
+
+			<template #footer>
+				<span class="dialog-footer">
+					<el-button @click="close">取消</el-button>
+					<el-button type="primary" style="margin-left: 50px" @click="onSubmit" :loading="loading">
+						保存
+					</el-button>
+				</span>
+			</template>
+		</el-dialog>
+	</view>
+</template>
+
+<style scoped lang="scss">
+:deep(.el-dialog) {
+	--el-dialog-width: min(80%, 600px);
+
+	.el-dialog__header {
+		padding-right: 0;
+	}
+}
+</style>

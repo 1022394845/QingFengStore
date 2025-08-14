@@ -65,7 +65,10 @@ const handleCreated = (editor) => {
 
 const mode = 'default' // 编辑器模式
 
-// 提交数据时删除内容中不存在但上传的云端图片
+/**
+ * 提交数据时删除内容中不存在但上传的云端图片
+ * @returns {Promise}
+ */
 const removeRedundantImage = () => {
 	// 获取最终内容存在的文件fileId集合
 	const currentFileList = editorRef.value

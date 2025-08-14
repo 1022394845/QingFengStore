@@ -51,7 +51,8 @@
 		"is_on_sale": {
 			"bsonType": "bool",
 			"description": "是否上架销售",
-			"title": "是否上架"
+			"title": "是否上架",
+			"defaultValue": false
 		},
 		"add_date": {
 			"bsonType": "timestamp",

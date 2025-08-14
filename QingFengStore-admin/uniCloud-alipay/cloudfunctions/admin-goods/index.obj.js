@@ -1,4 +1,4 @@
-// 分类
+// 商品
 let dbJQL = uniCloud.databaseForJQL()
 const { result } = require('utils')
 const defaultError = result({ errCode: 500, errMsg: 'error', type: '服务器' })
@@ -51,8 +51,7 @@ module.exports = {
 
 			if (errCode !== 0) return result({ errCode, errMsg: 'fail', type: '获取', custom: errMsg })
 			return result({ errCode: 0, errMsg: 'success', data, total: count, type: '获取' })
-		} catch (err) {
-			console.log(err)
+		} catch {
 			return defaultError
 		}
 	},

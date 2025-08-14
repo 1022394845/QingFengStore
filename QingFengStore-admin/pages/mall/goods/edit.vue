@@ -3,6 +3,7 @@ import { onLoad } from '@dcloudio/uni-app'
 import { onMounted, ref } from 'vue'
 import { routerTo, routerBack } from '@/utils/router.js'
 import { showMsg } from '@/utils/common.js'
+import SkuEditor from './components/sku-editor.vue'
 const categoriesCloudObj = uniCloud.importObject('admin-categories', { customUI: true })
 const goodsCloudObj = uniCloud.importObject('admin-goods', { customUI: true })
 
@@ -15,9 +16,9 @@ const formData = ref({
 	is_on_sale: false
 })
 const rules = {
-	name: [{ required: true, message: '请输入标题', trigger: 'blur' }],
-	category_id: [{ required: true, message: '请选择分类', trigger: 'blur' }],
-	goods_desc: [{ required: true, message: '请输入内容', trigger: 'blur' }]
+	name: [{ required: true, message: '请输入商品名称', trigger: 'blur' }],
+	category_id: [{ required: true, message: '请选择商品分类', trigger: 'blur' }],
+	goods_desc: [{ required: true, message: '请输入商品详情', trigger: 'blur' }]
 }
 
 const formRef = ref(null)
@@ -93,24 +94,26 @@ const getCategoryList = async () => {
 	}
 }
 onMounted(() => {
-	getCategoryList()
+	// getCategoryList()
 })
 
 // sku编辑
+let goods_id = null
 const skuList = ref([])
-const skuInput = ref('')
-const skuInputVisible = ref(false)
+const skuEditorRef = ref(null)
 const onAddSku = () => {
-	console.log(skuInput.value.trim())
+	if (!goods_id) return showMsg('获取商品id异常，请刷新重试', 'error')
+	if (skuEditorRef.value) skuEditorRef.value.open(goods_id)
 }
 
 // 编辑数据回显
 onLoad(async (e) => {
 	if (!e.id) return
+	goods_id = e.id
 
 	try {
 		dataLoading.value = true
-		const { errCode, data } = await goodsCloudObj.detail(e.id)
+		const { errCode, data } = await goodsCloudObj.detail(goods_id)
 
 		if (errCode !== 0) throw new Error()
 		const {
@@ -186,17 +189,21 @@ const onRemoveImage = (url) => {
 						></upload-image>
 					</el-form-item>
 					<el-form-item label="商品规格" prop="goods_sku">
-						<el-tag v-for="sku in skuList" :key="sku._id" closable>
-							{{ sku.sku_name }}
-						</el-tag>
-						<el-input
-							v-if="skuInputVisible"
-							v-model="skuInput"
-							size="small"
-							@keyup.enter="onAddSku"
-							@blur="skuInputVisible = false"
-						/>
-						<el-button v-else size="small" @click="skuInputVisible = true">+ 新增规格</el-button>
+						<view class="sku-group">
+							<el-button
+								v-for="sku in skuList"
+								:key="sku._id"
+								:type="sku.is_on_sale ? 'success' : 'info'"
+								size="small"
+								class="sku-item"
+							>
+								{{ sku.sku_name }}
+							</el-button>
+							<el-button v-if="formData._id" size="small" class="sku-item" @click="onAddSku">
+								+ 新增规格
+							</el-button>
+							<el-button v-else size="small" disabled>请先新增商品后，再添加规格信息</el-button>
+						</view>
 					</el-form-item>
 					<el-form-item label="商品详情" prop="goods_desc">
 						<rich-text-editor
@@ -218,12 +225,36 @@ const onRemoveImage = (url) => {
 						</view>
 					</el-form-item>
 				</el-form>
+				<sku-editor ref="skuEditorRef"></sku-editor>
 			</el-col>
 		</el-row>
 	</view>
 </template>
 
 <style scoped lang="scss">
+.sku-group {
+	width: 100%;
+	display: flex;
+	gap: 10px;
+	align-items: center;
+	flex-wrap: wrap;
+
+	.sku-item {
+		flex-shrink: 0;
+		width: 120px;
+		margin-left: 0; // 覆盖默认样式
+
+		:deep(span) {
+			display: block;
+			width: 100%;
+			white-space: nowrap;
+			text-overflow: ellipsis;
+			overflow: hidden;
+			word-break: break-all;
+		}
+	}
+}
+
 .btn-group {
 	width: 100%;
 	display: flex;

@@ -34,7 +34,10 @@ const onRemove = (file) => {
 	uploadRef.value.handleRemove(file)
 	emits('remove', file.url)
 }
-// 上传图片
+/**
+ * 开始批量上传图片
+ * @returns {Promise} 全部图片上传完成情况
+ */
 const upload = () => {
 	const result = fileList.value.map((file, index) => {
 		if (file.status === 'success') {
