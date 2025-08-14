@@ -148,14 +148,38 @@ module.exports = {
 
 		try {
 			// 商品id 分类id 商品名称 展示图片 商品详情 上架状态
-			const { errCode, errMsg, data, count } = await dbJQL
+			const dataTemp = dbJQL
 				.collection('QingFengStore-mall-goods')
 				.where(`_id == "${id}"`)
 				.field('_id, category_id, name, goods_banner_imgs, goods_desc, is_on_sale')
-				.get({ getOne: true })
+				.getTemp({ getOne: true })
+			// sku_id goods_id sku名称 sku上架状态
+			const skuTemp = dbJQL
+				.collection('QingFengStore-mall-sku')
+				.where(`goods_id == "${id}"`)
+				.field('_id, goods_id, sku_name, is_on_sale')
+				.getTemp()
 
+			// 整体请求
+			const { errCode, dataList } = await dbJQL.multiSend(dataTemp, skuTemp)
 			if (errCode !== 0) return result({ errCode, errMsg: 'fail', type: '获取', custom: errMsg })
-			return result({ errCode: 0, errMsg: 'success', data, type: '获取' })
+
+			let finalData = {}
+
+			// 商品信息
+			{
+				const { errCode, errMsg, data } = dataList[0]
+				if (errCode !== 0) return result({ errCode, errMsg: 'fail', type: '获取', custom: errMsg })
+				finalData = data
+			}
+
+			// sku信息
+			{
+				const { errCode, errMsg, data } = dataList[1]
+				finalData.skus = errCode === 0 ? data : 'error' // sku获取失败不影响商品信息获取
+			}
+
+			return result({ errCode: 0, errMsg: 'success', data: finalData, type: '获取' })
 		} catch {
 			return defaultError
 		}

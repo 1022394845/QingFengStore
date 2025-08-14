@@ -94,7 +94,7 @@ const getCategoryList = async () => {
 	}
 }
 onMounted(() => {
-	// getCategoryList()
+	getCategoryList()
 })
 
 // sku编辑
@@ -122,9 +122,11 @@ onLoad(async (e) => {
 			name = '',
 			goods_banner_imgs = [],
 			goods_desc = '',
-			is_on_sale = false
+			is_on_sale = false,
+			skus = []
 		} = data
 		formData.value = { _id, category_id, name, goods_banner_imgs, goods_desc, is_on_sale }
+		skuList.value = skus
 		// 展示图片列表处理
 		if (goods_banner_imgs.length) uploadRef.value.init(goods_banner_imgs)
 		dataLoading.value = false
@@ -180,21 +182,26 @@ const onRemoveImage = (url) => {
 							@remove="(url) => onRemoveImage(url)"
 						></upload-image>
 					</el-form-item>
-					<el-form-item label="商品规格" prop="goods_sku">
+					<el-form-item label="商品规格" prop="skus">
 						<view class="sku-group">
-							<el-button
-								v-for="sku in skuList"
-								:key="sku._id"
-								:type="sku.is_on_sale ? 'success' : 'info'"
-								size="small"
-								class="sku-item"
-							>
-								{{ sku.sku_name }}
-							</el-button>
-							<el-button v-if="formData._id" size="small" class="sku-item" @click="onAddSku">
-								+ 新增规格
-							</el-button>
-							<el-button v-else size="small" disabled>请先新增商品后，再添加规格信息</el-button>
+							<template v-if="skuList === 'error'">
+								<el-button size="small" disabled>获取商品规格失败，请刷新页面重试</el-button>
+							</template>
+							<template v-else>
+								<el-button
+									v-for="sku in skuList"
+									:key="sku._id"
+									:type="sku.is_on_sale ? 'success' : 'info'"
+									size="small"
+									class="sku-item"
+								>
+									{{ sku.sku_name }}
+								</el-button>
+								<el-button v-if="formData._id" size="small" class="sku-item" @click="onAddSku">
+									+ 新增规格
+								</el-button>
+								<el-button v-else size="small" disabled>请先新增商品后，再添加规格信息</el-button>
+							</template>
 						</view>
 					</el-form-item>
 					<el-form-item label="商品详情" prop="goods_desc">
