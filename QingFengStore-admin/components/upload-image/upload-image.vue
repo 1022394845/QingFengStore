@@ -34,6 +34,26 @@ const onRemove = (file) => {
 	uploadRef.value.handleRemove(file)
 	emits('remove', file.url)
 }
+
+/**
+ * 编辑回显时初始化fileList
+ * @param {string|string[]} 文件地址/地址数组
+ * @returns {boolean} 处理结果
+ */
+const init = (files) => {
+	let list = null
+	if (typeof files === 'string') list = [files]
+	else if (Array.isArray(files)) list = files
+	else return false
+
+	fileList.value = list.map((item) => ({
+		url: item,
+		status: 'success', // 避免被重复上传
+		exist: true // 无需显示进度条
+	}))
+	return true
+}
+
 /**
  * 开始批量上传图片
  * @returns {Promise} 全部图片上传完成情况
@@ -49,7 +69,7 @@ const upload = () => {
 	})
 	return Promise.all(result)
 }
-defineExpose({ upload })
+defineExpose({ init, upload })
 
 // 图片裁剪
 const showModal = ref(false)

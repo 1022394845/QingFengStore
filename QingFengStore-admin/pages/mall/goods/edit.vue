@@ -126,15 +126,7 @@ onLoad(async (e) => {
 		} = data
 		formData.value = { _id, category_id, name, goods_banner_imgs, goods_desc, is_on_sale }
 		// 展示图片列表处理
-		if (goods_banner_imgs.length) {
-			goods_banner_imgs.forEach((item) => {
-				fileList.value.push({
-					url: item,
-					status: 'success', // 避免被重复上传
-					exist: true // 无需显示进度条
-				})
-			})
-		}
+		if (goods_banner_imgs.length) uploadRef.value.init(goods_banner_imgs)
 		dataLoading.value = false
 	} catch {
 		showMsg('获取数据失败，请刷新页面重试')
