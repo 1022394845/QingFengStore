@@ -14,12 +14,13 @@ let sku_id = null
 const open = (goodsId, skuId) => {
 	if (!goodsId) return showMsg('请先新建商品，再添加规格信息', 'error')
 	goods_id = goodsId
-	if (skuId) {
-		sku_id = skuId
+	// 判断是否可以使用缓存数据
+	if (!(skuId && sku_id && sku_id === skuId)) {
 		getDetail(skuId)
+		if (formRef.value) formRef.value.resetFields()
+		fileList.value = []
 	}
-	if (formRef.value) formRef.value.resetFields()
-	fileList.value = []
+	sku_id = skuId // 缓存当前sku_id
 	dialogVisible.value = true
 }
 /**
