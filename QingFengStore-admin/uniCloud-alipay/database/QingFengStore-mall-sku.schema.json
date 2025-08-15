@@ -3,7 +3,7 @@
 	"required": [
 		"goods_id",
 		"sku_name",
-		"price",
+		"price"
 	],
 	"properties": {
 		"_id": {
@@ -44,6 +44,12 @@
 			"description": "是否上架销售",
 			"title": "是否上架",
 			"defaultValue": false
+		},
+		"sell_count": {
+			"bsonType": "int",
+			"description": "规格销售量",
+			"title": "销售量",
+			"defaultValue": 0
 		},
 		"create_date": {
 			"bsonType": "timestamp",

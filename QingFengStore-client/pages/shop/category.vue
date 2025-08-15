@@ -10,6 +10,7 @@ import {
 } from '@/utils/system.js'
 import { formatPrice } from '@/utils/format.js'
 import { throttle } from '@/utils/throttle.js'
+import { onReady } from '@dcloudio/uni-app'
 import { getCurrentInstance, nextTick, onMounted, ref } from 'vue'
 import CommonNavBar from '@/components/CommonNavBar.vue'
 import CommonSearch from '@/components/CommonSearch.vue'
@@ -18,36 +19,60 @@ import GoodsSKU from '@/components/GoodsSKU.vue'
 import GoodsCart from '@/components/GoodsCart.vue'
 import { useCartStore } from '@/store/cart'
 import { routerTo } from '@/utils/router'
-import { showMsg } from '@/utils/common'
+import { observeElement, showMsg } from '@/utils/common'
 const goodsCloudObj = uniCloud.importObject('client-goods')
 
 const wrapperHeight_px = `${containerHeight - searchHeight - tabBarHeight - settleBarHeight}px`
 const popupBottom_px = `${tabBarHeight + uni.rpx2px(40)}px`
 
 // 分类
-const categoryList = ref([])
+const dataList = ref([])
 const getCategoryList = async () => {
 	try {
 		const { errCode, data } = await goodsCloudObj.categories()
 		if (errCode !== 0) throw new Error()
-		categoryList.value = data
+		dataList.value = data
 	} catch {
 		return showMsg('获取数据失败，请刷新重试')
 	}
 }
 onMounted(async () => {
 	await getCategoryList()
-	currentCategory.value = categoryList.value[0]._id
+	currentCategory.value = dataList.value[0]._id || ''
 	nextTick(() => {
 		getCategoryOffset()
+		registerObserver()
 	})
 })
+
+// 对所有分类标题监听是否可见 懒加载对应商品列表
+const getCategoryGoods = async (category_id) => {
+	try {
+		const { errCode, data } = await goodsCloudObj.goods(category_id)
+		if (errCode !== 0) throw new Error()
+		const target = dataList.value.find((item) => item._id === category_id)
+		if (target) {
+			console.log(category_id)
+			target.goods = data
+		} else throw new Error()
+	} catch {
+		return showMsg('获取商品信息失败，请刷新重试')
+	}
+}
+const registerObserver = () => {
+	if (!dataList.value) return
+
+	dataList.value.forEach((item) => {
+		const selector = `#group-${item._id}`
+		observeElement(selector, () => getCategoryGoods(item._id), true)
+	})
+}
 
 const currentCategory = ref('')
 const currentCategoryOffset = ref(0)
 const instance = getCurrentInstance()
 const getCategoryOffset = () => {
-	categoryList.value.forEach((item, index) => {
+	dataList.value.forEach((item, index) => {
 		const query = uni
 			.createSelectorQuery()
 			.in(instance)
@@ -74,7 +99,7 @@ const onChangeCategory = (item) => {
 const onScrollCategory = throttle((event) => {
 	if (onChanging) return
 	const scrollTop = event.detail.scrollTop
-	const result = categoryList.value.filter((item) => item.top <= scrollTop + 1)
+	const result = dataList.value.filter((item) => item.top <= scrollTop + 1)
 	if (result.length) currentCategory.value = result[result.length - 1]._id
 })
 
@@ -122,7 +147,7 @@ const onSearch = (newKeyword) => {
 			<scroll-view class="aside" scroll-y>
 				<view
 					class="aside_item"
-					v-for="item in categoryList"
+					v-for="item in dataList"
 					:key="item._id"
 					:class="{ active: item._id === currentCategory }"
 					@click="onChangeCategory(item)"
@@ -137,12 +162,7 @@ const onSearch = (newKeyword) => {
 				scroll-with-animation
 				@scroll="onScrollCategory"
 			>
-				<view
-					class="group"
-					v-for="group in categoryList"
-					:key="group._id"
-					:id="`group-${group._id}`"
-				>
+				<view class="group" v-for="group in dataList" :key="group._id" :id="`group-${group._id}`">
 					<view class="group_name">{{ group.name }}</view>
 					<view class="group_list">
 						<template v-if="group.goods">
