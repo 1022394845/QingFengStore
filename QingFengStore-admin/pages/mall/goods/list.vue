@@ -17,8 +17,9 @@ const loading = ref(false)
 const getGoodsList = async () => {
 	try {
 		loading.value = true
-		const { errCode, data } = await goodsCloudObj.list()
+		const { errCode, total, data } = await goodsCloudObj.list(pageInfo.value)
 		if (errCode !== 0) throw new Error()
+		pageInfo.value.total = total
 		goodsList.value = data
 	} catch {
 		goodsList.value = []
