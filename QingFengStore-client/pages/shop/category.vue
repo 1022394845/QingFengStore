@@ -16,9 +16,10 @@ import CommonSearch from '@/components/CommonSearch.vue'
 import GoodsCard from '@/components/GoodsCard.vue'
 import GoodsSKU from '@/components/GoodsSKU.vue'
 import GoodsCart from '@/components/GoodsCart.vue'
-import { getCategoryListAPI, getGoodsDetailAPI } from '@/apis/goods'
 import { useCartStore } from '@/store/cart'
 import { routerTo } from '@/utils/router'
+import { showMsg } from '@/utils/common'
+const goodsCloudObj = uniCloud.importObject('client-goods')
 
 const wrapperHeight_px = `${containerHeight - searchHeight - tabBarHeight - settleBarHeight}px`
 const popupBottom_px = `${tabBarHeight + uni.rpx2px(40)}px`
@@ -26,14 +27,20 @@ const popupBottom_px = `${tabBarHeight + uni.rpx2px(40)}px`
 // 分类
 const categoryList = ref([])
 const getCategoryList = async () => {
-	const { data = [] } = await getCategoryListAPI()
-	categoryList.value = data
+	try {
+		const { errCode, data } = await goodsCloudObj.categories()
+		if (errCode !== 0) throw new Error()
+		categoryList.value = data
+	} catch {
+		return showMsg('获取数据失败，请刷新重试')
+	}
 }
 onMounted(async () => {
 	await getCategoryList()
 	currentCategory.value = categoryList.value[0]._id
-	await nextTick()
-	getCategoryOffset()
+	nextTick(() => {
+		getCategoryOffset()
+	})
 })
 
 const currentCategory = ref('')
@@ -76,9 +83,9 @@ const skuPopRef = ref(null)
 const currentGoodsDetail = ref({})
 const currentGoodsSkuId = ref('')
 const getGoodsDetail = async (id) => {
-	const { data = {} } = await getGoodsDetailAPI()
-	currentGoodsDetail.value = data
-	currentGoodsSkuId.value = data?.sku?.[0]?._id || ''
+	// const { data = {} } = await getGoodsDetailAPI()
+	// currentGoodsDetail.value = data
+	// currentGoodsSkuId.value = data?.sku?.[0]?._id || ''
 }
 const openSkuPop = (id) => {
 	skuPopRef.value.open()
@@ -138,13 +145,18 @@ const onSearch = (newKeyword) => {
 				>
 					<view class="group_name">{{ group.name }}</view>
 					<view class="group_list">
-						<GoodsCard
-							v-for="item in group.goods"
-							:key="item._id"
-							:detail="item"
-							:config="0"
-							@onSelectBuy="(id) => openSkuPop(id)"
-						></GoodsCard>
+						<template v-if="group.goods">
+							<GoodsCard
+								v-for="item in group.goods"
+								:key="item._id"
+								:detail="item"
+								:config="0"
+								@onSelectBuy="(id) => openSkuPop(id)"
+							></GoodsCard>
+						</template>
+						<template v-else>
+							<GoodsCard v-for="item in group.total" :key="item" :config="0"></GoodsCard>
+						</template>
 					</view>
 				</view>
 				<view class="nomore">暂无更多</view>
