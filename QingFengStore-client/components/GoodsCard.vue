@@ -22,18 +22,6 @@ const props = defineProps({
 })
 const emits = defineEmits(['onSelectBuy', 'overMinus'])
 
-const info = computed(() => {
-	const bannerImg = props.detail?.goods_banner_img || props.detail?.goods_banner_imgs?.[0] || ''
-	const price = props.detail?.price || props.sku?.price || null
-	const market_price = props.detail?.market_price || props.sku?.market_price
-
-	return {
-		bannerImg,
-		price,
-		market_price
-	}
-})
-
 const onSelectBuy = () => {
 	emits('onSelectBuy', props.detail._id)
 }
@@ -54,7 +42,7 @@ const checkDetail = () => {
 		<view class="goods-card_banner">
 			<uv-image
 				class="image"
-				:src="info.bannerImg"
+				:src="detail.goods_thumb"
 				observeLazyLoad
 				width="100%"
 				height="100%"
@@ -73,24 +61,24 @@ const checkDetail = () => {
 					{{ sku.name }}
 				</view>
 			</view>
-			<view class="goods-card_info_bottom">
+			<view class="goods-card_info_bottom" v-if="detail._id">
 				<view class="goods-card_info_bottom_left">
 					<view class="goods-card_info_bottom_left_price">
 						<view class="goods-card_info_bottom_left_price_new">
 							<view class="goods-card_info_bottom_left_price_new_unit">￥</view>
 							<view class="goods-card_info_bottom_left_price_new_text">
-								{{ info.price ? formatPrice(info.price) : '暂无价格' }}
+								{{ detail.price ? formatPrice(detail.price) : '暂无价格' }}
 							</view>
 						</view>
-						<view class="goods-card_info_bottom_left_price_old" v-if="info.market_price">
-							￥{{ formatPrice(info.market_price) }}
+						<view class="goods-card_info_bottom_left_price_old" v-if="detail.market_price">
+							￥{{ formatPrice(detail.market_price) }}
 						</view>
 					</view>
 				</view>
 				<view class="goods-card_info_bottom_right">
 					<view
 						class="goods-card_info_bottom_right_buy"
-						v-if="detail._id && [0].includes(config)"
+						v-if="[0].includes(config)"
 						@click.stop="onSelectBuy"
 					>
 						选购
