@@ -51,10 +51,8 @@ const getCategoryGoods = async (category_id) => {
 		const { errCode, data } = await goodsCloudObj.goods(category_id)
 		if (errCode !== 0) throw new Error()
 		const target = dataList.value.find((item) => item._id === category_id)
-		if (target) {
-			console.log(category_id)
-			target.goods = data
-		} else throw new Error()
+		if (target) target.goods = data
+		else throw new Error()
 	} catch {
 		return showMsg('获取商品信息失败，请刷新重试')
 	}
@@ -106,15 +104,17 @@ const onScrollCategory = throttle((event) => {
 // SKU弹出框
 const skuPopRef = ref(null)
 const currentGoodsDetail = ref({})
-const currentGoodsSkuId = ref('')
-const getGoodsDetail = async (id) => {
-	// const { data = {} } = await getGoodsDetailAPI()
-	// currentGoodsDetail.value = data
-	// currentGoodsSkuId.value = data?.sku?.[0]?._id || ''
-}
-const openSkuPop = (id) => {
+const currentSkuId = ref(null)
+const openSkuPop = (item) => {
+	if (!skuPopRef.value) return
+
+	// 查看新商品信息，更新缓存
+	if (!Object.keys(currentGoodsDetail.value).length || currentGoodsDetail.value._id !== item._id) {
+		currentGoodsDetail.value = { ...item }
+		currentSkuId.value = item.skus?.[0]?._id || null
+	}
+
 	skuPopRef.value.open()
-	getGoodsDetail(id)
 }
 const closeSkuPop = () => {
 	skuPopRef.value.close()
@@ -171,7 +171,7 @@ const onSearch = (newKeyword) => {
 								:key="item._id"
 								:detail="item"
 								:config="0"
-								@onSelectBuy="(id) => openSkuPop(id)"
+								@onSelectBuy="openSkuPop(item)"
 							></GoodsCard>
 						</template>
 						<template v-else>
@@ -204,8 +204,8 @@ const onSearch = (newKeyword) => {
 			<uni-popup ref="skuPopRef" type="bottom" :safe-area="false">
 				<view class="sku-popup_container">
 					<GoodsSKU
+						v-model="currentSkuId"
 						:detail="currentGoodsDetail"
-						v-model:currentGoodsSkuId="currentGoodsSkuId"
 						@close="closeSkuPop"
 					></GoodsSKU>
 				</view>

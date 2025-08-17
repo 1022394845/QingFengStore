@@ -22,8 +22,10 @@ const props = defineProps({
 })
 const emits = defineEmits(['onSelectBuy', 'overMinus'])
 
+const info = computed(() => ({ ...props.detail, ...props.sku }))
+
 const onSelectBuy = () => {
-	emits('onSelectBuy', props.detail._id)
+	emits('onSelectBuy')
 }
 
 // 步进器超出阈值
@@ -42,7 +44,7 @@ const checkDetail = () => {
 		<view class="goods-card_banner">
 			<uv-image
 				class="image"
-				:src="detail.goods_thumb"
+				:src="info.sku_thumb || info.goods_thumb"
 				observeLazyLoad
 				width="100%"
 				height="100%"
@@ -50,15 +52,15 @@ const checkDetail = () => {
 		</view>
 		<view class="goods-card_info">
 			<view class="goods-card_info_top">
-				<view class="goods-card_info_top_title ellipsis" v-if="detail.name">{{ detail.name }}</view>
+				<view class="goods-card_info_top_title ellipsis" v-if="info.name">{{ info.name }}</view>
 				<view class="goods-card_info_top_title loading" v-else>
 					商品加载中
 					<view class="loading-dot" id="dot1"></view>
 					<view class="loading-dot" id="dot2"></view>
 					<view class="loading-dot" id="dot3"></view>
 				</view>
-				<view class="goods-card_info_top_sku-tag ellipsis" v-if="config === 2 && sku.name">
-					{{ sku.name }}
+				<view class="goods-card_info_top_sku-tag ellipsis" v-if="config === 2 && info.sku_name">
+					{{ info.sku_name }}
 				</view>
 			</view>
 			<view class="goods-card_info_bottom" v-if="detail._id">
@@ -67,11 +69,11 @@ const checkDetail = () => {
 						<view class="goods-card_info_bottom_left_price_new">
 							<view class="goods-card_info_bottom_left_price_new_unit">￥</view>
 							<view class="goods-card_info_bottom_left_price_new_text">
-								{{ detail.price ? formatPrice(detail.price) : '暂无价格' }}
+								{{ info.price ? formatPrice(info.price) : '暂无价格' }}
 							</view>
 						</view>
-						<view class="goods-card_info_bottom_left_price_old" v-if="detail.market_price">
-							￥{{ formatPrice(detail.market_price) }}
+						<view class="goods-card_info_bottom_left_price_old" v-if="info.market_price">
+							￥{{ formatPrice(info.market_price) }}
 						</view>
 					</view>
 				</view>

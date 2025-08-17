@@ -27,6 +27,11 @@ module.exports = {
 
 			if (categoriesRes.errCode !== 0)
 				return result({ errCode, errMsg: 'fail', type: '获取', custom: categoriesRes.errMsg })
+
+			// 无分类直接返回空数组
+			if (categoriesRes.data.length === 0)
+				return result({ errCode: 0, errMsg: 'success', data: [], type: '获取' })
+
 			const categories = categoriesRes.data.map((item) => item._id)
 
 			const goodsRes = await dbJQL
@@ -34,6 +39,7 @@ module.exports = {
 				.where(`category_id in (${JSON.stringify(categories)})`)
 				.field('category_id')
 				.get()
+
 			if (goodsRes.errCode !== 0)
 				return result({ errCode, errMsg: 'fail', type: '获取', custom: goodsRes.errMsg })
 
@@ -113,8 +119,7 @@ module.exports = {
 			})
 
 			return result({ errCode: 0, errMsg: 'success', data, type: '获取' })
-		} catch (err) {
-			console.log(err)
+		} catch {
 			return defaultError
 		}
 	}

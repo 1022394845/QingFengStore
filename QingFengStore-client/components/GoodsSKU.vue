@@ -1,8 +1,9 @@
 <script setup>
-import { computed, ref } from 'vue'
+import { computed, ref, watch } from 'vue'
 import GoodsCard from '@/components/GoodsCard.vue'
 import NumberBox from '@/components/NumberBox.vue'
 import { useCartStore } from '@/store/cart'
+import { showMsg } from '@/utils/common'
 
 const props = defineProps({
 	detail: {
@@ -12,23 +13,28 @@ const props = defineProps({
 })
 const emits = defineEmits(['close'])
 
-const currentGoodsSkuId = defineModel('currentGoodsSkuId', { type: String, default: '' })
-const onChangeSku = (id) => {
-	currentGoodsSkuId.value = id
-}
-const currentSkuInfo = computed(
-	() => props.detail.sku?.find((item) => item._id === currentGoodsSkuId.value) || {}
-)
+// 当前选择sku_id
+const currentGoodsSkuId = defineModel()
+const currentSku = computed(() => {
+	return props.detail.skus?.find((item) => item._id === currentGoodsSkuId.value) || {}
+})
 
-// 选择数量
-const count = ref(1)
+const onChangeSku = (sku_id) => {
+	currentGoodsSkuId.value = sku_id
+}
 
 // 创建信息
+const count = ref(1) // 选择数量
 const createInfo = () => {
-	if (!currentGoodsSkuId.value) throw new Error('缺少商品规格参数')
+	if (!currentGoodsSkuId.value) return showMsg('缺少商品规格参数')
+
+	if (!Object.keys(currentSku.value).length) return showMsg('获取商品规格信息异常')
+
+	const { skus, ...cartDetail } = props.detail
+
 	return {
-		...props.detail,
-		sku: { ...currentSkuInfo.value },
+		...cartDetail,
+		sku: currentSku.value,
 		count: count.value
 	}
 }
@@ -44,26 +50,29 @@ const onCart = () => {
 // 立即购买
 const onBuy = () => {
 	const res = createInfo()
-	console.log(res)
+	console.log('buy', res)
 	emits('close')
 }
 </script>
 
 <template>
 	<view class="goods-sku-container">
-		<GoodsCard :detail="detail" :sku="currentSkuInfo" :config="1"></GoodsCard>
+		<GoodsCard :detail="detail" :sku="currentSku" :config="1"></GoodsCard>
 		<!-- SKU列表 -->
 		<view class="goods-sku">
 			<view class="goods-sku_label label">规格</view>
 			<view class="goods-sku_list">
+				<view class="goods-sku_list_item" v-if="!detail.skus || detail.skus.length === 0">
+					暂无规格
+				</view>
 				<view
 					class="goods-sku_list_item"
-					v-for="item in detail.sku"
+					v-for="item in detail.skus"
 					:key="item._id"
 					:class="{ active: item._id === currentGoodsSkuId }"
 					@click="onChangeSku(item._id)"
 				>
-					{{ item.name }}
+					{{ item.sku_name }}
 				</view>
 			</view>
 		</view>
