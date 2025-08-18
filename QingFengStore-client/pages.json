@@ -133,6 +133,12 @@
 				"enablePullDownRefresh": false,
 				"navigationBarTitleText": "实名认证"
 			}
+		},
+		{
+			"path": "pages/shop/cart",
+			"style": {
+				"navigationBarTitleText": "购物车"
+			}
 		}
 	],
 	"globalStyle": {

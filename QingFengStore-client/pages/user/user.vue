@@ -1,4 +1,5 @@
 <script setup>
+import { routerTo } from '@/utils/router'
 import CommonNavBar from '@/components/CommonNavBar.vue'
 import { containerHeight, tabBarHeight } from '@/utils/system'
 
@@ -67,6 +68,11 @@ const menuList = [
 		note: '退出当前账号'
 	}
 ]
+
+// 前往购物车
+const goCart = () => {
+	routerTo('/pages/shop/cart')
+}
 </script>
 
 <template>
@@ -98,7 +104,7 @@ const menuList = [
 				</view>
 			</view>
 			<view class="order">
-				<view class="order_header">
+				<view class="order_header" @click="goCart">
 					<view class="order_header_text">我的订单</view>
 					<view class="order_header_note">查看全部订单</view>
 					<view class="order_header_more icon-container">

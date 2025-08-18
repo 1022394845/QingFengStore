@@ -1,0 +1,64 @@
+[
+	{
+		"IndexName": "user_id",
+		"MgoKeySchema": {
+			"MgoIndexKeys": [
+				{
+					"Name": "user_id",
+					"Direction": "1"
+				}
+			],
+			"MgoIsUnique": false
+		}
+	},
+	{
+		"IndexName": "goods_id",
+		"MgoKeySchema": {
+			"MgoIndexKeys": [
+				{
+					"Name": "goods_id",
+					"Direction": "1"
+				}
+			],
+			"MgoIsUnique": false
+		}
+	},
+	{
+		"IndexName": "sku_id",
+		"MgoKeySchema": {
+			"MgoIndexKeys": [
+				{
+					"Name": "sku_id",
+					"Direction": "1"
+				}
+			],
+			"MgoIsUnique": false
+		}
+	},
+	{
+		"IndexName": "is_selected",
+		"MgoKeySchema": {
+			"MgoIndexKeys": [
+				{
+					"Name": "is_selected",
+					"Direction": "1",
+					"Type": "bool"
+				}
+			],
+			"MgoIsUnique": false
+		}
+	},
+	{
+		"IndexName": "create_date",
+		"MgoKeySchema": {
+			"MgoIndexKeys": [
+				{
+					"Name": "create_date",
+					"Direction": "1",
+					"Type": "long"
+				}
+			],
+			"MgoIsUnique": false
+		}
+	}
+]
