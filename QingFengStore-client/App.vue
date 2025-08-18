@@ -1,4 +1,6 @@
-<script setup></script>
+<script setup>
+import uniIdPageInit from '@/uni_modules/uni-id-pages/init.js'
+</script>
 
 <template></template>
 

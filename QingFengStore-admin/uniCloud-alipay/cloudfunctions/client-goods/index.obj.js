@@ -130,53 +130,57 @@ module.exports = {
 	 * @return {object[]} 推荐商品列表
 	 */
 	async hot(size = 6) {
-		// 商品id 商品名称 缩略图
-		const goodsRes = await dbJQL
-			.collection('QingFengStore-mall-goods')
-			.where(`is_on_sale == true`)
-			.orderBy('total_sell_count desc')
-			.limit(size)
-			.field('_id, name, goods_thumb')
-			.get()
+		try {
+			// 商品id 商品名称 缩略图
+			const goodsRes = await dbJQL
+				.collection('QingFengStore-mall-goods')
+				.where(`is_on_sale == true`)
+				.orderBy('total_sell_count desc')
+				.limit(size)
+				.field('_id, name, goods_thumb')
+				.get()
 
-		if (goodsRes.errCode !== 0)
-			return result({ errCode, errMsg: 'fail', type: '获取', custom: goodsRes.errMsg })
+			if (goodsRes.errCode !== 0)
+				return result({ errCode, errMsg: 'fail', type: '获取', custom: goodsRes.errMsg })
 
-		// 获取sku集合
-		const goodsIds = goodsRes.data.map((item) => item._id) // 商品id集合
-		// sku_id goods_id sku名称 出售价格 市场价格
-		const skuRes = await dbJQL
-			.collection('QingFengStore-mall-sku')
-			.where(`is_on_sale == true && goods_id in ${JSON.stringify(goodsIds)}`)
-			.orderBy('sell_count desc, create_date')
-			.field('_id, goods_id, sku_name, price, market_price')
-			.get()
-		if (skuRes.errCode !== 0)
-			return result({ errCode, errMsg: 'fail', type: '获取', custom: skuRes.errMsg })
+			// 获取sku集合
+			const goodsIds = goodsRes.data.map((item) => item._id) // 商品id集合
+			// sku_id goods_id sku名称 出售价格 市场价格
+			const skuRes = await dbJQL
+				.collection('QingFengStore-mall-sku')
+				.where(`is_on_sale == true && goods_id in ${JSON.stringify(goodsIds)}`)
+				.orderBy('sell_count desc, create_date')
+				.field('_id, goods_id, sku_name, price, market_price')
+				.get()
+			if (skuRes.errCode !== 0)
+				return result({ errCode, errMsg: 'fail', type: '获取', custom: skuRes.errMsg })
 
-		// 关联sku与商品
-		const data = goodsRes.data.map((item) => {
-			const skus = skuRes.data
-				.filter((sku) => sku.goods_id === item._id)
-				.map((sku) => {
-					const { price, market_price } = sku
-					return { price, market_price }
-				})
-			// 将商品所有sku中出售价格最低的作为商品展示价格
-			let price = null
-			let market_price = null
-			if (skus.length) {
-				price = skus[0].price
-				market_price = skus[0].market_price
-			}
+			// 关联sku与商品
+			const data = goodsRes.data.map((item) => {
+				const skus = skuRes.data
+					.filter((sku) => sku.goods_id === item._id)
+					.map((sku) => {
+						const { price, market_price } = sku
+						return { price, market_price }
+					})
+				// 将商品所有sku中出售价格最低的作为商品展示价格
+				let price = null
+				let market_price = null
+				if (skus.length) {
+					price = skus[0].price
+					market_price = skus[0].market_price
+				}
 
-			return {
-				...item,
-				...(price !== null && { price }),
-				...(market_price !== null && { market_price })
-			}
-		})
+				return {
+					...item,
+					...(price !== null && { price }),
+					...(market_price !== null && { market_price })
+				}
+			})
 
-		return result({ errCode: 0, errMsg: 'success', data, type: '获取' })
+			return result({ errCode: 0, errMsg: 'success', data, type: '获取' })
+		} catch {
+			return defaultError
+		}
 	}
 }
