@@ -62,19 +62,22 @@ module.exports = {
 	},
 
 	/**
-	 * 获取商城分类对应的商品列表
-	 * @param {string} category_id 分类id
-	 * @returns {object[]} 分类列表 每个分类含有对应商品
+	 * 获取商品列表
+	 * @param {object} config 筛选配置
+	 * @param {string} [config.category_id] 分类id
+	 * @param {string} [config.keyword] 关键词
+	 * @returns {object[]} 商品列表 每个分类含有对应商品
 	 */
-	async goods(category_id) {
-		if (!category_id)
-			return result({ errCode: 400, errMsg: 'error', type: '请求', custom: '参数不可为空' })
+	async goods(config) {
+		let query = `is_on_sale == true`
+		if (config.category_id) query += ' && ' + `category_id == "${config.category_id}"`
+		if (config.keyword) query += ' && ' + `${new RegExp(config.keyword, 'i')}.test(name)`
 
 		try {
 			// 商品id 商品名称 缩略图
 			const goodsRes = await dbJQL
 				.collection('QingFengStore-mall-goods')
-				.where(`is_on_sale == true && category_id == "${category_id}"`)
+				.where(query)
 				.orderBy('total_sell_count desc, add_date desc')
 				.field('_id, name, goods_thumb')
 				.get()

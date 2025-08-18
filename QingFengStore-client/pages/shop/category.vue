@@ -48,7 +48,7 @@ onMounted(async () => {
 // 对所有分类标题监听是否可见 懒加载对应商品列表
 const getCategoryGoods = async (category_id) => {
 	try {
-		const { errCode, data } = await goodsCloudObj.goods(category_id)
+		const { errCode, data } = await goodsCloudObj.goods({ category_id })
 		if (errCode !== 0) throw new Error()
 		const target = dataList.value.find((item) => item._id === category_id)
 		if (target) target.goods = data
