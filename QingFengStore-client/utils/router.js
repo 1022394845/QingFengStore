@@ -39,11 +39,33 @@ export function routerTo(url, type = 'navigateTo') {
 	}
 }
 
-// 路由返回
+/**
+ * 路由返回
+ */
 export function routerBack() {
 	uni.navigateBack({
 		fail: (err) => {
 			routerTo()
 		}
 	})
+}
+
+/**
+ * 跳转登录
+ */
+export async function needLogin() {
+	// 确认是否跳转登录
+	const { cancel } = await uni.showModal({
+		title: '请先登录',
+		content: '此操作需要先完成登录',
+		confirmColor: '#bdaf8d'
+	})
+	if (cancel) return
+
+	// #ifdef MP-WEIXIN
+	routerTo('/uni_modules/uni-id-pages/pages/login/login-withoutpwd')
+	// #endif
+	// #ifndef MP-WEIXIN
+	routerTo('/uni_modules/uni-id-pages/pages/login/login-withpwd')
+	// #endif
 }

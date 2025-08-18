@@ -46,3 +46,12 @@ export function observeElement(selector, callback, once = false, options = {}) {
 
 	return observer
 }
+
+/**
+ * 判断用户是否登录
+ * @returns {string|null} uid 当前用户uid
+ */
+export function isLogin() {
+	const { uid } = uniCloud.getCurrentUserInfo()
+	return uid
+}

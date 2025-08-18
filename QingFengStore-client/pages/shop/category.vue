@@ -18,8 +18,8 @@ import GoodsCard from '@/components/GoodsCard.vue'
 import GoodsSKU from '@/components/GoodsSKU.vue'
 import GoodsCart from '@/components/GoodsCart.vue'
 import { useCartStore } from '@/store/cart'
-import { routerTo } from '@/utils/router'
-import { observeElement, showMsg } from '@/utils/common'
+import { needLogin, routerTo } from '@/utils/router'
+import { isLogin, observeElement, showMsg } from '@/utils/common'
 const goodsCloudObj = uniCloud.importObject('client-goods', { customUI: true })
 
 const wrapperHeight_px = `${containerHeight - searchHeight - tabBarHeight - settleBarHeight}px`
@@ -106,6 +106,8 @@ const skuPopRef = ref(null)
 const currentGoodsDetail = ref({})
 const currentSkuId = ref(null)
 const openSkuPop = (item) => {
+	if (!isLogin()) return needLogin()
+
 	if (!skuPopRef.value) return
 
 	// 查看新商品信息，更新缓存
@@ -123,7 +125,8 @@ const closeSkuPop = () => {
 // 购物车弹出框
 const cartPopRef = ref(null)
 const openCartPop = () => {
-	cartPopRef.value.open()
+	if (isLogin()) cartPopRef.value.open()
+	else needLogin()
 }
 const closeCartPop = () => {
 	cartPopRef.value.close()
