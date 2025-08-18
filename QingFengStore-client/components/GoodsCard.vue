@@ -4,6 +4,7 @@ import DotLoading from '@/components/DotLoading.vue'
 import { computed } from 'vue'
 import { formatPrice } from '@/utils/format.js'
 import { routerTo } from '@/utils/router'
+import { showMsg } from '@/utils/common'
 
 const props = defineProps({
 	detail: {
@@ -36,7 +37,8 @@ const overMinus = () => {
 
 // 跳转详情页
 const checkDetail = () => {
-	routerTo('/pages/shop/detail')
+	if (!props.detail._id) return showMsg('获取商品信息失败')
+	routerTo(`/pages/shop/detail?id=${props.detail._id}`)
 }
 </script>
 

@@ -6,8 +6,8 @@ import { ref } from 'vue'
 import { onLoad } from '@dcloudio/uni-app'
 
 const keyword = ref('')
-onLoad((event) => {
-	if (event.keyword) onSearch(event.keyword)
+onLoad((e) => {
+	if (e.keyword) onSearch(e.keyword)
 })
 const onSearch = (newKeyword) => {
 	if (newKeyword) keyword.value = newKeyword

@@ -106,8 +106,6 @@ const skuPopRef = ref(null)
 const currentGoodsDetail = ref({})
 const currentSkuId = ref(null)
 const openSkuPop = (item) => {
-	if (!isLogin()) return needLogin()
-
 	if (!skuPopRef.value) return
 
 	// 查看新商品信息，更新缓存

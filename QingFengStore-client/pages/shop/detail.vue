@@ -3,31 +3,48 @@ import CommonNavBar from '@/components/CommonNavBar.vue'
 import CommonShopBar from '@/components/CommonShopBar.vue'
 import GoodsSKU from '@/components/GoodsSKU.vue'
 import GoodsCart from '@/components/GoodsCart.vue'
+import { onLoad } from '@dcloudio/uni-app'
 import { computed, onMounted, ref } from 'vue'
 import { formatPrice } from '@/utils/format'
-import { getGoodsDetailAPI } from '@/apis/goods'
 import { safeareaHeight, shopBarHeight } from '@/utils/system'
+import { showMsg } from '@/utils/common'
+const goodsCloudObj = uniCloud.importObject('client-goods', { customUI: true })
 
 const detailHeight_px = `${safeareaHeight + shopBarHeight + uni.rpx2px(30)}px`
 const popupBottom_px = `${safeareaHeight + uni.rpx2px(40)}px`
 
+let goods_id = null
 const detail = ref({})
+
 const getDetail = async () => {
-	const { data = {} } = await getGoodsDetailAPI()
-	detail.value = data
-	currentGoodsSkuId.value = data.sku?.[0]._id
+	if (!goods_id) return showMsg('获取商品id失败')
+
+	try {
+		const { errCode, data } = await goodsCloudObj.detail(goods_id)
+		detail.value = data
+		currentSkuId.value = data.skus?.[0]?._id || null // 设置默认sku规格
+	} catch {
+		return showMsg('获取商品信息失败')
+	}
 }
+
+onLoad((e) => {
+	if (e.id) goods_id = e.id
+})
+
 onMounted(() => {
 	getDetail()
 })
 
+const currentSkuId = ref(null)
+const currentSku = computed(() => {
+	return detail.value.skus?.find((item) => item._id === currentSkuId.value) || {}
+})
+
 // SKU弹出框
 const skuPopRef = ref(null)
-const currentGoodsSkuId = ref('')
-const currentSkuInfo = computed(
-	() => detail.value.sku?.find((item) => item._id === currentGoodsSkuId.value) || {}
-)
-const openSkuPop = () => {
+const openSkuPop = (item) => {
+	if (!skuPopRef.value) return
 	skuPopRef.value.open()
 }
 const closeSkuPop = () => {
@@ -49,7 +66,7 @@ const closeCartPop = () => {
 		<CommonNavBar title="商品详情" titleColor="#ffffff" :canBack="true"></CommonNavBar>
 		<view class="wrapper">
 			<!-- 轮播图 -->
-			<view class="banner">
+			<view v-if="detail.goods_banner_imgs && detail.goods_banner_imgs.length" class="banner">
 				<swiper
 					class="banner_swiper"
 					indicator-dots
@@ -80,11 +97,11 @@ const closeCartPop = () => {
 					<view class="detail_price_new">
 						<view class="detail_price_new_unit">￥</view>
 						<view class="detail_price_new_text">
-							{{ formatPrice(currentSkuInfo.price || null) }}
+							{{ currentSku.price ? formatPrice(currentSku.price) : '暂无价格' }}
 						</view>
 					</view>
-					<view class="detail_price_old" v-if="currentSkuInfo.market_price">
-						￥{{ formatPrice(currentSkuInfo.market_price) }}
+					<view class="detail_price_old" v-if="currentSku.market_price">
+						￥{{ formatPrice(currentSku.market_price) }}
 					</view>
 				</view>
 				<!-- 服务 -->
@@ -96,7 +113,7 @@ const closeCartPop = () => {
 				<view class="detail_row sku" @click="openSkuPop">
 					<view class="detail_row_label">规格</view>
 					<view class="detail_row_content ellipsis" style="font-weight: bold">
-						{{ currentSkuInfo.name || '请选择产品规格' }}
+						{{ currentSku.sku_name || '请选择产品规格' }}
 					</view>
 					<view class="detail_row_icon icon-container">
 						<uni-icons type="forward" size="36rpx" color="#999999"></uni-icons>
@@ -104,7 +121,7 @@ const closeCartPop = () => {
 				</view>
 				<!-- 详细信息 -->
 				<view class="detail_content">
-					<uv-parse :content="detail.goods_desc" selectable lazyLoad></uv-parse>
+					<mp-html :content="detail.goods_desc" lazy-load selectable />
 				</view>
 			</view>
 		</view>
@@ -113,11 +130,7 @@ const closeCartPop = () => {
 		<!-- SKU弹出框 -->
 		<uni-popup ref="skuPopRef" type="bottom" :safe-area="false">
 			<view class="sku-popup_container">
-				<GoodsSKU
-					:detail="detail"
-					v-model:currentGoodsSkuId="currentGoodsSkuId"
-					@close="closeSkuPop"
-				></GoodsSKU>
+				<GoodsSKU v-model="currentSkuId" :detail="detail" @close="closeSkuPop"></GoodsSKU>
 			</view>
 		</uni-popup>
 		<!-- 购物车弹出框 -->

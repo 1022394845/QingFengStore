@@ -12,7 +12,8 @@ const props = defineProps({
 
 // 跳转详情页
 const checkDetail = () => {
-	routerTo('/pages/shop/detail')
+	if (!props.detail._id) return showMsg('获取商品信息失败')
+	routerTo(`/pages/shop/detail?id=${props.detail._id}`)
 }
 </script>
 

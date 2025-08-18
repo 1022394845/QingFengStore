@@ -177,7 +177,7 @@ module.exports = {
 			// sku信息
 			{
 				const { errCode, errMsg, data } = dataList[1]
-				finalData.skus = errCode === 0 ? data : 'error' // sku获取失败不影响商品信息获取
+				finalData.skus = errCode === 0 ? data : null // sku获取失败不影响商品信息获取
 			}
 
 			return result({ errCode: 0, errMsg: 'success', data: finalData, type: '获取' })

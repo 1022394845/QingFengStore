@@ -182,5 +182,54 @@ module.exports = {
 		} catch {
 			return defaultError
 		}
+	},
+
+	/**
+	 * 获取商品详情
+	 * @param {string} id 商品id
+	 * @return {object} 商品详情
+	 */
+	async detail(id) {
+		if (!id) return result({ errCode: 400, errMsg: 'error', type: '请求', custom: '参数不可为空' })
+
+		try {
+			// 商品id 商品名称 banner图 商品详情
+			const goodsTemp = dbJQL
+				.collection('QingFengStore-mall-goods')
+				.where(`is_on_sale == true && _id == "${id}"`)
+				.field('_id, name, goods_banner_imgs, goods_desc')
+				.getTemp({ getOne: true })
+
+			// sku_id sku名称 缩略图 出售价格 市场价格 库存数
+			const skuTemp = dbJQL
+				.collection('QingFengStore-mall-sku')
+				.where(`is_on_sale == true && goods_id == "${id}"`)
+				.orderBy('sell_count desc, create_date')
+				.field('_id, sku_name, sku_thumb, price, market_price, stock')
+				.getTemp()
+
+			const { errCode, errMsg, dataList } = await dbJQL.multiSend(goodsTemp, skuTemp)
+			if (errCode !== 0) return result({ errCode, errMsg: 'fail', type: '获取', custom: errMsg })
+
+			let finalData = {}
+
+			// 商品信息
+			{
+				const { errCode, errMsg, data } = dataList[0]
+				if (errCode !== 0) return result({ errCode, errMsg: 'fail', type: '获取', custom: errMsg })
+				finalData = data
+			}
+
+			// sku信息
+			{
+				const { errCode, errMsg, data } = dataList[1]
+				finalData.skus = errCode === 0 ? data : null // sku获取失败不影响商品信息获取
+			}
+
+			return result({ errCode: 0, errMsg: 'success', data: finalData, type: '获取' })
+		} catch (err) {
+			console.log(err)
+			return defaultError
+		}
 	}
 }

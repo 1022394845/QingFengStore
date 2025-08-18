@@ -3,7 +3,8 @@ import { computed, ref, watch } from 'vue'
 import GoodsCard from '@/components/GoodsCard.vue'
 import NumberBox from '@/components/NumberBox.vue'
 import { useCartStore } from '@/store/cart'
-import { showMsg } from '@/utils/common'
+import { isLogin, showMsg } from '@/utils/common'
+import { needLogin } from '@/utils/router'
 
 const props = defineProps({
 	detail: {
@@ -14,44 +15,57 @@ const props = defineProps({
 const emits = defineEmits(['close'])
 
 // 当前选择sku_id
-const currentGoodsSkuId = defineModel()
+const currentSkuId = defineModel()
 const currentSku = computed(() => {
-	return props.detail.skus?.find((item) => item._id === currentGoodsSkuId.value) || {}
+	return props.detail.skus?.find((item) => item._id === currentSkuId.value) || {}
 })
 
 const onChangeSku = (sku_id) => {
-	currentGoodsSkuId.value = sku_id
+	currentSkuId.value = sku_id
 }
 
 // 创建信息
 const count = ref(1) // 选择数量
 const createInfo = () => {
-	if (!currentGoodsSkuId.value) return showMsg('缺少商品规格参数')
+	if (!currentSkuId.value) {
+		return { errCode: 400, errMsg: '缺少商品规格参数' }
+	}
 
-	if (!Object.keys(currentSku.value).length) return showMsg('获取商品规格信息异常')
+	if (!Object.keys(currentSku.value).length) {
+		return { errCode: 500, errMsg: '获取商品规格信息异常' }
+	}
 
 	const { skus, ...cartDetail } = props.detail
 
 	return {
-		...cartDetail,
-		sku: currentSku.value,
-		count: count.value
+		errCode: 0,
+		data: {
+			...cartDetail,
+			sku: currentSku.value,
+			count: count.value
+		}
 	}
 }
 
 const cartStore = useCartStore()
 // 加入购物车
 const onCart = () => {
-	const data = createInfo()
-	cartStore.addGoods(data)
-	emits('close')
+	if (isLogin()) {
+		const { errCode, errMsg, data } = createInfo()
+		if (errCode !== 0) return showMsg(errMsg)
+		cartStore.addGoods(data)
+		emits('close')
+	} else needLogin()
 }
 
 // 立即购买
 const onBuy = () => {
-	const res = createInfo()
-	console.log('buy', res)
-	emits('close')
+	if (isLogin()) {
+		const { errCode, errMsg, data } = createInfo()
+		if (errCode !== 0) return showMsg(errMsg)
+		console.log('buy', data)
+		emits('close')
+	} else needLogin()
 }
 </script>
 
@@ -69,7 +83,7 @@ const onBuy = () => {
 					class="goods-sku_list_item"
 					v-for="item in detail.skus"
 					:key="item._id"
-					:class="{ active: item._id === currentGoodsSkuId }"
+					:class="{ active: item._id === currentSkuId }"
 					@click="onChangeSku(item._id)"
 				>
 					{{ item.sku_name }}
