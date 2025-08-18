@@ -1,8 +1,16 @@
 <script setup>
-import { routerTo } from '@/utils/router'
+import DotLoading from '@/components/DotLoading.vue'
+import { routerTo } from '@/utils/router.js'
 import { formatPrice } from '@/utils/format.js'
 
-// 跳转详情也
+const props = defineProps({
+	detail: {
+		type: Object,
+		default: {}
+	}
+})
+
+// 跳转详情页
 const checkDetail = () => {
 	routerTo('/pages/shop/detail')
 }
@@ -13,22 +21,27 @@ const checkDetail = () => {
 		<view class="goods-info-card_image">
 			<uv-image
 				class="image"
-				src="/static/tmp_goods.jpg"
+				:src="detail.goods_thumb"
 				observeLazyLoad
 				width="100%"
 				height="100%"
 			></uv-image>
 		</view>
 		<view class="goods-info-card_info">
-			<view class="goods-info-card_info_title ellipsis">
-				测试商品测试商品测试商品测试商品测试商品测试商品测试商品测试商品
+			<view class="goods-info-card_info_title ellipsis" v-if="detail.name">
+				{{ detail.name }}
 			</view>
-			<view class="goods-info-card_info_price">
+			<dot-loading v-else>商品加载中</dot-loading>
+			<view class="goods-info-card_info_price" v-if="detail._id">
 				<view class="goods-info-card_info_price_new">
 					<view class="goods-info-card_info_price_new_unit">￥</view>
-					<view class="goods-info-card_info_price_new_text">{{ formatPrice(18900) }}</view>
+					<view class="goods-info-card_info_price_new_text">
+						{{ detail.price ? formatPrice(detail.price) : '暂无价格' }}
+					</view>
 				</view>
-				<view class="goods-info-card_info_price_old">￥{{ formatPrice(22900) }}</view>
+				<view class="goods-info-card_info_price_old" v-if="detail.market_price">
+					￥{{ formatPrice(detail.market_price) }}
+				</view>
 			</view>
 		</view>
 	</view>

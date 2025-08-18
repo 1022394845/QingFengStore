@@ -1,12 +1,15 @@
 <script setup>
+import { onReady } from '@dcloudio/uni-app'
 import { onMounted, ref } from 'vue'
 import CommonNavBar from '@/components/CommonNavBar.vue'
 import CommonSearch from '@/components/CommonSearch.vue'
 import ScrollNotice from '@/components/ScrollNotice.vue'
 import CommonTitle from '@/components/CommonTitle.vue'
 import GoodsInfoCard from '@/components/GoodsInfoCard.vue'
-import { routerTo } from '@/utils/router'
+import { observeElement, showMsg } from '@/utils/common.js'
+import { routerTo } from '@/utils/router.js'
 const newsCloudObj = uniCloud.importObject('client-news', { customUI: true })
+const goodsCloudObj = uniCloud.importObject('client-goods', { customUI: true })
 
 // 菜单列表
 const menuList = ref([
@@ -53,11 +56,28 @@ const getNoticeList = async () => {
 		if (errCode !== 0) throw new Error()
 		noticeList.value = data
 	} catch {
+		showMsg('获取公告失败')
 		noticeList.value = [{ _id: 0, title: '获取失败' }]
 	}
 }
 onMounted(() => {
 	getNoticeList()
+})
+
+// 热销产品
+const hotList = ref([])
+const getHotList = async () => {
+	try {
+		const { errCode, data } = await goodsCloudObj.hot()
+		if (errCode !== 0) throw new Error()
+		hotList.value = data
+	} catch {
+		showMsg('获取热销产品失败')
+	}
+}
+onReady(() => {
+	// 热销产品懒加载
+	observeElement('.hot', () => getHotList(), true)
 })
 </script>
 
@@ -90,7 +110,7 @@ onMounted(() => {
 				</swiper>
 			</view>
 			<!-- 公告 -->
-			<ScrollNotice v-model="noticeList"></ScrollNotice>
+			<ScrollNotice :list="noticeList"></ScrollNotice>
 			<!-- 菜单 -->
 			<view class="menu">
 				<view
@@ -116,7 +136,7 @@ onMounted(() => {
 			<view class="hot">
 				<CommonTitle name="热销产品"></CommonTitle>
 				<view class="hot_list">
-					<GoodsInfoCard v-for="(item, index) in 6" :key="index"></GoodsInfoCard>
+					<GoodsInfoCard v-for="item in hotList" :key="item._id" :detail="item"></GoodsInfoCard>
 				</view>
 			</view>
 		</view>

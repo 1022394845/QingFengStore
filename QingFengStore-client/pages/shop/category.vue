@@ -20,7 +20,7 @@ import GoodsCart from '@/components/GoodsCart.vue'
 import { useCartStore } from '@/store/cart'
 import { routerTo } from '@/utils/router'
 import { observeElement, showMsg } from '@/utils/common'
-const goodsCloudObj = uniCloud.importObject('client-goods')
+const goodsCloudObj = uniCloud.importObject('client-goods', { customUI: true })
 
 const wrapperHeight_px = `${containerHeight - searchHeight - tabBarHeight - settleBarHeight}px`
 const popupBottom_px = `${tabBarHeight + uni.rpx2px(40)}px`

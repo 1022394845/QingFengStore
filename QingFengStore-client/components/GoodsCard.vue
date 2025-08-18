@@ -1,5 +1,6 @@
 <script setup>
 import NumberBox from '@/components/NumberBox.vue'
+import DotLoading from '@/components/DotLoading.vue'
 import { computed } from 'vue'
 import { formatPrice } from '@/utils/format.js'
 import { routerTo } from '@/utils/router'
@@ -53,12 +54,7 @@ const checkDetail = () => {
 		<view class="goods-card_info">
 			<view class="goods-card_info_top">
 				<view class="goods-card_info_top_title ellipsis" v-if="info.name">{{ info.name }}</view>
-				<view class="goods-card_info_top_title loading" v-else>
-					商品加载中
-					<view class="loading-dot" id="dot1"></view>
-					<view class="loading-dot" id="dot2"></view>
-					<view class="loading-dot" id="dot3"></view>
-				</view>
+				<dot-loading v-else>商品加载中</dot-loading>
 				<view class="goods-card_info_top_sku-tag ellipsis" v-if="config === 2 && info.sku_name">
 					{{ info.sku_name }}
 				</view>
@@ -122,40 +118,6 @@ const checkDetail = () => {
 			&_title {
 				font-size: 32rpx;
 				font-weight: bold;
-
-				&.loading {
-					display: flex;
-					gap: 10rpx;
-					align-items: center;
-					color: #666666;
-
-					.loading-dot {
-						width: 5rpx;
-						height: 5rpx;
-						border-radius: 50%;
-						background-color: #333333;
-						animation: dotPulse 1.5s infinite ease-in-out;
-
-						@for $i from 1 through 3 {
-							&#dot#{$i} {
-								animation-delay: 0.2s * ($i - 1);
-							}
-						}
-					}
-
-					/* 点淡入淡出效果 */
-					@keyframes dotPulse {
-						0%,
-						100% {
-							opacity: 0;
-							transform: scale(0.5);
-						}
-						50% {
-							opacity: 1;
-							transform: scale(1);
-						}
-					}
-				}
 			}
 
 			&_sku-tag {

@@ -7,7 +7,12 @@ defineOptions({
 	}
 })
 
-const noticleList = defineModel()
+const props = defineProps({
+	list: {
+		type: Array,
+		default: []
+	}
+})
 
 const checkDetail = (id) => {
 	routerTo(`/pages/news/detail?id=${id}`)
@@ -30,7 +35,7 @@ const checkDetail = (id) => {
 			>
 				<swiper-item
 					class="scroll-notice_list_swiper_item"
-					v-for="item in noticleList"
+					v-for="item in list"
 					:key="item._id"
 					@click="checkDetail(item._id)"
 				>
