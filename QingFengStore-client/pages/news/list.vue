@@ -21,7 +21,7 @@ const loadNewsList = async (page, pageSize) => {
 
 <template>
 	<view class="container">
-		<z-paging ref="pagingRef" v-model="newsList" @query="loadNewsList">
+		<z-paging ref="pagingRef" v-model="newsList" :default-page-size="9" @query="loadNewsList">
 			<template #top>
 				<CommonNavBar title="资讯" titleColor="#ffffff"></CommonNavBar>
 			</template>

@@ -1,4 +1,5 @@
 <script setup>
+import { showMsg } from '@/utils/common'
 import { useCartStore } from '@/store/cart'
 import { platform, safeareaHeight, safeareaHeight_px } from '@/utils/system'
 
@@ -7,12 +8,7 @@ const shopBarHeight_px = `${safeareaHeight + uni.rpx2px(100)}px`
 // 联系客服
 const onContact = () => {
 	// 仅支持小程序联系客服
-	if (!platform.startsWith('mp')) {
-		uni.showToast({
-			title: '当前平台不支持联系客服',
-			icon: 'none'
-		})
-	}
+	if (!platform.startsWith('mp')) return showMsg('当前平台暂不支持联系客服')
 }
 
 const cartStore = useCartStore()

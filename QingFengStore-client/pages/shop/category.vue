@@ -195,7 +195,7 @@ const onSearch = (newKeyword) => {
 					<view class="settle-info_text">
 						<view class="settle-info_text_note">合计</view>
 						<view class="settle-info_text_unit">￥</view>
-						<view class="settle-info_text_price">
+						<view class="settle-info_text_price ellipsis">
 							{{ formatPrice(cartStore.selectedPrice) }}
 						</view>
 					</view>
@@ -363,6 +363,7 @@ const onSearch = (newKeyword) => {
 				}
 
 				&_price {
+					max-width: 250rpx;
 					font-size: 42rpx;
 					font-weight: bold;
 				}

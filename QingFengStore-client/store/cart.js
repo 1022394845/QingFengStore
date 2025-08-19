@@ -16,12 +16,12 @@ export const useCartStore = defineStore('cart', () => {
 
 	// 选中商品数量
 	const selectedTotal = computed(() =>
-		localCart.value.reduce((total, item) => total + item.quantity, 0)
+		selectedGoods.value.reduce((total, item) => total + item.quantity, 0)
 	)
 
 	// 选中商品总价
 	const selectedPrice = computed(() =>
-		localCart.value.reduce((total, item) => total + item.quantity * item.sku.price, 0)
+		selectedGoods.value.reduce((total, item) => total + item.quantity * item.sku.price, 0)
 	)
 
 	// 全选状态
