@@ -41,6 +41,7 @@ const createInfo = () => {
 		errCode: 0,
 		data: {
 			...cartGoodsInfo,
+			goods_thumb: currentSku.value.sku_thumb || props.detail.goods_thumb || null,
 			sku: currentSku.value,
 			quantity: count.value
 		}
