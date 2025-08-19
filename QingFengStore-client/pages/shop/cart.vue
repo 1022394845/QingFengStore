@@ -30,7 +30,7 @@ const updateQuantity = debounce((item, quantity) => {
 <template>
 	<view class="container">
 		<CommonNavBar title="购物车" titleColor="#ffffff"></CommonNavBar>
-		<view class="goods-list">
+		<scroll-view class="goods-list" scroll-y>
 			<view
 				class="goods-list_item"
 				v-for="item in cartStore.localCart"
@@ -53,7 +53,8 @@ const updateQuantity = debounce((item, quantity) => {
 					@updateQuantity="(quantity) => updateQuantity(item, quantity)"
 				></GoodsCard>
 			</view>
-		</view>
+		</scroll-view>
+
 		<view class="shop-bar">
 			<view class="shop-bar_check">
 				<uv-checkbox-group
@@ -83,7 +84,10 @@ const updateQuantity = debounce((item, quantity) => {
 
 <style scoped lang="scss">
 .goods-list {
+	width: 100%;
 	padding: 30rpx;
+	padding-bottom: v-bind(settleBarHeight_px);
+	box-sizing: border-box;
 
 	&_item {
 		margin-bottom: 40rpx;
