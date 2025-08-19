@@ -1,7 +1,9 @@
 <script setup>
+import { onLoad } from '@dcloudio/uni-app'
 import { useCartStore } from '@/store/cart'
 import GoodsCard from '@/components/GoodsCard.vue'
 import CommonNavBar from '@/components/CommonNavBar.vue'
+import DotLoading from '@/components/DotLoading.vue'
 import { settleBarHeight_px, tabBarHeight_px } from '@/utils/system'
 import { formatPrice } from '@/utils/format.js'
 import { debounce } from '@/utils/common.js'
@@ -82,7 +84,12 @@ const updateQuantity = debounce((item, quantity) => {
 			</view>
 		</template>
 
-		<view class="empty" v-else>购物车为空</view>
+		<view class="empty" v-else>
+			<template v-if="cartStore.isIniting">
+				<DotLoading>加载中</DotLoading>
+			</template>
+			<template v-else>购物车为空</template>
+		</view>
 	</view>
 </template>
 

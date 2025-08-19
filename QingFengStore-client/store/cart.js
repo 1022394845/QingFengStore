@@ -10,7 +10,10 @@ export const useCartStore = defineStore('cart', () => {
 	let needSync = false // 需要同步标志
 	let syncTimer = null // 同步计时器
 	let networkListener = null // 网络连接状态监听
-	const STORAGE_KEY = 'QingFengStore_cart' // 本地存储键
+	let uid = null // 当前用户id
+	let localUpdateDate = null
+	const STORAGE_KEY_PREFIX = 'QingFengStore_cart' // 本地存储键前缀
+	let STORAGE_KEY = 'QingFengStore_cart-visitor' // 本地存储键
 	const SYNC_INTERVAL = 30000 // 同步间隔 30s
 	const MAX_CAPACITY = 100 // 购物车最大容量
 
@@ -34,11 +37,17 @@ export const useCartStore = defineStore('cart', () => {
 	})
 
 	/**
+	 * 更新用户id
+	 */
+	const updateUserId = () => {
+		uid = uniCloud.getCurrentUserInfo()?.uid || null
+		STORAGE_KEY = `${STORAGE_KEY_PREFIX}-${uid}`
+	}
+
+	/**
 	 * 加载购物车数据
 	 */
 	const loadCartData = async () => {
-		const { uid } = uniCloud.getCurrentUserInfo()
-
 		const { errCode, errMsg, data: cloud } = await cartCloudObj.list(uid) // 云端数据
 		// 获取云端数据失败
 		if (errCode !== 0) return
@@ -59,6 +68,7 @@ export const useCartStore = defineStore('cart', () => {
 			} else {
 				// 本地数据最新
 				localCart.value = local.data
+				localUpdateDate = local.update_date
 				needSync = true // 开启需要同步标志
 			}
 		} else {
@@ -76,8 +86,10 @@ export const useCartStore = defineStore('cart', () => {
 	const saveLocalCart = () => {
 		const cartData = {
 			data: localCart.value,
-			update_date: Date.now()
+			update_date: Date.now(),
+			user_id: uid
 		}
+		localUpdateDate = cartData.update_date
 		localStorage.setItem(STORAGE_KEY, JSON.stringify(cartData))
 		needSync = true // 开启需要同步标志
 	}
@@ -106,17 +118,28 @@ export const useCartStore = defineStore('cart', () => {
 	 * 同步本地购物车至数据库
 	 */
 	const syncToServer = async () => {
+		if (!uid || isIniting.value) return
+
 		isSyncing = true
-		console.log('同步数据库')
+
+		try {
+			console.log('同步购物车数据库', uid)
+			const { errCode, errMsg } = await cartCloudObj.update(uid, localCart.value, localUpdateDate)
+			if (errCode !== 0) throw new Error(errMsg)
+		} catch (err) {
+			console.log(err)
+		} finally {
+			isSyncing = false
+		}
+
 		needSync = false
-		isSyncing = false
 	}
 
 	/**
 	 * 手动同步
 	 */
-	const forceSync = () => {
-		if (needSync && !isSyncing) syncToServer()
+	const forceSync = async () => {
+		if (needSync && !isSyncing) await syncToServer()
 	}
 
 	/**
@@ -149,7 +172,7 @@ export const useCartStore = defineStore('cart', () => {
 	 * 结算前强制同步
 	 */
 	const syncBeforeCheckout = async () => {
-		forceSync()
+		await forceSync()
 	}
 
 	/**
@@ -277,6 +300,7 @@ export const useCartStore = defineStore('cart', () => {
 	 */
 	const init = async () => {
 		isIniting.value = true
+		updateUserId()
 		startSyncTimer()
 		watchNetworkStatus()
 		watchPageVisibility()
@@ -305,6 +329,7 @@ export const useCartStore = defineStore('cart', () => {
 		isAllSelected,
 		init,
 		cleanup,
+		updateUserId,
 		add,
 		update,
 		remove,
