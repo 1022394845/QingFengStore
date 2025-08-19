@@ -4,6 +4,7 @@ import GoodsCard from '@/components/GoodsCard.vue'
 import CommonNavBar from '@/components/CommonNavBar.vue'
 import { settleBarHeight_px, tabBarHeight_px } from '@/utils/system'
 import { formatPrice } from '@/utils/format.js'
+import { debounce } from '@/utils/common.js'
 
 const cartStore = useCartStore()
 
@@ -14,6 +15,16 @@ const toggleSelect = (item) => {
 const toggleAllSelect = () => {
 	cartStore.isAllSelected = !cartStore.isAllSelected
 }
+
+/**
+ * 更新商品数量 防抖1s
+ * @param {object} item 商品信息
+ * @param {number} quantity 更新数量
+ */
+const updateQuantity = debounce((item, quantity) => {
+	const { errCode, errMsg } = cartStore.update(item._id, item.sku._id, quantity)
+	if (errCode !== 0) return showMsg(errMsg || '更新商品购买数量失败')
+}, 1000)
 </script>
 
 <template>
@@ -35,7 +46,12 @@ const toggleAllSelect = () => {
 				>
 					<uv-checkbox activeColor="#bdaf8d" :name="true"></uv-checkbox>
 				</uv-checkbox-group>
-				<GoodsCard :detail="item" :sku="item.sku" :config="2"></GoodsCard>
+				<GoodsCard
+					:detail="item"
+					:sku="item.sku"
+					:config="2"
+					@updateQuantity="(quantity) => updateQuantity(item, quantity)"
+				></GoodsCard>
 			</view>
 		</view>
 		<view class="shop-bar">
