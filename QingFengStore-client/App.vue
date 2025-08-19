@@ -1,5 +1,16 @@
 <script setup>
+import { onMounted, onUnmounted } from 'vue'
+import { useCartStore } from './store/cart'
 import uniIdPageInit from '@/uni_modules/uni-id-pages/init.js'
+
+// 注册购物车
+const cartStore = useCartStore()
+onMounted(() => {
+	cartStore.init()
+})
+onUnmounted(() => {
+	cartStore.cleanup()
+})
 </script>
 
 <template></template>

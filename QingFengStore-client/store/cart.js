@@ -7,6 +7,7 @@ export const useCartStore = defineStore('cart', () => {
 	let isSyncing = false // 正在同步标志
 	let needSync = false // 需要同步标志
 	let syncTimer = null // 同步计时器
+	let networkListener = null // 网络连接状态监听
 	const STORAGE_KEY = 'QingFengStore_cart' // 本地存储键
 	const SYNC_INTERVAL = 30000 // 同步间隔 30s
 
@@ -14,15 +15,13 @@ export const useCartStore = defineStore('cart', () => {
 	const selectedGoods = computed(() => localCart.value.filter((item) => item.is_selected))
 
 	// 选中商品数量
-	const selectedTotal = computed(
-		() => localCart.value.reduce((total, item) => total + item.quantity),
-		0
+	const selectedTotal = computed(() =>
+		localCart.value.reduce((total, item) => total + item.quantity, 0)
 	)
 
 	// 选中商品总价
-	const selectedPrice = computed(
-		() => localCart.value.reduce((total, item) => total + item.quantity * item.price),
-		0
+	const selectedPrice = computed(() =>
+		localCart.value.reduce((total, item) => total + item.quantity * item.sku.price, 0)
 	)
 
 	// 全选状态
@@ -36,7 +35,7 @@ export const useCartStore = defineStore('cart', () => {
 	 */
 	const loadLocalCart = () => {
 		const saved = localStorage.getItem(STORAGE_KEY)
-		if (saved) localCart.value = saved
+		if (saved) localCart.value = JSON.parse(saved)
 	}
 
 	/**
@@ -71,7 +70,10 @@ export const useCartStore = defineStore('cart', () => {
 	 * 同步本地购物车至数据库
 	 */
 	const syncToServer = async () => {
+		isSyncing = true
 		console.log('同步数据库')
+		needSync = false
+		isSyncing = false
 	}
 
 	/**
@@ -85,7 +87,10 @@ export const useCartStore = defineStore('cart', () => {
 	 * 监听网络连接后强制同步
 	 */
 	const watchNetworkStatus = () => {
-		uni.onNetworkStatusChange(({ isConnected }) => {
+		// 移除旧的监听器
+		if (networkListener) uni.offNetworkStatusChange(networkListener)
+
+		networkListener = uni.onNetworkStatusChange(({ isConnected }) => {
 			if (isConnected) forceSync()
 		})
 	}
@@ -134,22 +139,27 @@ export const useCartStore = defineStore('cart', () => {
 	 * 添加商品至购物车
 	 * @param {object} data 商品信息
 	 * @param {string} data._id 商品id
-	 * @param {string} data.sku_id 规格id
-	 * @param {number} data.price 商品单价
 	 * @param {number} data.quantity 购买数量
-	 * @param  {string} [data.goods_name] 商品名称
-	 * @param {string} [data.sku_name] 规格名称
-	 * @param {number} [data.market_price] 商品市场价格
+	 * @param {object} data.sku 规格信息
+	 * @param {string} data.sku._id 规格id
+	 * @param {number} data.sku.price 规格单价
+	 * @param {string} [data.goods_name] 商品名称
 	 * @param {string} [data.goods_thumb] 商品缩略图
+	 * @param {string} [data.sku.sku_name] 规格名称
+	 * @param {number} [data.sku.market_price] 商品市场价格
 	 * @returns {object} 操作结果
 	 */
 	const add = (data) => {
 		try {
-			const { _id, sku_id, price, quantity } = data
+			const {
+				_id,
+				sku: { _id: sku_id, price },
+				quantity
+			} = data
 			if (!_id || !sku_id || !price || !quantity)
 				return { errCode: 400, errMsg: '缺少商品必要参数' }
 
-			const target = localCart.value.find((item) => item._id === _id && item.sku_id === sku_id)
+			const target = localCart.value.find((item) => item._id === _id && item.sku._id === sku_id)
 			if (target) {
 				// 购物车中已有相同商品 累加数量
 				target.quantity += quantity
@@ -161,7 +171,6 @@ export const useCartStore = defineStore('cart', () => {
 			}
 
 			saveLocalCart()
-			needSync
 			return { errCode: 0 }
 		} catch {
 			return { errCode: 500, errMsg: '未知错误' }
@@ -179,12 +188,11 @@ export const useCartStore = defineStore('cart', () => {
 		if (!_id || !sku_id || !quantity) return { errCode: 400, errMsg: '缺少商品必要参数' }
 
 		try {
-			const target = localCart.value.find((item) => item._id === _id && item.sku_id === sku_id)
-			if (target) target.quantity += quantity
+			const target = localCart.value.find((item) => item._id === _id && item.sku._id === sku_id)
+			if (target) target.quantity = quantity
 			else return { errCode: 400, errMsg: '商品暂未加入购物车' }
 
 			saveLocalCart()
-			needSync
 			return { errCode: 0 }
 		} catch {
 			return { errCode: 500, errMsg: '未知错误' }
@@ -201,12 +209,11 @@ export const useCartStore = defineStore('cart', () => {
 		if (!_id || !sku_id) return { errCode: 400, errMsg: '缺少商品必要参数' }
 
 		try {
-			const index = localCart.value.findIndex((item) => item._id === _id && item.sku_id === sku_id)
+			const index = localCart.value.findIndex((item) => item._id === _id && item.sku._id === sku_id)
 			if (index !== -1) localCart.value.splice(index, 1)
 			else return { errCode: 400, errMsg: '购物车不存在该商品' }
 
 			saveLocalCart()
-			needSync
 			return { errCode: 0 }
 		} catch {
 			return { errCode: 500, errMsg: '未知错误' }
@@ -228,12 +235,15 @@ export const useCartStore = defineStore('cart', () => {
 	 */
 	const cleanup = () => {
 		clearSyncTimer()
-		uni.offNetworkStatusChange()
+		if (networkListener) {
+			uni.offNetworkStatusChange(networkListener)
+			networkListener = null
+		}
 		forceSync()
 	}
 
 	return {
-		loadLocalCart,
+		localCart,
 		selectedGoods,
 		selectedTotal,
 		selectedPrice,

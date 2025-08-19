@@ -22,7 +22,7 @@ const props = defineProps({
 		default: 0
 	}
 })
-const emits = defineEmits(['onSelectBuy', 'overMinus'])
+const emits = defineEmits(['onSelectBuy', 'overMinus', 'updateQuantity'])
 
 const info = computed(() => ({ ...props.detail, ...props.sku }))
 
@@ -33,6 +33,11 @@ const onSelectBuy = () => {
 // 步进器超出阈值
 const overMinus = () => {
 	emits('overMinus')
+}
+
+// 更新商品购买数量
+const updateQuantity = (quantity) => {
+	emits('updateQuantity', quantity)
 }
 
 // 跳转详情页
@@ -56,7 +61,7 @@ const checkDetail = () => {
 		<view class="goods-card_info">
 			<view class="goods-card_info_top">
 				<view class="goods-card_info_top_title ellipsis" v-if="info.name">{{ info.name }}</view>
-				<dot-loading v-else>商品加载中</dot-loading>
+				<DotLoading v-else>商品加载中</DotLoading>
 				<view class="goods-card_info_top_sku-tag ellipsis" v-if="config === 2 && info.sku_name">
 					{{ info.sku_name }}
 				</view>
@@ -85,8 +90,9 @@ const checkDetail = () => {
 					</view>
 					<NumberBox
 						v-if="[2].includes(config)"
-						v-model="detail.count"
+						v-model="detail.quantity"
 						@overMinus="overMinus"
+						@update="(value) => updateQuantity(value)"
 					></NumberBox>
 				</view>
 			</view>

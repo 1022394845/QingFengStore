@@ -9,17 +9,16 @@ import {
 	settleBarHeight_px
 } from '@/utils/system.js'
 import { formatPrice } from '@/utils/format.js'
-import { throttle } from '@/utils/throttle.js'
 import { onReady } from '@dcloudio/uni-app'
-import { getCurrentInstance, nextTick, onMounted, ref } from 'vue'
+import { getCurrentInstance, nextTick, onMounted, onUnmounted, ref } from 'vue'
 import CommonNavBar from '@/components/CommonNavBar.vue'
 import CommonSearch from '@/components/CommonSearch.vue'
 import GoodsCard from '@/components/GoodsCard.vue'
 import GoodsSKU from '@/components/GoodsSKU.vue'
 import GoodsCart from '@/components/GoodsCart.vue'
 import { useCartStore } from '@/store/cart'
-import { needLogin, routerTo } from '@/utils/router'
-import { isLogin, observeElement, showMsg } from '@/utils/common'
+import { needLogin, routerTo } from '@/utils/router.js'
+import { isLogin, observeElement, showMsg, throttle } from '@/utils/common.js'
 const goodsCloudObj = uniCloud.importObject('client-goods', { customUI: true })
 
 const wrapperHeight_px = `${containerHeight - searchHeight - tabBarHeight - settleBarHeight}px`
@@ -106,7 +105,7 @@ const skuPopRef = ref(null)
 const currentGoodsDetail = ref({})
 const currentSkuId = ref(null)
 const openSkuPop = (item) => {
-	if (!skuPopRef.value) return
+	if (!skuPopRef.value) return showMsg('未知错误，请刷新后重试')
 
 	// 查看新商品信息，更新缓存
 	if (!Object.keys(currentGoodsDetail.value).length || currentGoodsDetail.value._id !== item._id) {
@@ -123,6 +122,8 @@ const closeSkuPop = () => {
 // 购物车弹出框
 const cartPopRef = ref(null)
 const openCartPop = () => {
+	if (!cartPopRef.value) return showMsg('未知错误，请刷新后重试')
+
 	if (isLogin()) cartPopRef.value.open()
 	else needLogin()
 }
@@ -187,15 +188,15 @@ const onSearch = (newKeyword) => {
 				<view class="settle-info">
 					<view class="settle-info_icon icon-container" @click="openCartPop">
 						<view class="iconfont icon-caigou"></view>
-						<view class="settle-info_icon_tag" v-if="cartStore.cartTotalNum">
-							{{ cartStore.cartTotalNum }}
+						<view class="settle-info_icon_tag" v-if="cartStore.selectedTotal">
+							{{ cartStore.selectedTotal }}
 						</view>
 					</view>
 					<view class="settle-info_text">
 						<view class="settle-info_text_note">合计</view>
 						<view class="settle-info_text_unit">￥</view>
 						<view class="settle-info_text_price">
-							{{ formatPrice(cartStore.cartTotalPrice) }}
+							{{ formatPrice(cartStore.selectedPrice) }}
 						</view>
 					</view>
 				</view>

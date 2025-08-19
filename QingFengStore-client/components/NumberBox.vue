@@ -8,8 +8,8 @@ defineOptions({
 })
 
 const count = defineModel()
+const emits = defineEmits(['overMinus', 'update'])
 
-const emits = defineEmits(['overMinus'])
 const onOverlimit = (type) => {
 	if (type === 'plus') {
 		uni.showToast({
@@ -20,10 +20,22 @@ const onOverlimit = (type) => {
 		emits('overMinus')
 	}
 }
+
+const onChange = ({ value }) => {
+	emits('update', value)
+}
 </script>
 
 <template>
-	<uv-number-box v-model="count" integer :min="1" :max="999" @overlimit="onOverlimit" @click.stop>
+	<uv-number-box
+		v-model="count"
+		integer
+		:min="1"
+		:max="999"
+		@overlimit="onOverlimit"
+		@change="onChange"
+		@click.stop
+	>
 		<template v-slot:minus>
 			<view class="minus btn">
 				<uv-icon name="minus" color="#bdaf8d" size="16rpx"></uv-icon>

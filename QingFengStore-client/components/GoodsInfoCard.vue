@@ -32,7 +32,7 @@ const checkDetail = () => {
 			<view class="goods-info-card_info_title ellipsis" v-if="detail.name">
 				{{ detail.name }}
 			</view>
-			<dot-loading v-else>商品加载中</dot-loading>
+			<DotLoading v-else>商品加载中</DotLoading>
 			<view class="goods-info-card_info_price" v-if="detail._id">
 				<view class="goods-info-card_info_price_new">
 					<view class="goods-info-card_info_price_new_unit">￥</view>

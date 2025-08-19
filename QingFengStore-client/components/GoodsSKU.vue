@@ -35,14 +35,14 @@ const createInfo = () => {
 		return { errCode: 500, errMsg: '获取商品规格信息异常' }
 	}
 
-	const { skus, ...cartDetail } = props.detail
+	const { skus, price, market_price, ...cartGoodsInfo } = props.detail
 
 	return {
 		errCode: 0,
 		data: {
-			...cartDetail,
+			...cartGoodsInfo,
 			sku: currentSku.value,
-			count: count.value
+			quantity: count.value
 		}
 	}
 }
@@ -53,7 +53,12 @@ const onCart = () => {
 	if (isLogin()) {
 		const { errCode, errMsg, data } = createInfo()
 		if (errCode !== 0) return showMsg(errMsg)
-		cartStore.addGoods(data)
+
+		{
+			const { errCode, errMsg } = cartStore.add(data)
+			if (errCode !== 0) return showMsg(errMsg || '添加商品至购物车失败')
+		}
+
 		emits('close')
 	} else needLogin()
 }
@@ -63,6 +68,7 @@ const onBuy = () => {
 	if (isLogin()) {
 		const { errCode, errMsg, data } = createInfo()
 		if (errCode !== 0) return showMsg(errMsg)
+
 		console.log('buy', data)
 		emits('close')
 	} else needLogin()
