@@ -69,7 +69,7 @@ export const useCartStore = defineStore('cart', () => {
 				// 本地数据最新
 				localCart.value = local.data
 				localUpdateDate = local.update_date
-				needSync = true // 开启需要同步标志
+				if (cloud.update_date < local.update_date) needSync = true // 开启需要同步标志
 			}
 		} else {
 			// 本地数据无效，直接使用云端数据
@@ -118,7 +118,7 @@ export const useCartStore = defineStore('cart', () => {
 	 * 同步本地购物车至数据库
 	 */
 	const syncToServer = async () => {
-		if (!uid || isIniting.value) return
+		if (!uid || !localUpdateDate || isIniting.value) return
 
 		isSyncing = true
 
