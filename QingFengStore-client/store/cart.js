@@ -198,8 +198,10 @@ export const useCartStore = defineStore('cart', () => {
 			const target = localCart.value.find(
 				(item) => item.goods_id === goods_id && item.sku._id === sku_id
 			)
-			if (target) target.quantity = quantity
-			else return { errCode: 400, errMsg: '商品暂未加入购物车' }
+			if (target) {
+				target.quantity = quantity
+				target.update_date = Date.now() // 更新修改时间
+			} else return { errCode: 400, errMsg: '商品暂未加入购物车' }
 
 			saveLocalCart()
 			return { errCode: 0 }
