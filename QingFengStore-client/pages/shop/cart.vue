@@ -22,7 +22,7 @@ const toggleAllSelect = () => {
  * @param {number} quantity 更新数量
  */
 const updateQuantity = debounce((item, quantity) => {
-	const { errCode, errMsg } = cartStore.update(item._id, item.sku._id, quantity)
+	const { errCode, errMsg } = cartStore.update(item.goods_id, item.sku._id, quantity)
 	if (errCode !== 0) return showMsg(errMsg || '更新商品购买数量失败')
 }, 1000)
 </script>
@@ -30,55 +30,59 @@ const updateQuantity = debounce((item, quantity) => {
 <template>
 	<view class="container">
 		<CommonNavBar title="购物车" titleColor="#ffffff"></CommonNavBar>
-		<scroll-view class="goods-list" scroll-y>
-			<view
-				class="goods-list_item"
-				v-for="item in cartStore.localCart"
-				:key="`${item._id}_${item.sku._id}`"
-			>
-				<uv-checkbox-group
-					:value="[item.is_selected]"
-					shape="circle"
-					size="32rpx"
-					iconSize="24rpx"
-					labelSize="28rpx"
-					@change="toggleSelect(item)"
+		<template v-if="cartStore.localCart.length">
+			<scroll-view class="goods-list" scroll-y>
+				<view
+					class="goods-list_item"
+					v-for="item in cartStore.localCart"
+					:key="`${item.goods_id}_${item.sku._id}`"
 				>
-					<uv-checkbox activeColor="#bdaf8d" :name="true"></uv-checkbox>
-				</uv-checkbox-group>
-				<GoodsCard
-					:detail="item"
-					:sku="item.sku"
-					:config="2"
-					@updateQuantity="(quantity) => updateQuantity(item, quantity)"
-				></GoodsCard>
-			</view>
-		</scroll-view>
-
-		<view class="shop-bar">
-			<view class="shop-bar_check">
-				<uv-checkbox-group
-					:value="[cartStore.isAllSelected]"
-					shape="circle"
-					size="32rpx"
-					iconSize="24rpx"
-					labelSize="28rpx"
-					@change="toggleAllSelect"
-				>
-					<uv-checkbox activeColor="#bdaf8d" label="全选" :name="true"></uv-checkbox>
-				</uv-checkbox-group>
-			</view>
-
-			<view class="shop-bar_price">
-				<view class="shop-bar_price_text">合计:</view>
-				<view class="shop-bar_price_unit">￥</view>
-				<view class="shop-bar_price_total ellipsis">
-					{{ formatPrice(cartStore.selectedPrice) }}
+					<uv-checkbox-group
+						:value="[item.is_selected]"
+						shape="circle"
+						size="32rpx"
+						iconSize="24rpx"
+						labelSize="28rpx"
+						@change="toggleSelect(item)"
+					>
+						<uv-checkbox activeColor="#bdaf8d" :name="true"></uv-checkbox>
+					</uv-checkbox-group>
+					<GoodsCard
+						:detail="item"
+						:sku="item.sku"
+						:config="2"
+						@updateQuantity="(quantity) => updateQuantity(item, quantity)"
+					></GoodsCard>
 				</view>
-			</view>
+			</scroll-view>
 
-			<view class="shop-bar_settle-btn">结算</view>
-		</view>
+			<view class="shop-bar">
+				<view class="shop-bar_check">
+					<uv-checkbox-group
+						:value="[cartStore.isAllSelected]"
+						shape="circle"
+						size="32rpx"
+						iconSize="24rpx"
+						labelSize="28rpx"
+						@change="toggleAllSelect"
+					>
+						<uv-checkbox activeColor="#bdaf8d" label="全选" :name="true"></uv-checkbox>
+					</uv-checkbox-group>
+				</view>
+
+				<view class="shop-bar_price">
+					<view class="shop-bar_price_text">合计:</view>
+					<view class="shop-bar_price_unit">￥</view>
+					<view class="shop-bar_price_total ellipsis">
+						{{ formatPrice(cartStore.selectedPrice) }}
+					</view>
+				</view>
+
+				<view class="shop-bar_settle-btn">结算</view>
+			</view>
+		</template>
+
+		<view class="empty" v-else>购物车为空</view>
 	</view>
 </template>
 
@@ -95,6 +99,15 @@ const updateQuantity = debounce((item, quantity) => {
 		gap: 20rpx;
 		align-items: center;
 	}
+}
+
+.empty {
+	position: absolute;
+	top: 50%;
+	left: 50%;
+	transform: translate(-50%, -50%);
+	font-size: 32rpx;
+	color: #333333;
 }
 
 .shop-bar {

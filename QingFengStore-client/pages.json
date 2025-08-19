@@ -193,7 +193,8 @@
 		"loginPage": "uni_modules/uni-id-pages/pages/login/login-withpwd",
 		// #endif 
 		"needLogin": [
-			"pages/user/.*"
+			"pages/user/.*",
+			"pages/shop/cart"
 		],
 		"resToLogin": true
 	}

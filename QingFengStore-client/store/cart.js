@@ -138,7 +138,7 @@ export const useCartStore = defineStore('cart', () => {
 	/**
 	 * 添加商品至购物车
 	 * @param {object} data 商品信息
-	 * @param {string} data._id 商品id
+	 * @param {string} data.goods_id 商品id
 	 * @param {number} data.quantity 购买数量
 	 * @param {object} data.sku 规格信息
 	 * @param {string} data.sku._id 规格id
@@ -152,21 +152,28 @@ export const useCartStore = defineStore('cart', () => {
 	const add = (data) => {
 		try {
 			const {
-				_id,
+				goods_id,
 				sku: { _id: sku_id, price },
 				quantity
 			} = data
-			if (!_id || !sku_id || !price || !quantity)
+			if (!goods_id || !sku_id || !price || !quantity)
 				return { errCode: 400, errMsg: '缺少商品必要参数' }
 
-			const target = localCart.value.find((item) => item._id === _id && item.sku._id === sku_id)
+			const target = localCart.value.find(
+				(item) => item.goods_id === goods_id && item.sku._id === sku_id
+			)
 			if (target) {
 				// 购物车中已有相同商品 累加数量
 				target.quantity += quantity
 			} else {
+				const { uid } = uniCloud.getCurrentUserInfo()
+
 				localCart.value.unshift({
 					...data,
-					is_selected: true // 默认选中
+					is_selected: true, // 默认选中
+					create_date: Date.now(),
+					update_date: Date.now(),
+					user_id: uid
 				})
 			}
 
@@ -179,16 +186,18 @@ export const useCartStore = defineStore('cart', () => {
 
 	/**
 	 * 修改商品购买数量
-	 * @param {string} _id 商品id
+	 * @param {string} goods_id 商品id
 	 * @param {string} sku_id 规格id
 	 * @param {number} quantity 购买数量
 	 * @returns {object} 操作结果
 	 */
-	const update = (_id, sku_id, quantity) => {
-		if (!_id || !sku_id || !quantity) return { errCode: 400, errMsg: '缺少商品必要参数' }
+	const update = (goods_id, sku_id, quantity) => {
+		if (!goods_id || !sku_id || !quantity) return { errCode: 400, errMsg: '缺少商品必要参数' }
 
 		try {
-			const target = localCart.value.find((item) => item._id === _id && item.sku._id === sku_id)
+			const target = localCart.value.find(
+				(item) => item.goods_id === goods_id && item.sku._id === sku_id
+			)
 			if (target) target.quantity = quantity
 			else return { errCode: 400, errMsg: '商品暂未加入购物车' }
 
@@ -201,15 +210,17 @@ export const useCartStore = defineStore('cart', () => {
 
 	/**
 	 * 删除购物车商品
-	 * @param {string} _id 商品id
+	 * @param {string} goods_id 商品id
 	 * @param {string} sku_id 规格id
 	 * @return {object} 操作结果
 	 */
-	const remove = (_id, sku_id) => {
-		if (!_id || !sku_id) return { errCode: 400, errMsg: '缺少商品必要参数' }
+	const remove = (goods_id, sku_id) => {
+		if (!goods_id || !sku_id) return { errCode: 400, errMsg: '缺少商品必要参数' }
 
 		try {
-			const index = localCart.value.findIndex((item) => item._id === _id && item.sku._id === sku_id)
+			const index = localCart.value.findIndex(
+				(item) => item.goods_id === goods_id && item.sku._id === sku_id
+			)
 			if (index !== -1) localCart.value.splice(index, 1)
 			else return { errCode: 400, errMsg: '购物车不存在该商品' }
 

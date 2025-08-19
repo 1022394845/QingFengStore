@@ -24,6 +24,10 @@ const props = defineProps({
 })
 const emits = defineEmits(['onSelectBuy', 'overMinus', 'updateQuantity'])
 
+const goods_id = computed(() => {
+	if (props.config === 2) return props.detail.goods_id
+	else return props.detail._id
+})
 const info = computed(() => ({ ...props.detail, ...props.sku }))
 
 const onSelectBuy = () => {
@@ -42,8 +46,9 @@ const updateQuantity = (quantity) => {
 
 // 跳转详情页
 const checkDetail = () => {
-	if (!props.detail._id) return showMsg('获取商品信息失败')
-	routerTo(`/pages/shop/detail?id=${props.detail._id}`)
+	if (!goods_id.value) return showMsg('获取商品信息失败')
+
+	routerTo(`/pages/shop/detail?id=${goods_id.value}`)
 }
 </script>
 
@@ -66,7 +71,7 @@ const checkDetail = () => {
 					{{ info.sku_name }}
 				</view>
 			</view>
-			<view class="goods-card_info_bottom" v-if="detail._id">
+			<view class="goods-card_info_bottom" v-if="goods_id">
 				<view class="goods-card_info_bottom_left">
 					<view class="goods-card_info_bottom_left_price">
 						<view class="goods-card_info_bottom_left_price_new">

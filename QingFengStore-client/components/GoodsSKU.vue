@@ -35,16 +35,23 @@ const createInfo = () => {
 		return { errCode: 500, errMsg: '获取商品规格信息异常' }
 	}
 
-	const { skus, price, market_price, ...cartGoodsInfo } = props.detail
+	try {
+		const { _id, skus, price, market_price, ...cartGoodsInfo } = props.detail
 
-	return {
-		errCode: 0,
-		data: {
+		const data = {
 			...cartGoodsInfo,
+			goods_id: _id,
 			goods_thumb: currentSku.value.sku_thumb || props.detail.goods_thumb || null,
 			sku: currentSku.value,
 			quantity: count.value
 		}
+
+		return {
+			errCode: 0,
+			data
+		}
+	} catch {
+		return { errCode: 500, errMsg: '创建商品表单失败' }
 	}
 }
 

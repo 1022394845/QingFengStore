@@ -2,6 +2,7 @@
 import { useCartStore } from '@/store/cart'
 import GoodsCard from '@/components/GoodsCard.vue'
 import { debounce, showMsg } from '@/utils/common.js'
+import { routerTo } from '@/utils/router.js'
 
 const cartStore = useCartStore()
 
@@ -14,7 +15,7 @@ const onConfirmRemove = async (item) => {
 	})
 	if (cancel) return
 
-	cartStore.remove(item._id, item.sku._id)
+	cartStore.remove(item.goods_id, item.sku._id)
 }
 
 /**
@@ -23,7 +24,7 @@ const onConfirmRemove = async (item) => {
  * @param {number} quantity 更新数量
  */
 const updateQuantity = debounce((item, quantity) => {
-	const { errCode, errMsg } = cartStore.update(item._id, item.sku._id, quantity)
+	const { errCode, errMsg } = cartStore.update(item.goods_id, item.sku._id, quantity)
 	if (errCode !== 0) return showMsg(errMsg || '更新商品购买数量失败')
 }, 1000)
 </script>
@@ -34,7 +35,7 @@ const updateQuantity = debounce((item, quantity) => {
 			<view
 				class="goods-cart_list_item"
 				v-for="item in cartStore.localCart"
-				:key="`${item._id}_${item.sku._id}`"
+				:key="`${item.goods_id}_${item.sku._id}`"
 			>
 				<GoodsCard
 					:detail="item"
@@ -46,7 +47,13 @@ const updateQuantity = debounce((item, quantity) => {
 			</view>
 			<view class="goods-cart_list_item nomore" v-if="!cartStore.selectedTotal">购物车是空的</view>
 		</scroll-view>
-		<view class="goods-cart_buy-btn" v-if="cartStore.selectedTotal">结算</view>
+		<view
+			class="goods-cart_buy-btn"
+			v-if="cartStore.selectedTotal"
+			@click="routerTo('/pages/shop/cart')"
+		>
+			结算
+		</view>
 	</view>
 </template>
 
