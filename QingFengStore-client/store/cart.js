@@ -10,6 +10,7 @@ export const useCartStore = defineStore('cart', () => {
 	let networkListener = null // 网络连接状态监听
 	const STORAGE_KEY = 'QingFengStore_cart' // 本地存储键
 	const SYNC_INTERVAL = 30000 // 同步间隔 30s
+	const MAX_CAPACITY = 100 // 购物车最大容量
 
 	// 选中商品列表
 	const selectedGoods = computed(() => localCart.value.filter((item) => item.is_selected))
@@ -150,6 +151,9 @@ export const useCartStore = defineStore('cart', () => {
 	 * @returns {object} 操作结果
 	 */
 	const add = (data) => {
+		if (localCart.value.length >= MAX_CAPACITY)
+			return { errCode: 403, errMsg: '购物车已达最大容量，请先清理购物车' }
+
 		try {
 			const {
 				goods_id,
