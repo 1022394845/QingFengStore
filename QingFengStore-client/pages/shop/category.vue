@@ -28,10 +28,16 @@ const popupBottom_px = `${tabBarHeight + uni.rpx2px(40)}px`
 const dataList = ref([])
 const getCategoryList = async () => {
 	try {
+		uni.showLoading({
+			title: '加载中...'
+		})
 		const { errCode, data } = await goodsCloudObj.categories()
 		if (errCode !== 0) throw new Error()
+
 		dataList.value = data
+		uni.hideLoading()
 	} catch {
+		uni.hideLoading()
 		return showMsg('获取数据失败，请刷新重试')
 	}
 }
