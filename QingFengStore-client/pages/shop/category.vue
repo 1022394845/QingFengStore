@@ -35,10 +35,10 @@ const getCategoryList = async () => {
 		if (errCode !== 0) throw new Error()
 
 		dataList.value = data
-		uni.hideLoading()
 	} catch {
+		showMsg('获取数据失败，请刷新重试')
+	} finally {
 		uni.hideLoading()
-		return showMsg('获取数据失败，请刷新重试')
 	}
 }
 onMounted(async () => {

@@ -20,11 +20,18 @@ const getDetail = async () => {
 	if (!goods_id) return showMsg('获取商品id失败')
 
 	try {
+		uni.showLoading({
+			title: '加载中...'
+		})
 		const { errCode, data } = await goodsCloudObj.detail(goods_id)
+		if (errCode !== 0) throw new Error()
+
 		detail.value = data
 		currentSkuId.value = data.skus?.[0]?._id || null // 设置默认sku规格
 	} catch {
-		return showMsg('获取商品信息失败')
+		showMsg('获取商品信息失败')
+	} finally {
+		uni.hideLoading()
 	}
 }
 
