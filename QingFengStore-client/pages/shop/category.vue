@@ -206,7 +206,7 @@ const onSearch = (newKeyword) => {
 						</view>
 					</view>
 				</view>
-				<view class="settle-btn">去结算</view>
+				<view class="settle-btn" @click="routerTo('/pages/shop/cart')">去结算</view>
 			</view>
 			<!-- SKU弹出框 -->
 			<uni-popup ref="skuPopRef" type="bottom" :safe-area="false">

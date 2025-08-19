@@ -1,9 +1,11 @@
 import { defineStore } from 'pinia'
 import { computed, ref } from 'vue'
+const cartCloudObj = uniCloud.importObject('client-cart', { customUI: true })
 
 // 购物车
 export const useCartStore = defineStore('cart', () => {
 	const localCart = ref([]) // 本地购物车
+	const isIniting = ref(false) // 正在初始化标志
 	let isSyncing = false // 正在同步标志
 	let needSync = false // 需要同步标志
 	let syncTimer = null // 同步计时器
@@ -32,18 +34,51 @@ export const useCartStore = defineStore('cart', () => {
 	})
 
 	/**
-	 * 加载本地购物车数据
+	 * 加载购物车数据
 	 */
-	const loadLocalCart = () => {
-		const saved = localStorage.getItem(STORAGE_KEY)
-		if (saved) localCart.value = JSON.parse(saved)
+	const loadCartData = async () => {
+		const { uid } = uniCloud.getCurrentUserInfo()
+
+		const { errCode, errMsg, data: cloud } = await cartCloudObj.list(uid) // 云端数据
+		// 获取云端数据失败
+		if (errCode !== 0) return
+
+		const local = JSON.parse(localStorage.getItem(STORAGE_KEY)) // 本地数据
+
+		if (
+			local.user_id === uid &&
+			local.update_date &&
+			Array.isArray(local.data) &&
+			local.data.length
+		) {
+			// 本地数据有效
+			if (cloud && cloud.update_date && cloud.update_date > local.update_date) {
+				// 云端数据最新
+				localCart.value = cloud.data
+				saveLocalCart() // 强制覆盖本地数据
+			} else {
+				// 本地数据最新
+				localCart.value = local.data
+				needSync = true // 开启需要同步标志
+			}
+		} else {
+			// 本地数据无效，直接使用云端数据
+			if (cloud && cloud.data) {
+				localCart.value = cloud.data
+				saveLocalCart() // 强制覆盖本地数据
+			}
+		}
 	}
 
 	/**
 	 * 保存购物车数据至本地
 	 */
 	const saveLocalCart = () => {
-		localStorage.setItem(STORAGE_KEY, JSON.stringify(localCart.value))
+		const cartData = {
+			data: localCart.value,
+			update_date: Date.now()
+		}
+		localStorage.setItem(STORAGE_KEY, JSON.stringify(cartData))
 		needSync = true // 开启需要同步标志
 	}
 
@@ -240,11 +275,13 @@ export const useCartStore = defineStore('cart', () => {
 	/**
 	 * 初始化 开启定时同步 监听强制同步
 	 */
-	const init = () => {
-		loadLocalCart()
+	const init = async () => {
+		isIniting.value = true
 		startSyncTimer()
 		watchNetworkStatus()
 		watchPageVisibility()
+		await loadCartData()
+		isIniting.value = false
 	}
 
 	/**
@@ -261,6 +298,7 @@ export const useCartStore = defineStore('cart', () => {
 
 	return {
 		localCart,
+		isIniting,
 		selectedGoods,
 		selectedTotal,
 		selectedPrice,

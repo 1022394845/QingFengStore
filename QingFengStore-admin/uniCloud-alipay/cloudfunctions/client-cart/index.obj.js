@@ -1,29 +1,64 @@
-// 云对象教程: https://uniapp.dcloud.net.cn/uniCloud/cloud-obj
-// jsdoc语法提示教程：https://ask.dcloud.net.cn/docs/#//ask.dcloud.net.cn/article/129
-module.exports = {
-	_before: function () { // 通用预处理器
+// 资讯
+let dbJQL = uniCloud.databaseForJQL()
+let db = uniCloud.database()
+let dbCmd = db.command
+const { result } = require('utils')
+const defaultError = result({ errCode: 500, errMsg: 'error', type: '服务器' })
 
+module.exports = {
+	// 通用预处理器
+	_before: function () {
+		// 获取客户端信息
+		const clientInfo = this.getClientInfo()
+		dbJQL = uniCloud.databaseForJQL({ clientInfo })
 	},
+
 	/**
-	 * method1方法描述
-	 * @param {string} param1 参数1描述
-	 * @returns {object} 返回值描述
+	 * 获取购物车列表
+	 * @param {string} user_id 用户id
+	 * @returns {object[]} 资讯列表
 	 */
-	/* 
-	method1(param1) {
-		// 参数校验，如无参数则不需要
-		if (!param1) {
-			return {
-				errCode: 'PARAM_IS_NULL',
-				errMsg: '参数不能为空'
-			}
+	async list(user_id) {
+		if (!user_id)
+			return result({ errCode: 400, errMsg: 'error', type: '请求', custom: '用户id不可为空' })
+
+		try {
+			const {
+				errCode,
+				errMsg,
+				data = null
+			} = await dbJQL
+				.collection('QingFengStore-mall-cart')
+				.where(`user_id == "${user_id}"`)
+				.get({ getOne: true })
+
+			if (errCode !== 0) return result({ errCode, errMsg: 'fail', type: '获取', custom: errMsg })
+			return result({ errCode: 0, errMsg: 'success', data, type: '获取' })
+		} catch (err) {
+			return defaultError
 		}
-		// 业务逻辑
-		
-		// 返回结果
-		return {
-			param1 //请根据实际需要返回值
+	},
+
+	/**
+	 * 更新用户购物车列表
+	 * @param {string} user_id 用户id
+	 * @param {object[]} cartList 购物车列表
+	 * @returns {number} updated 成功修改个数(无变化为0)
+	 */
+	async update(user_id, cartData) {
+		if (!user_id)
+			return result({ errCode: 400, errMsg: 'error', type: '请求', custom: '用户id不可为空' })
+
+		try {
+			const { errCode, errMsg, updated } = await dbJQL
+				.collection('QingFengStore-mall-cart')
+				.where(`user_id == "${user_id}"`)
+				.update({ data: cartData, update_date: Date.now() })
+
+			if (errCode !== 0) return result({ errCode, errMsg: 'fail', type: '修改', custom: errMsg })
+			return result({ errCode: 0, errMsg: 'success', data: { updated }, type: '修改' })
+		} catch (err) {
+			return defaultError
 		}
 	}
-	*/
 }
