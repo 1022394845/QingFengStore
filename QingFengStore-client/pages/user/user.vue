@@ -101,9 +101,7 @@ const menuList = [
 				<view class="order_header">
 					<view class="order_header_text">我的订单</view>
 					<view class="order_header_note">查看全部订单</view>
-					<view class="order_header_more icon-container">
-						<uni-icons type="forward" size="28rpx" color="#AAAAAA"></uni-icons>
-					</view>
+					<view class="order_header_more iconfont icon-more"></view>
 				</view>
 				<view class="order_list">
 					<view class="order_list_item" v-for="item in orderMenuList" :key="item.label">
@@ -122,9 +120,7 @@ const menuList = [
 					</view>
 					<view class="menu_item_label">{{ item.label }}</view>
 					<view class="menu_item_note">{{ item.note }}</view>
-					<view class="menu_item_more icon-container">
-						<uni-icons type="forward" size="28rpx" color="#AAAAAA"></uni-icons>
-					</view>
+					<view class="menu_item_more iconfont icon-more"></view>
 				</view>
 			</view>
 		</view>
@@ -337,6 +333,11 @@ const menuList = [
 
 			&_note {
 				margin-left: auto;
+				font-size: 28rpx;
+				color: #999999;
+			}
+
+			&_more {
 				font-size: 28rpx;
 				color: #999999;
 			}

@@ -89,6 +89,7 @@ const payMethodList = [
 					<view class="delivery-method">配送方式</view>
 					<view class="delivery-cost">快递运费 ￥28.88</view>
 				</view>
+				<view class="edit-address iconfont icon-edit"></view>
 			</view>
 
 			<!-- 商品列表 -->
@@ -151,9 +152,7 @@ const payMethodList = [
 						<view class="order_discount_item_label">优惠券</view>
 						<view class="order_discount_item_price">-￥{{ formatPrice(0) }}</view>
 						<view class="order_discount_item_more">
-							<view class="icon-container">
-								<uni-icons type="forward" size="28rpx" color="#AAAAAA"></uni-icons>
-							</view>
+							<view class="iconfont icon-more"></view>
 						</view>
 					</view>
 					<view class="order_discount_item">
@@ -200,6 +199,7 @@ const payMethodList = [
 	}
 
 	.address-container {
+		position: relative;
 		padding: 40rpx;
 
 		.base-address {
@@ -227,6 +227,14 @@ const payMethodList = [
 			align-items: center;
 			font-size: 32rpx;
 			color: #666666;
+		}
+
+		.edit-address {
+			position: absolute;
+			top: 40rpx;
+			right: 40rpx;
+			font-size: 42rpx;
+			color: #aaaaaa;
 		}
 	}
 
@@ -315,8 +323,9 @@ const payMethodList = [
 				}
 
 				&_more {
-					margin-left: 10rpx;
+					margin-left: 5rpx;
 					width: 10rpx;
+					color: #aaaaaa;
 				}
 			}
 		}

@@ -6,6 +6,20 @@
   "description": "",
   "glyphs": [
     {
+      "icon_id": "17427356",
+      "name": "edit",
+      "font_class": "edit",
+      "unicode": "e61d",
+      "unicode_decimal": 58909
+    },
+    {
+      "icon_id": "10146946",
+      "name": "更多",
+      "font_class": "more",
+      "unicode": "e606",
+      "unicode_decimal": 58886
+    },
+    {
       "icon_id": "20009240",
       "name": "包裹",
       "font_class": "package",

@@ -43,9 +43,7 @@ const checkDetail = (id) => {
 				</swiper-item>
 			</swiper>
 		</view>
-		<view class="scroll-notice_suffix icon-container">
-			<uni-icons type="forward" color="#888888" size="32rpx"></uni-icons>
-		</view>
+		<view class="scroll-notice_suffix iconfont icon-more"></view>
 	</view>
 </template>
 
@@ -85,9 +83,10 @@ const checkDetail = (id) => {
 		}
 	}
 
-	&_subfix {
+	&_suffix {
 		flex-shrink: 0;
-		width: 80rpx;
+		font-size: 32rpx;
+		color: #333333;
 	}
 }
 </style>
