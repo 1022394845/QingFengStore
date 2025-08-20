@@ -7,6 +7,7 @@ import DotLoading from '@/components/DotLoading.vue'
 import { settleBarHeight_px, tabBarHeight_px } from '@/utils/system'
 import { formatPrice } from '@/utils/format.js'
 import { debounce } from '@/utils/common.js'
+import { routerTo } from '@/utils/router'
 
 const cartStore = useCartStore()
 
@@ -27,6 +28,11 @@ const updateQuantity = debounce((item, quantity) => {
 	const { errCode, errMsg } = cartStore.update(item.goods_id, item.sku._id, quantity)
 	if (errCode !== 0) return showMsg(errMsg || '更新商品购买数量失败')
 }, 1000)
+
+// 订单结算
+const onCheck = () => {
+	routerTo(`/pages/order/order`)
+}
 </script>
 
 <template>
@@ -80,7 +86,7 @@ const updateQuantity = debounce((item, quantity) => {
 					</view>
 				</view>
 
-				<view class="shop-bar_settle-btn">结算</view>
+				<view class="shop-bar_settle-btn" @click="onCheck">结算</view>
 			</view>
 		</template>
 
