@@ -1,7 +1,6 @@
 <script setup>
-import { routerTo } from '@/utils/router'
-import CommonNavBar from '@/components/CommonNavBar.vue'
-import { containerHeight, tabBarHeight } from '@/utils/system'
+import { routerTo } from '@/utils/router.js'
+import { containerHeight, tabBarHeight } from '@/utils/system.js'
 
 const wrapperHeight_px = `${containerHeight - tabBarHeight}px`
 
@@ -12,7 +11,7 @@ const userMenuList = [
 		note: '积分+1'
 	},
 	{
-		icon: 'icon-zijin',
+		icon: 'icon-point',
 		label: '我的积分',
 		note: '当前3258分'
 	},
@@ -29,19 +28,19 @@ const orderMenuList = [
 		label: '待付款'
 	},
 	{
-		icon: 'icon-product',
+		icon: 'icon-package',
 		label: '待发货'
 	},
 	{
-		icon: 'icon-landtransportation',
+		icon: 'icon-transportation',
 		label: '运输中'
 	},
 	{
-		icon: 'icon-Newuserzone',
+		icon: 'icon-bag',
 		label: '待收货'
 	},
 	{
-		icon: 'icon-tuishuirongzi',
+		icon: 'icon-refund-fill',
 		label: '售后/退款'
 	}
 ]
@@ -53,7 +52,7 @@ const menuList = [
 		note: '已签到10天'
 	},
 	{
-		icon: 'icon-Newuserzone-fill',
+		icon: 'icon-gift-fill',
 		label: '抽奖记录',
 		note: '已参与3次'
 	},
@@ -72,7 +71,7 @@ const menuList = [
 
 <template>
 	<view class="container">
-		<CommonNavBar title="我的" titleColor="#ffffff"></CommonNavBar>
+		<common-nav-bar title="我的" titleColor="#ffffff"></common-nav-bar>
 		<view class="wrapper">
 			<view class="user">
 				<view class="user_info">
@@ -217,11 +216,12 @@ const menuList = [
 				text-align: center;
 
 				&_icon .iconfont {
-					font-size: 70rpx;
+					font-size: 50rpx;
 					color: $uni-color-primary;
 				}
 
 				&_label {
+					margin-top: 10rpx;
 					font-size: 28rpx;
 					font-weight: bold;
 				}
@@ -283,7 +283,7 @@ const menuList = [
 					position: relative;
 
 					.iconfont {
-						font-size: 52rpx;
+						font-size: 48rpx;
 						color: #000000;
 					}
 
@@ -326,12 +326,12 @@ const menuList = [
 			}
 
 			&_icon .iconfont {
-				font-size: 42rpx;
+				font-size: 36rpx;
 				color: $uni-color-primary;
 			}
 
 			&_label {
-				margin-left: 10rpx;
+				margin-left: 15rpx;
 				font-size: 32rpx;
 			}
 

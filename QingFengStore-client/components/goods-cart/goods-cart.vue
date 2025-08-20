@@ -1,6 +1,5 @@
 <script setup>
-import { useCartStore } from '@/store/cart'
-import GoodsCard from '@/components/GoodsCard.vue'
+import { useCartStore } from '@/store/cart.js'
 import { debounce, showMsg } from '@/utils/common.js'
 import { routerTo } from '@/utils/router.js'
 
@@ -37,13 +36,13 @@ const updateQuantity = debounce((item, quantity) => {
 				v-for="item in cartStore.localCart"
 				:key="`${item.goods_id}_${item.sku._id}`"
 			>
-				<GoodsCard
+				<goods-card
 					:detail="item"
 					:sku="item.sku"
 					:config="2"
 					@overMinus="onConfirmRemove(item)"
 					@updateQuantity="(quantity) => updateQuantity(item, quantity)"
-				></GoodsCard>
+				></goods-card>
 			</view>
 			<view class="goods-cart_list_item nomore" v-if="!cartStore.selectedTotal">购物车是空的</view>
 		</scroll-view>

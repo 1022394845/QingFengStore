@@ -1,5 +1,4 @@
 <script setup>
-import DotLoading from '@/components/DotLoading.vue'
 import { routerTo } from '@/utils/router.js'
 import { formatPrice } from '@/utils/format.js'
 
@@ -32,7 +31,7 @@ const checkDetail = () => {
 			<view class="goods-info-card_info_title ellipsis" v-if="detail.name">
 				{{ detail.name }}
 			</view>
-			<DotLoading v-else>商品加载中</DotLoading>
+			<dot-loading v-else>商品加载中</dot-loading>
 			<view class="goods-info-card_info_price" v-if="detail._id">
 				<view class="goods-info-card_info_price_new">
 					<view class="goods-info-card_info_price_new_unit">￥</view>

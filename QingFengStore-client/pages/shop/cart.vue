@@ -1,13 +1,10 @@
 <script setup>
 import { onLoad } from '@dcloudio/uni-app'
-import { useCartStore } from '@/store/cart'
-import GoodsCard from '@/components/GoodsCard.vue'
-import CommonNavBar from '@/components/CommonNavBar.vue'
-import DotLoading from '@/components/DotLoading.vue'
-import { settleBarHeight_px, tabBarHeight_px } from '@/utils/system'
+import { useCartStore } from '@/store/cart.js'
+import { settleBarHeight_px, tabBarHeight_px } from '@/utils/system.js'
 import { formatPrice } from '@/utils/format.js'
 import { debounce } from '@/utils/common.js'
-import { routerTo } from '@/utils/router'
+import { routerTo } from '@/utils/router.js'
 
 const cartStore = useCartStore()
 
@@ -37,7 +34,7 @@ const onCheck = () => {
 
 <template>
 	<view class="container">
-		<CommonNavBar title="购物车" titleColor="#ffffff"></CommonNavBar>
+		<common-nav-bar title="购物车" titleColor="#ffffff"></common-nav-bar>
 		<template v-if="cartStore.localCart.length">
 			<scroll-view class="goods-list" scroll-y>
 				<view
@@ -55,12 +52,12 @@ const onCheck = () => {
 					>
 						<uv-checkbox activeColor="#bdaf8d" :name="true"></uv-checkbox>
 					</uv-checkbox-group>
-					<GoodsCard
+					<goods-card
 						:detail="item"
 						:sku="item.sku"
 						:config="2"
 						@updateQuantity="(quantity) => updateQuantity(item, quantity)"
-					></GoodsCard>
+					></goods-card>
 				</view>
 			</scroll-view>
 
@@ -92,7 +89,7 @@ const onCheck = () => {
 
 		<view class="empty" v-else>
 			<template v-if="cartStore.isIniting">
-				<DotLoading>加载中</DotLoading>
+				<dot-loading>加载中</dot-loading>
 			</template>
 			<template v-else>购物车为空</template>
 		</view>
@@ -163,13 +160,13 @@ const onCheck = () => {
 	}
 
 	&_settle-btn {
-		width: 160rpx;
+		width: 180rpx;
 		height: 65rpx;
 		display: flex;
 		justify-content: center;
 		align-items: center;
 		color: #ffffff;
-		border-radius: 10rpx;
+		border-radius: 20rpx;
 		background-color: $uni-color-primary;
 	}
 }

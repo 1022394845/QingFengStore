@@ -1,7 +1,7 @@
 <script setup>
-import { showMsg } from '@/utils/common'
-import { useCartStore } from '@/store/cart'
-import { platform, safeareaHeight, safeareaHeight_px } from '@/utils/system'
+import { showMsg } from '@/utils/common.js'
+import { useCartStore } from '@/store/cart.js'
+import { platform, safeareaHeight, safeareaHeight_px } from '@/utils/system.js'
 
 const shopBarHeight_px = `${safeareaHeight + uni.rpx2px(100)}px`
 
@@ -56,10 +56,10 @@ const openCart = () => {
 <style scoped lang="scss">
 .common-shop-bar {
 	position: fixed;
-	bottom: 0;
+	bottom: v-bind(safeareaHeight_px);
 	width: 100%;
 	height: v-bind(shopBarHeight_px);
-	padding: 0 26rpx v-bind(safeareaHeight_px) 48rpx;
+	padding: 0 26rpx 0 48rpx;
 	display: flex;
 	gap: 40rpx;
 	align-items: center;

@@ -1,11 +1,6 @@
 <script setup>
 import { onReady } from '@dcloudio/uni-app'
 import { onMounted, ref } from 'vue'
-import CommonNavBar from '@/components/CommonNavBar.vue'
-import CommonSearch from '@/components/CommonSearch.vue'
-import ScrollNotice from '@/components/ScrollNotice.vue'
-import CommonTitle from '@/components/CommonTitle.vue'
-import GoodsInfoCard from '@/components/GoodsInfoCard.vue'
 import { observeElement, showMsg } from '@/utils/common.js'
 import { routerTo } from '@/utils/router.js'
 const newsCloudObj = uniCloud.importObject('client-news', { customUI: true })
@@ -15,28 +10,28 @@ const goodsCloudObj = uniCloud.importObject('client-goods', { customUI: true })
 const menuList = ref([
 	{
 		label: '我的积分',
-		icon: 'icon-jifen',
+		icon: 'icon-point-fill',
 		color: '#6470E8',
 		bgc1: '#CBD6FC',
 		bgc2: '#EDEFFD'
 	},
 	{
 		label: '购物商城',
-		icon: 'icon-caigou',
+		icon: 'icon-cart-fill',
 		color: '#EF807A',
 		bgc1: '#FADAD2',
 		bgc2: '#FFF6F5'
 	},
 	{
 		label: '商家地图',
-		icon: 'icon-dianpu1',
+		icon: 'icon-shop-fill',
 		color: '#79AA9C',
 		bgc1: '#D3F2EE',
 		bgc2: '#EDF7F7'
 	},
 	{
 		label: '我要合作',
-		icon: 'icon-hezuoguanxi',
+		icon: 'icon-cooperation-fill',
 		color: '#45C2D3',
 		bgc1: '#A4F2FD',
 		bgc2: '#ECFBFD'
@@ -83,11 +78,11 @@ onReady(() => {
 
 <template>
 	<view class="container">
-		<CommonNavBar title="清风商城" titleColor="#ffffff"></CommonNavBar>
-		<CommonSearch
+		<common-nav-bar title="清风商城" titleColor="#ffffff"></common-nav-bar>
+		<common-search
 			placeholder="请输入商品名称"
 			@search="(newKeyword) => onSearch(newKeyword)"
-		></CommonSearch>
+		></common-search>
 		<view class="wrapper">
 			<!-- 轮播图 -->
 			<view class="banner">
@@ -110,7 +105,7 @@ onReady(() => {
 				</swiper>
 			</view>
 			<!-- 公告 -->
-			<ScrollNotice :list="noticeList"></ScrollNotice>
+			<scroll-notice :list="noticeList"></scroll-notice>
 			<!-- 菜单 -->
 			<view class="menu">
 				<view
@@ -134,9 +129,9 @@ onReady(() => {
 			</view>
 			<!-- 产品 -->
 			<view class="hot">
-				<CommonTitle name="热销产品"></CommonTitle>
+				<common-title name="热销产品"></common-title>
 				<view class="hot_list">
-					<GoodsInfoCard v-for="item in hotList" :key="item._id" :detail="item"></GoodsInfoCard>
+					<goods-info-card v-for="item in hotList" :key="item._id" :detail="item"></goods-info-card>
 				</view>
 			</view>
 		</view>
@@ -182,7 +177,7 @@ onReady(() => {
 			border-radius: 50%;
 
 			.iconfont {
-				font-size: 70rpx;
+				font-size: 60rpx;
 			}
 		}
 

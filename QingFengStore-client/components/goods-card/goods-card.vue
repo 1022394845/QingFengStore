@@ -1,10 +1,8 @@
 <script setup>
-import NumberBox from '@/components/NumberBox.vue'
-import DotLoading from '@/components/DotLoading.vue'
 import { computed } from 'vue'
 import { formatPrice } from '@/utils/format.js'
-import { routerTo } from '@/utils/router'
-import { showMsg } from '@/utils/common'
+import { routerTo } from '@/utils/router.js'
+import { showMsg } from '@/utils/common.js'
 
 const props = defineProps({
 	detail: {
@@ -17,7 +15,7 @@ const props = defineProps({
 		default: {}
 	},
 	config: {
-		// 0-商城列表 1-规格选择 2-购物车列表
+		// 0-商城列表 1-规格选择 2-购物车列表 3-订单列表
 		type: Number,
 		default: 0
 	}
@@ -25,7 +23,7 @@ const props = defineProps({
 const emits = defineEmits(['onSelectBuy', 'overMinus', 'updateQuantity'])
 
 const goods_id = computed(() => {
-	if (props.config === 2) return props.detail.goods_id
+	if ([2, 3].includes(props.config)) return props.detail.goods_id
 	else return props.detail._id
 })
 const info = computed(() => ({ ...props.detail, ...props.sku }))
@@ -66,8 +64,11 @@ const checkDetail = () => {
 		<view class="goods-card_info">
 			<view class="goods-card_info_top">
 				<view class="goods-card_info_top_title ellipsis" v-if="info.name">{{ info.name }}</view>
-				<DotLoading v-else>商品加载中</DotLoading>
-				<view class="goods-card_info_top_sku-tag ellipsis" v-if="config === 2 && info.sku_name">
+				<dot-loading v-else>商品加载中</dot-loading>
+				<view
+					class="goods-card_info_top_sku-tag ellipsis"
+					v-if="[2, 3].includes(config) && info.sku_name"
+				>
 					{{ info.sku_name }}
 				</view>
 			</view>
@@ -86,19 +87,26 @@ const checkDetail = () => {
 					</view>
 				</view>
 				<view class="goods-card_info_bottom_right">
-					<view
-						class="goods-card_info_bottom_right_buy"
-						v-if="[0].includes(config)"
-						@click.stop="onSelectBuy"
-					>
-						选购
-					</view>
-					<NumberBox
-						v-if="[2].includes(config)"
-						v-model="detail.quantity"
-						@overMinus="overMinus"
-						@update="(value) => updateQuantity(value)"
-					></NumberBox>
+					<!-- 选购按钮 -->
+					<template v-if="[0].includes(config)">
+						<view class="goods-card_info_bottom_right_buy" @click.stop="onSelectBuy">选购</view>
+					</template>
+
+					<!-- 购买数量步进器 -->
+					<template v-if="[2].includes(config)">
+						<number-box
+							v-model="detail.quantity"
+							@overMinus="overMinus"
+							@update="(value) => updateQuantity(value)"
+						></number-box>
+					</template>
+
+					<!-- 购买数量 -->
+					<template v-if="[3].includes(config)">
+						<view class="goods-card_info_bottom_right_quantity" v-if="detail.quantity">
+							×{{ detail.quantity }}
+						</view>
+					</template>
 				</view>
 			</view>
 		</view>
@@ -183,6 +191,11 @@ const checkDetail = () => {
 					color: #ffffff;
 					background-color: $uni-color-primary;
 					border-radius: 20rpx;
+				}
+
+				&_quantity {
+					font-size: 26rpx;
+					color: #666666;
 				}
 			}
 		}

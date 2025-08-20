@@ -1,7 +1,4 @@
 <script setup>
-import CommonNavBar from '@/components/CommonNavBar.vue'
-import CommonSearch from '@/components/CommonSearch.vue'
-import GoodsInfoCard from '@/components/GoodsInfoCard.vue'
 import { ref } from 'vue'
 import { onLoad } from '@dcloudio/uni-app'
 import { showMsg } from '@/utils/common.js'
@@ -30,15 +27,15 @@ const onSearch = async (newKeyword) => {
 
 <template>
 	<view class="container">
-		<CommonNavBar title="搜索" titleColor="#ffffff"></CommonNavBar>
-		<CommonSearch
+		<common-nav-bar title="搜索" titleColor="#ffffff"></common-nav-bar>
+		<common-search
 			v-model.trim="keyword"
 			placeholder="请输入商品名称"
 			@search="(newKeyword) => onSearch(newKeyword)"
-		></CommonSearch>
+		></common-search>
 		<view class="wrapper">
 			<view class="search-list">
-				<GoodsInfoCard v-for="item in goodsList" :key="item._id" :detail="item"></GoodsInfoCard>
+				<goods-info-card v-for="item in goodsList" :key="item._id" :detail="item"></goods-info-card>
 			</view>
 		</view>
 	</view>

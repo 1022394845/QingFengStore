@@ -1,5 +1,5 @@
 <script setup>
-import { routerTo } from '../utils/router'
+import { routerTo } from '@/utils/router.js'
 
 defineOptions({
 	options: {

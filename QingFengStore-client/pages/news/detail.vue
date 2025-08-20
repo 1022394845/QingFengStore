@@ -1,5 +1,4 @@
 <script setup>
-import CommonNavBar from '@/components/CommonNavBar.vue'
 import dayjs from 'dayjs'
 import { getCurrentInstance, nextTick, onMounted, ref } from 'vue'
 import { onLoad } from '@dcloudio/uni-app'
@@ -38,7 +37,7 @@ onMounted(() => {
 
 <template>
 	<view class="container">
-		<CommonNavBar title="资讯详情" titleColor="#ffffff" :canBack="true"></CommonNavBar>
+		<common-nav-bar title="资讯详情" titleColor="#ffffff" :canBack="true"></common-nav-bar>
 		<view class="wrapper" v-if="detail._id">
 			<view class="news_title">
 				{{ detail.title }}

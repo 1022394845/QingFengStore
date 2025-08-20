@@ -1,10 +1,8 @@
 <script setup>
 import { computed, ref, watch } from 'vue'
-import GoodsCard from '@/components/GoodsCard.vue'
-import NumberBox from '@/components/NumberBox.vue'
-import { useCartStore } from '@/store/cart'
-import { isLogin, showMsg } from '@/utils/common'
-import { needLogin } from '@/utils/router'
+import { useCartStore } from '@/store/cart.js'
+import { isLogin, showMsg } from '@/utils/common.js'
+import { needLogin } from '@/utils/router.js'
 
 const props = defineProps({
 	detail: {
@@ -85,7 +83,7 @@ const onBuy = () => {
 
 <template>
 	<view class="goods-sku-container">
-		<GoodsCard :detail="detail" :sku="currentSku" :config="1"></GoodsCard>
+		<goods-card :detail="detail" :sku="currentSku" :config="1"></goods-card>
 		<!-- SKU列表 -->
 		<view class="goods-sku">
 			<view class="goods-sku_label label">规格</view>
@@ -107,7 +105,7 @@ const onBuy = () => {
 		<!-- 步进器 -->
 		<view class="goods-count">
 			<view class="goods-count_label label">数量</view>
-			<NumberBox v-model="count"></NumberBox>
+			<number-box v-model="count"></number-box>
 		</view>
 		<!-- 操作 -->
 		<view class="goods-btn-group">

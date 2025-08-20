@@ -10,12 +10,7 @@ import {
 } from '@/utils/system.js'
 import { formatPrice } from '@/utils/format.js'
 import { nextTick, onMounted, ref } from 'vue'
-import CommonNavBar from '@/components/CommonNavBar.vue'
-import CommonSearch from '@/components/CommonSearch.vue'
-import GoodsCard from '@/components/GoodsCard.vue'
-import GoodsSKU from '@/components/GoodsSKU.vue'
-import GoodsCart from '@/components/GoodsCart.vue'
-import { useCartStore } from '@/store/cart'
+import { useCartStore } from '@/store/cart.js'
 import { needLogin, routerTo } from '@/utils/router.js'
 import { isLogin, observeElement, showMsg } from '@/utils/common.js'
 const goodsCloudObj = uniCloud.importObject('client-goods', { customUI: true })
@@ -109,11 +104,11 @@ const onSearch = (newKeyword) => {
 
 <template>
 	<view class="container">
-		<CommonNavBar title="商城" titleColor="#ffffff"></CommonNavBar>
-		<CommonSearch
+		<common-nav-bar title="商城" titleColor="#ffffff"></common-nav-bar>
+		<common-search
 			placeholder="请输入商品名称"
 			@search="(newKeyword) => onSearch(newKeyword)"
-		></CommonSearch>
+		></common-search>
 		<view class="wrapper">
 			<uv-vtabs
 				:list="dataList"
@@ -144,17 +139,17 @@ const onSearch = (newKeyword) => {
 							<view class="group-title">{{ group.name }}</view>
 							<view class="group-list">
 								<template v-if="group.goods">
-									<GoodsCard
+									<goods-card
 										v-for="item in group.goods"
 										:key="item._id"
 										:detail="item"
 										:config="0"
 										@onSelectBuy="openSkuPop(item)"
-									></GoodsCard>
+									></goods-card>
 								</template>
 								<!-- 加载占位 -->
 								<template v-else>
-									<GoodsCard v-for="item in group.total" :key="item" :config="0"></GoodsCard>
+									<goods-card v-for="item in group.total" :key="item" :config="0"></goods-card>
 								</template>
 							</view>
 						</view>
@@ -184,17 +179,17 @@ const onSearch = (newKeyword) => {
 			<!-- SKU弹出框 -->
 			<uni-popup ref="skuPopRef" type="bottom" :safe-area="false">
 				<view class="sku-popup_container">
-					<GoodsSKU
+					<goods-sku
 						v-model="currentSkuId"
 						:detail="currentGoodsDetail"
 						@close="closeSkuPop"
-					></GoodsSKU>
+					></goods-sku>
 				</view>
 			</uni-popup>
 			<!-- 购物车弹出框 -->
 			<uni-popup ref="cartPopRef" type="bottom" :safe-area="false">
 				<view class="cart-popup_container">
-					<GoodsCart></GoodsCart>
+					<goods-cart></goods-cart>
 				</view>
 			</uni-popup>
 		</view>

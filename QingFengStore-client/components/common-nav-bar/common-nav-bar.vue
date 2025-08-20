@@ -1,5 +1,5 @@
 <script setup>
-import { routerBack, routerTo } from '@/utils/router'
+import { routerBack, routerTo } from '@/utils/router.js'
 import { statusBarHeight_px, titleBarHeight_px, navBarHeight_px } from '@/utils/system.js'
 
 const props = defineProps({

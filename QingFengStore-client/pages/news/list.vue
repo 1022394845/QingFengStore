@@ -1,7 +1,6 @@
 <script setup>
-import CommonNavBar from '@/components/CommonNavBar.vue'
 import dayjs from 'dayjs'
-import { routerTo } from '@/utils/router'
+import { routerTo } from '@/utils/router.js'
 import { onMounted, ref } from 'vue'
 const newsCloudObj = uniCloud.importObject('client-news', { customUI: true })
 
@@ -23,7 +22,7 @@ const loadNewsList = async (page, pageSize) => {
 	<view class="container">
 		<z-paging ref="pagingRef" v-model="newsList" :default-page-size="9" @query="loadNewsList">
 			<template #top>
-				<CommonNavBar title="资讯" titleColor="#ffffff"></CommonNavBar>
+				<common-nav-bar title="资讯" titleColor="#ffffff"></common-nav-bar>
 			</template>
 
 			<template #loading>

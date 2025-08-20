@@ -1,13 +1,9 @@
 <script setup>
-import CommonNavBar from '@/components/CommonNavBar.vue'
-import CommonShopBar from '@/components/CommonShopBar.vue'
-import GoodsSKU from '@/components/GoodsSKU.vue'
-import GoodsCart from '@/components/GoodsCart.vue'
 import { onLoad } from '@dcloudio/uni-app'
 import { computed, onMounted, ref } from 'vue'
-import { formatPrice } from '@/utils/format'
-import { safeareaHeight, shopBarHeight } from '@/utils/system'
-import { showMsg } from '@/utils/common'
+import { formatPrice } from '@/utils/format.js'
+import { safeareaHeight, shopBarHeight } from '@/utils/system.js'
+import { showMsg } from '@/utils/common.js'
 const goodsCloudObj = uniCloud.importObject('client-goods', { customUI: true })
 
 const detailHeight_px = `${safeareaHeight + shopBarHeight + uni.rpx2px(30)}px`
@@ -70,7 +66,7 @@ const closeCartPop = () => {
 
 <template>
 	<view class="container">
-		<CommonNavBar title="商品详情" titleColor="#ffffff" :canBack="true"></CommonNavBar>
+		<common-nav-bar title="商品详情" titleColor="#ffffff" :canBack="true"></common-nav-bar>
 		<view class="wrapper">
 			<!-- 轮播图 -->
 			<view v-if="detail.goods_banner_imgs && detail.goods_banner_imgs.length" class="banner">
@@ -133,17 +129,17 @@ const closeCartPop = () => {
 			</view>
 		</view>
 		<!-- 操作栏 -->
-		<CommonShopBar @openSku="openSkuPop" @openCart="openCartPop"></CommonShopBar>
+		<common-shop-bar @openSku="openSkuPop" @openCart="openCartPop"></common-shop-bar>
 		<!-- SKU弹出框 -->
 		<uni-popup ref="skuPopRef" type="bottom" :safe-area="false">
 			<view class="sku-popup_container">
-				<GoodsSKU v-model="currentSkuId" :detail="detail" @close="closeSkuPop"></GoodsSKU>
+				<goods-sku v-model="currentSkuId" :detail="detail" @close="closeSkuPop"></goods-sku>
 			</view>
 		</uni-popup>
 		<!-- 购物车弹出框 -->
 		<uni-popup ref="cartPopRef" type="bottom" :safe-area="false">
 			<view class="cart-popup_container">
-				<GoodsCart></GoodsCart>
+				<goods-cart></goods-cart>
 			</view>
 		</uni-popup>
 	</view>
