@@ -54,44 +54,40 @@ export const useCartStore = defineStore('cart', () => {
 
 		const local = JSON.parse(localStorage.getItem(STORAGE_KEY)) // 本地数据
 
-		if (
-			local.user_id === uid &&
-			local.update_date &&
-			Array.isArray(local.data) &&
-			local.data.length
-		) {
+		if (local && local.user_id === uid && local.update_date && Array.isArray(local.data)) {
 			// 本地数据有效
 			if (cloud && cloud.update_date && cloud.update_date > local.update_date) {
 				// 云端数据最新
 				localCart.value = cloud.data
-				saveLocalCart() // 强制覆盖本地数据
+				saveLocalCart(cloud.update_date) // 强制覆盖本地数据
 			} else {
 				// 本地数据最新
 				localCart.value = local.data
 				localUpdateDate = local.update_date
-				if (cloud.update_date < local.update_date) needSync = true // 开启需要同步标志
+				if (!cloud || cloud.update_date < local.update_date) needSync = true // 开启需要同步标志
 			}
 		} else {
 			// 本地数据无效，直接使用云端数据
 			if (cloud && cloud.data) {
 				localCart.value = cloud.data
-				saveLocalCart() // 强制覆盖本地数据
+				saveLocalCart(cloud.update_date) // 强制覆盖本地数据
 			}
 		}
 	}
 
 	/**
 	 * 保存购物车数据至本地
+	 * @param {number} [cloudUpdateDate] 云端数据更新时间
 	 */
-	const saveLocalCart = () => {
+	const saveLocalCart = (cloudUpdateDate = null) => {
 		const cartData = {
 			data: localCart.value,
-			update_date: Date.now(),
+			update_date: cloudUpdateDate ? cloudUpdateDate : Date.now(),
 			user_id: uid
 		}
 		localUpdateDate = cartData.update_date
 		localStorage.setItem(STORAGE_KEY, JSON.stringify(cartData))
-		needSync = true // 开启需要同步标志
+		if (!cloudUpdateDate) needSync = true // 开启需要同步标志
 	}
 
 	/**
@@ -228,14 +224,11 @@ export const useCartStore = defineStore('cart', () => {
 				// 购物车中已有相同商品 累加数量
 				target.quantity += quantity
 			} else {
-				const { uid } = uniCloud.getCurrentUserInfo()
-
 				localCart.value.unshift({
 					...data,
 					is_selected: true, // 默认选中
 					create_date: Date.now(),
-					update_date: Date.now(),
-					user_id: uid
+					update_date: Date.now()
 				})
 			}
 

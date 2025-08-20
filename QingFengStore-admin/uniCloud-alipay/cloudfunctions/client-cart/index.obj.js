@@ -43,7 +43,7 @@ module.exports = {
 	 * 更新用户购物车列表
 	 * @param {string} user_id 用户id
 	 * @param {object[]} cartList 购物车列表
-	 * @param {} [localUpdateDate] 本地修改时间
+	 * @param {number} localUpdateDate 本地修改时间
 	 * @returns {number} updated 成功修改个数(无变化为0)
 	 */
 	async update(user_id, cartData, localUpdateDate) {
