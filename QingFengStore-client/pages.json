@@ -140,6 +140,13 @@
 				"navigationBarTitleText": "购物车",
 				"navigationStyle": "custom"
 			}
+		},
+		{
+			"path" : "pages/order/order",
+			"style" : 
+			{
+				"navigationBarTitleText" : "确认订单"
+			}
 		}
 	],
 	"globalStyle": {

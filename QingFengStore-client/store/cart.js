@@ -48,29 +48,27 @@ export const useCartStore = defineStore('cart', () => {
 	 * 加载购物车数据
 	 */
 	const loadCartData = async () => {
-		const { errCode, errMsg, data: cloud } = await cartCloudObj.list(uid) // 云端数据
-		// 获取云端数据失败
-		if (errCode !== 0) return
-
 		const local = JSON.parse(localStorage.getItem(STORAGE_KEY)) // 本地数据
-
-		if (local && local.user_id === uid && local.update_date && Array.isArray(local.data)) {
+		if (
+			local &&
+			local.user_id &&
+			local.user_id === uid &&
+			local.update_date &&
+			Array.isArray(local.data)
+		) {
 			// 本地数据有效
-			if (cloud && cloud.update_date && cloud.update_date > local.update_date) {
-				// 云端数据最新
-				localCart.value = cloud.data
-				saveLocalCart(cloud.update_date) // 强制覆盖本地数据
-			} else {
-				// 本地数据最新
-				localCart.value = local.data
-				localUpdateDate = local.update_date
-				if (!cloud || cloud.update_date < local.update_date) needSync = true // 开启需要同步标志
-			}
+			localCart.value = local.data
+			localUpdateDate = local.update_date
+			return
 		} else {
-			// 本地数据无效，直接使用云端数据
-			if (cloud && cloud.data) {
+			// 本地数据无效 获取云端数据
+			const { errCode, errMsg, data: cloud } = await cartCloudObj.list(uid) // 云端数据
+			if (errCode !== 0) return // 获取云端数据失败
+
+			if (cloud && cloud.update_date && cloud.data) {
+				// 云端数据有效
 				localCart.value = cloud.data
-				saveLocalCart(cloud.update_date) // 强制覆盖本地数据
+				saveLocalCart(cloud.update_date) // 强制覆盖本地数据 并不重新同步
 			}
 		}
 	}
