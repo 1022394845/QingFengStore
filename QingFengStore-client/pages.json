@@ -147,6 +147,13 @@
 			{
 				"navigationBarTitleText" : "确认订单"
 			}
+		},
+		{
+			"path" : "pages/order/address",
+			"style" : 
+			{
+				"navigationBarTitleText" : "收货地址"
+			}
 		}
 	],
 	"globalStyle": {

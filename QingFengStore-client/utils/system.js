@@ -34,8 +34,12 @@ export const navBarHeight_px = `${navBarHeight}px`
 export const searchHeight = uni.rpx2px(100)
 export const searchHeight_px = `${searchHeight}px`
 
+// 可使用的窗口高度 px
+export const windowHeight = SYSTEM_INFO.windowHeight
+export const windowHeight_px = `${windowHeight}px`
+
 // 视口容器高度 px
-export const containerHeight = SYSTEM_WINDOW_INFO.windowHeight - navBarHeight
+export const containerHeight = windowHeight - navBarHeight
 export const containerHeight_px = `${containerHeight}px`
 
 // 标签栏高度 px

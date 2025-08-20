@@ -6,6 +6,7 @@ import {
 	containerHeight
 } from '@/utils/system.js'
 import { formatPrice } from '@/utils/format.js'
+import { routerTo } from '@/utils/router.js'
 import { ref } from 'vue'
 
 const wrapperHeight_px = `${containerHeight - settleBarHeight}px`
@@ -89,7 +90,10 @@ const payMethodList = [
 					<view class="delivery-method">配送方式</view>
 					<view class="delivery-cost">快递运费 ￥28.88</view>
 				</view>
-				<view class="edit-address iconfont icon-edit"></view>
+				<view
+					class="edit-address iconfont icon-edit"
+					@click="routerTo('/pages/order/address')"
+				></view>
 			</view>
 
 			<!-- 商品列表 -->
@@ -266,6 +270,10 @@ const payMethodList = [
 			font-size: 32rpx;
 			color: #666666;
 
+			.iconfont {
+				font-size: 32rpx;
+			}
+
 			.note {
 				max-width: 250rpx;
 				margin-left: auto;
@@ -326,6 +334,10 @@ const payMethodList = [
 					margin-left: 5rpx;
 					width: 10rpx;
 					color: #aaaaaa;
+
+					.iconfont {
+						font-size: 30rpx;
+					}
 				}
 			}
 		}
