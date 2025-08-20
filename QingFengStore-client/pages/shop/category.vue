@@ -9,8 +9,7 @@ import {
 	settleBarHeight_px
 } from '@/utils/system.js'
 import { formatPrice } from '@/utils/format.js'
-import { onReady } from '@dcloudio/uni-app'
-import { getCurrentInstance, nextTick, onMounted, onUnmounted, ref } from 'vue'
+import { nextTick, onMounted, ref } from 'vue'
 import CommonNavBar from '@/components/CommonNavBar.vue'
 import CommonSearch from '@/components/CommonSearch.vue'
 import GoodsCard from '@/components/GoodsCard.vue'
@@ -18,9 +17,10 @@ import GoodsSKU from '@/components/GoodsSKU.vue'
 import GoodsCart from '@/components/GoodsCart.vue'
 import { useCartStore } from '@/store/cart'
 import { needLogin, routerTo } from '@/utils/router.js'
-import { isLogin, observeElement, showMsg, throttle } from '@/utils/common.js'
+import { isLogin, observeElement, showMsg } from '@/utils/common.js'
 const goodsCloudObj = uniCloud.importObject('client-goods', { customUI: true })
 
+const headerHeight_px = `${navBarHeight + searchHeight}px`
 const wrapperHeight_px = `${containerHeight - searchHeight - tabBarHeight - settleBarHeight}px`
 const popupBottom_px = `${tabBarHeight + uni.rpx2px(40)}px`
 
@@ -43,9 +43,7 @@ const getCategoryList = async () => {
 }
 onMounted(async () => {
 	await getCategoryList()
-	currentCategory.value = dataList.value[0]._id || ''
 	nextTick(() => {
-		getCategoryOffset()
 		registerObserver()
 	})
 })
@@ -70,41 +68,6 @@ const registerObserver = () => {
 		observeElement(selector, () => getCategoryGoods(item._id), true)
 	})
 }
-
-const currentCategory = ref('')
-const currentCategoryOffset = ref(0)
-const instance = getCurrentInstance()
-const getCategoryOffset = () => {
-	dataList.value.forEach((item, index) => {
-		const query = uni
-			.createSelectorQuery()
-			.in(instance)
-			.select(`#group-${item._id}`)
-			.boundingClientRect(({ top }) => {
-				item.top = top - navBarHeight - searchHeight
-			})
-			.exec()
-	})
-}
-
-let onChanging = false // 在手动切换时禁用滚动监测
-const onChangeCategory = (item) => {
-	onChanging = true
-	onScrollCategory.disableLastCall()
-	currentCategory.value = item._id
-	currentCategoryOffset.value = item.top
-	setTimeout(() => {
-		onChanging = false
-		onScrollCategory.enableLastCall()
-	}, 500)
-}
-
-const onScrollCategory = throttle((event) => {
-	if (onChanging) return
-	const scrollTop = event.detail.scrollTop
-	const result = dataList.value.filter((item) => item.top <= scrollTop + 1)
-	if (result.length) currentCategory.value = result[result.length - 1]._id
-})
 
 // SKU弹出框
 const skuPopRef = ref(null)
@@ -152,43 +115,53 @@ const onSearch = (newKeyword) => {
 			@search="(newKeyword) => onSearch(newKeyword)"
 		></CommonSearch>
 		<view class="wrapper">
-			<scroll-view class="aside" scroll-y>
-				<view
-					class="aside_item"
-					v-for="item in dataList"
-					:key="item._id"
-					:class="{ active: item._id === currentCategory }"
-					@click="onChangeCategory(item)"
-				>
-					{{ item.name }}
-				</view>
-			</scroll-view>
-			<scroll-view
-				class="main"
-				scroll-y
-				:scroll-top="currentCategoryOffset"
-				scroll-with-animation
-				@scroll="onScrollCategory"
+			<uv-vtabs
+				:list="dataList"
+				:hdHeight="headerHeight_px"
+				:height="wrapperHeight_px"
+				barWidth="200rpx"
+				:barItemStyle="{ fontSize: '32rpx', textAlign: 'center' }"
+				:barItemActiveStyle="{
+					fontSize: '32rpx',
+					textAlign: 'center',
+					color: '#bdaf8d',
+					fontWeight: 'bold'
+				}"
+				:barItemActiveLineStyle="{
+					background: '#bdaf8d',
+					height: '40%',
+					top: '50%',
+					transform: 'translateY(-50%)'
+				}"
+				:contentStyle="{
+					padding: '20rpx 24rpx',
+					boxSizing: 'border-box'
+				}"
 			>
-				<view class="group" v-for="group in dataList" :key="group._id" :id="`group-${group._id}`">
-					<view class="group_name">{{ group.name }}</view>
-					<view class="group_list">
-						<template v-if="group.goods">
-							<GoodsCard
-								v-for="item in group.goods"
-								:key="item._id"
-								:detail="item"
-								:config="0"
-								@onSelectBuy="openSkuPop(item)"
-							></GoodsCard>
-						</template>
-						<template v-else>
-							<GoodsCard v-for="item in group.total" :key="item" :config="0"></GoodsCard>
-						</template>
-					</view>
-				</view>
-				<view class="nomore">暂无更多</view>
-			</scroll-view>
+				<template v-for="group in dataList" :key="group._id">
+					<uv-vtabs-item :index="group._id">
+						<view class="group" :id="`group-${group._id}`">
+							<view class="group-title">{{ group.name }}</view>
+							<view class="group-list">
+								<template v-if="group.goods">
+									<GoodsCard
+										v-for="item in group.goods"
+										:key="item._id"
+										:detail="item"
+										:config="0"
+										@onSelectBuy="openSkuPop(item)"
+									></GoodsCard>
+								</template>
+								<!-- 加载占位 -->
+								<template v-else>
+									<GoodsCard v-for="item in group.total" :key="item" :config="0"></GoodsCard>
+								</template>
+							</view>
+						</view>
+					</uv-vtabs-item>
+				</template>
+			</uv-vtabs>
+
 			<!-- 结算栏 -->
 			<view class="settle-container">
 				<view class="settle-info">
@@ -230,78 +203,38 @@ const onSearch = (newKeyword) => {
 
 <style scoped lang="scss">
 .wrapper {
-	display: flex;
 	height: v-bind(wrapperHeight_px);
 
-	.aside {
-		flex-shrink: 0;
-		width: 200rpx;
-		height: 100%;
-		background-color: #f9f9f9;
+	.group {
+		height: fit-content;
+		padding-bottom: 40rpx;
 
-		&_item {
-			position: relative;
-			width: 100%;
-			height: 90rpx;
+		&:last-child {
+			padding-bottom: 0;
+		}
+
+		&-title {
+			margin-bottom: 10rpx;
+			background-color: #ffffff;
+			font-size: 30rpx;
+			color: #888888;
+		}
+
+		&-list {
 			display: flex;
-			justify-content: center;
-			align-items: center;
-			font-size: 32rpx;
-			color: #333333;
-
-			&.active {
-				font-weight: bold;
-				color: #000000;
-				background-color: #ffffff;
-
-				&::before {
-					content: '';
-					position: absolute;
-					left: 0;
-					top: 50%;
-					transform: translateY(-50%);
-					display: block;
-					width: 8rpx;
-					height: 28rpx;
-					background-color: $uni-color-primary;
-				}
-			}
+			flex-direction: column;
+			gap: 40rpx;
+			padding-bottom: 40rpx;
 		}
 	}
 
-	.main {
-		flex: 1;
-		height: 100%;
-
-		.group {
-			padding: 10rpx 24rpx;
-
-			&:nth-child(n + 2) {
-				margin-top: 40rpx;
-			}
-
-			&_name {
-				margin-bottom: 10rpx;
-				background-color: #ffffff;
-				font-size: 30rpx;
-				color: #888888;
-				z-index: 999;
-			}
-
-			&_list {
-				display: grid;
-				gap: 40rpx;
-			}
-		}
-
-		.nomore {
-			padding: 30rpx;
-			display: flex;
-			justify-content: center;
-			align-items: center;
-			font-size: 28rpx;
-			color: #888888;
-		}
+	.nomore {
+		padding: 30rpx;
+		display: flex;
+		justify-content: center;
+		align-items: center;
+		font-size: 28rpx;
+		color: #888888;
 	}
 
 	.settle-container {
