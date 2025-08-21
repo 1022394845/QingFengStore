@@ -44,6 +44,11 @@
 			"description": "区级编码",
 			"title": "区"
 		},
+		"region": {
+			"bsonType": "string",
+			"description": "省市区文字描述",
+			"title": "地区"
+		},
 		"detail": {
 			"bsonType": "string",
 			"description": "省市区后面的详细住址，包含街道小区房间号",

@@ -1,21 +1,19 @@
 <script setup>
 import { ref } from 'vue'
-import { windowHeight_px, safeareaHeight } from '@/utils/system.js'
+import { useAddressStore } from '@/store/address.js'
 
-const popupBottom_px = `${safeareaHeight + uni.rpx2px(40)}px`
+const addressStore = useAddressStore()
+addressStore.init()
 
 // 地址编辑框
-const addressPopRef = ref(null)
+const addressEditorRef = ref(null)
 /**
  * 开启地址编辑框
  * @param {object} [info] 编辑回显数据
  */
-const openAddressPop = (info = {}) => {
-	if (!addressPopRef.value) return
-	addressPopRef.value.open()
-}
-const closeAddressPop = () => {
-	addressPopRef.value.close()
+const openAddressPop = (info = null) => {
+	if (!addressEditorRef.value) return
+	addressEditorRef.value.open(info)
 }
 </script>
 
@@ -24,37 +22,44 @@ const closeAddressPop = () => {
 		<view class="wrapper">
 			<view class="header">
 				<view class="header_title">选择地址</view>
-				<view class="header_add-address" @click="openAddressPop">
+				<view class="header_add-address" @click="openAddressPop()">
 					<view class="iconfont icon-add"></view>
 					<view class="text">新增地址</view>
 				</view>
 			</view>
-			<view class="address-list">
-				<view class="address-list_item" v-for="item in 3" :key="item">
+
+			<view class="address-list" v-if="addressStore.addressList.length">
+				<view class="address-list_item" v-for="item in addressStore.addressList" :key="item._id">
 					<view class="address-list_item_info">
-						<view class="address-list_item_info_base-address">山东省 济南市 历下区</view>
-						<view class="address-list_item_info_detail-address">中铁会展中心2号楼5层530室</view>
-						<view class="address-list_item_info_contact">王五 18966665555</view>
+						<view class="address-list_item_info_base-address">{{ item.region }}</view>
+						<view class="address-list_item_info_detail-address">{{ item.detail }}</view>
+						<view class="address-list_item_info_contact">
+							{{ `${item.name}  ${item.phone}` }}
+						</view>
 					</view>
-					<view class="address-list_item_edit">
+					<view class="address-list_item_edit" @click="openAddressPop(item)">
 						<view class="iconfont icon-edit"></view>
 					</view>
 				</view>
 			</view>
-		</view>
-		<!-- 地址编辑弹出框 -->
-		<uni-popup ref="addressPopRef" type="bottom" :safe-area="false">
-			<view class="address-popup_container">
-				<address-editor @success="closeAddressPop"></address-editor>
+
+			<view class="empty" v-else>
+				<template v-if="addressStore.loading">
+					<dot-loading>加载中</dot-loading>
+				</template>
+				<template v-else>暂无地址</template>
 			</view>
-		</uni-popup>
+		</view>
+
+		<!-- 地址编辑弹出框 -->
+		<address-editor ref="addressEditorRef"></address-editor>
 	</view>
 </template>
 
 <style scoped lang="scss">
 .wrapper {
 	width: 100%;
-	height: v-bind(windowHeight_px);
+	min-height: calc(100vh - 44px);
 	padding: 40rpx;
 	background-color: #f3f4f6;
 
@@ -124,10 +129,12 @@ const closeAddressPop = () => {
 	}
 }
 
-.address-popup_container {
-	min-height: 300rpx;
-	padding: 40rpx 60rpx v-bind(popupBottom_px);
-	background-color: #ffffff;
-	border-radius: 30rpx 30rpx 0 0;
+.empty {
+	position: absolute;
+	top: 50%;
+	left: 50%;
+	transform: translate(-50%, -50%);
+	font-size: 32rpx;
+	color: #333333;
 }
 </style>

@@ -3,10 +3,11 @@ import { computed, ref } from 'vue'
 const addressCloudObj = uniCloud.importObject('client-address')
 
 // 地址
-const useAddressStore = defineStore('address', () => {
+export const useAddressStore = defineStore('address', () => {
 	const addressList = ref([]) // 地址列表
 	const loading = ref(false) // 数据加载中
 	const uid = uniCloud.getCurrentUserInfo().uid || null
+	let isInitialized = false
 
 	// 默认地址
 	const defaultAddress = computed(
@@ -17,6 +18,8 @@ const useAddressStore = defineStore('address', () => {
 	 * 初始化获取数据
 	 */
 	const init = async () => {
+		if (loading.value || isInitialized) return { errCode: 0 }
+
 		try {
 			loading.value = true
 
@@ -25,8 +28,9 @@ const useAddressStore = defineStore('address', () => {
 
 			addressList.value = data
 			loading.value = false
+			isInitialized = true
 		} catch {
-			return { errCode: 0, errMsg: '获取地址信息失败' }
+			return { errCode: 500, errMsg: '获取地址信息失败' }
 		}
 	}
 
@@ -49,7 +53,7 @@ const useAddressStore = defineStore('address', () => {
 			const {
 				errCode,
 				errMsg,
-				data: { _id }
+				data: { id }
 			} = await addressCloudObj.add({ ...data, user_id: uid })
 			if (errCode !== 0) return { errCode, errMsg }
 
@@ -59,7 +63,7 @@ const useAddressStore = defineStore('address', () => {
 				if (target) target.default = false
 			}
 
-			addressList.value.unshift(data)
+			addressList.value.unshift({ ...data, _id: id })
 			loading.value = false
 
 			return { errCode, errMsg }
@@ -83,8 +87,8 @@ const useAddressStore = defineStore('address', () => {
 	 */
 	const update = async (data) => {
 		try {
-			const target = addressList.value.find((item) => item._id === data._id)
-			if (!target) throw new Error()
+			const targetIndex = addressList.value.findIndex((item) => item._id === data._id)
+			if (targetIndex === -1) throw new Error()
 
 			loading.value = true
 
@@ -93,11 +97,11 @@ const useAddressStore = defineStore('address', () => {
 
 			if (data.default && data._id !== defaultAddress.value._id) {
 				await addressCloudObj.update({ _id: defaultAddress.value._id, default: false })
-				const target = addressList.value.find((item) => item._id === defaultAddress.value._id)
-				if (target) target.default = false
+				const origin = addressList.value.find((item) => item.default === true)
+				if (origin) origin.default = false
 			}
 
-			target = data
+			addressList.value[targetIndex] = data
 			loading.value = false
 
 			return { errCode, errMsg }
@@ -128,5 +132,15 @@ const useAddressStore = defineStore('address', () => {
 		} catch {
 			return { errCode: 500, errMsg: '未知错误' }
 		}
+	}
+
+	return {
+		addressList,
+		loading,
+		defaultAddress,
+		init,
+		add,
+		update,
+		remove
 	}
 })

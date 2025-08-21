@@ -28,7 +28,8 @@ module.exports = {
 
 			if (errCode !== 0) return result({ errCode, errMsg: 'fail', type: '获取', custom: errMsg })
 			return result({ errCode: 0, errMsg: 'success', data, type: '获取' })
-		} catch {
+		} catch (err) {
+			console.log(err)
 			return defaultError
 		}
 	},

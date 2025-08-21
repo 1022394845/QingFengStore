@@ -7,7 +7,7 @@ const provinces = ref([]) // 省
 const citys = ref([]) // 市
 const areas = ref([]) // 区
 const pickerValue = ref([0, 0, 0])
-const defaultValue = [3442, 1, 2]
+const defaultValue = ['100', '110000', '110101'] // 北京 北京市 东城区
 const pickerRef = ref(null)
 
 const regionsList = computed(() => {
@@ -15,19 +15,21 @@ const regionsList = computed(() => {
 })
 
 // 设置默认地区
-const handlePickValueDefault = () => {
+const setPickerValue = (data) => {
 	if (!pickerRef.value) return
 
+	const target = data || defaultValue
+
 	// 设置省
-	pickerValue.value[0] = provinces.value.findIndex((item) => Number(item.id) === defaultValue[0])
+	pickerValue.value[0] = provinces.value.findIndex((item) => item.code === target[0])
 
 	// 设置市
 	citys.value = provinces.value[pickerValue.value[0]]?.children || []
-	pickerValue.value[1] = citys.value.findIndex((item) => Number(item.id) === defaultValue[1])
+	pickerValue.value[1] = citys.value.findIndex((item) => item.code === target[1])
 
 	// 设置区
 	areas.value = citys.value[pickerValue.value[1]]?.children || []
-	pickerValue.value[2] = areas.value.findIndex((item) => Number(item.id) === defaultValue[2])
+	pickerValue.value[2] = areas.value.findIndex((item) => item.code === target[2])
 
 	// 重置地区
 	pickerRef.value.setIndexs(
@@ -56,22 +58,25 @@ const change = throttle((e) => {
 // 初始化数据
 const init = () => {
 	provinces.value = regions.sort((left, right) => (Number(left.code) > Number(right.code) ? 1 : -1))
-	handlePickValueDefault()
+	setPickerValue()
 }
 init()
 
-// 打开选择器
-const open = () => {
+/**
+ * 打开选择器
+ * @param {array} [data] 编辑回显数据
+ */
+const open = (data = null) => {
 	if (!pickerRef.value) return showMsg('未知错误，请稍后再试')
+	setPickerValue(data)
 	pickerRef.value.open()
-	handlePickValueDefault()
 }
 defineExpose({ open })
 
 // 确认选择
 const emits = defineEmits(['confirm'])
 const confirm = (e) => {
-	const data = e.value.map((item) => ({ id: item.id, code: item.code, name: item.name }))
+	const data = e.value.map((item) => ({ code: item.code, name: item.name }))
 	emits('confirm', data)
 }
 </script>
