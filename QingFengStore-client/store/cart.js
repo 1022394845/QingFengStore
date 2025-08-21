@@ -40,7 +40,7 @@ export const useCartStore = defineStore('cart', () => {
 	 * 更新用户id
 	 */
 	const updateUserId = () => {
-		uid = uniCloud.getCurrentUserInfo()?.uid || null
+		uid = uniCloud.getCurrentUserInfo()?.uid || 'visitor'
 		STORAGE_KEY = `${STORAGE_KEY_PREFIX}-${uid}`
 	}
 

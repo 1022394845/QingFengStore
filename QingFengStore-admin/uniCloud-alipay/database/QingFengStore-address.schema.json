@@ -1,0 +1,61 @@
+{
+	"bsonType": "object",
+	"required": [
+		"name",
+		"phone",
+		"province_code",
+		"city_code",
+		"area_code",
+		"detail"
+	],
+	"properties": {
+		"_id": {
+			"description": "ID，系统自动生成"
+		},
+		"user_id": {
+			"bsonType": "string",
+			"description": "用户id，参考uni-id-users表"
+		},
+		"name": {
+			"bsonType": "string",
+			"description": "收货人",
+			"title": "收货人",
+			"trim": "both"
+		},
+		"phone": {
+			"bsonType": "string",
+			"description": "手机号码，加密存储",
+			"title": "手机号",
+			"pattern": "^\\+?[0-9-]{3,20}$",
+			"trim": "both"
+		},
+		"province_code": {
+			"bsonType": "string",
+			"description": "省级编码，冗余存储",
+			"title": "省"
+		},
+		"city_code": {
+			"bsonType": "string",
+			"description": "地级编码，冗余存储",
+			"title": "市"
+		},
+		"area_code": {
+			"bsonType": "string",
+			"description": "区级编码",
+			"title": "区"
+		},
+		"detail": {
+			"bsonType": "string",
+			"description": "省市区后面的详细住址，包含街道小区房间号",
+			"title": "详细住址",
+			"trim": "both"
+		},
+		"default": {
+			"bsonType": "bool",
+			"description": "是否为默认地址",
+			"title": "默认地址",
+			"defaultValue": false
+		}
+	},
+	"version": "0.0.1"
+}

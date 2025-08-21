@@ -126,7 +126,7 @@ const closeAddressPop = () => {
 
 .address-popup_container {
 	min-height: 300rpx;
-	padding: 40rpx 32rpx v-bind(popupBottom_px);
+	padding: 40rpx 60rpx v-bind(popupBottom_px);
 	background-color: #ffffff;
 	border-radius: 30rpx 30rpx 0 0;
 }
