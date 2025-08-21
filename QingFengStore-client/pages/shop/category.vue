@@ -12,12 +12,13 @@ import { formatPrice } from '@/utils/format.js'
 import { nextTick, onMounted, ref } from 'vue'
 import { useCartStore } from '@/store/cart.js'
 import { needLogin, routerTo } from '@/utils/router.js'
-import { isLogin, observeElement, showMsg } from '@/utils/common.js'
+import { observeElement, showMsg } from '@/utils/common.js'
 const goodsCloudObj = uniCloud.importObject('client-goods', { customUI: true })
 
 const headerHeight_px = `${navBarHeight + searchHeight}px`
 const wrapperHeight_px = `${containerHeight - searchHeight - tabBarHeight - settleBarHeight}px`
-const popupBottom_px = `${tabBarHeight + uni.rpx2px(40)}px`
+
+const cartStore = useCartStore()
 
 // 分类
 const dataList = ref([])
@@ -75,15 +76,8 @@ const openSkuPop = (item) => {
 const cartPopRef = ref(null)
 const openCartPop = () => {
 	if (!cartPopRef.value) return showMsg('未知错误，请刷新后重试')
-
-	if (isLogin()) cartPopRef.value.open()
-	else needLogin()
+	cartPopRef.value.open()
 }
-const closeCartPop = () => {
-	cartPopRef.value.close()
-}
-
-const cartStore = useCartStore()
 
 const onSearch = (newKeyword) => {
 	routerTo(`/pages/shop/search?keyword=${newKeyword}`)
@@ -167,11 +161,7 @@ const onSearch = (newKeyword) => {
 			<!-- SKU弹出框 -->
 			<goods-sku ref="skuPopRef"></goods-sku>
 			<!-- 购物车弹出框 -->
-			<uni-popup ref="cartPopRef" type="bottom" :safe-area="false">
-				<view class="cart-popup_container">
-					<goods-cart></goods-cart>
-				</view>
-			</uni-popup>
+			<goods-cart ref="cartPopRef"></goods-cart>
 		</view>
 	</view>
 </template>
@@ -297,13 +287,6 @@ const onSearch = (newKeyword) => {
 			border-radius: 33rpx;
 			background-color: #ef5350;
 		}
-	}
-
-	.cart-popup_container {
-		min-height: 300rpx;
-		padding: 40rpx 32rpx v-bind(popupBottom_px);
-		background-color: #ffffff;
-		border-radius: 30rpx 30rpx 0 0;
 	}
 }
 </style>

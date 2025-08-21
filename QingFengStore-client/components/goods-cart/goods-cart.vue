@@ -1,9 +1,28 @@
 <script setup>
+import { ref } from 'vue'
 import { useCartStore } from '@/store/cart.js'
-import { debounce, showMsg } from '@/utils/common.js'
-import { routerTo } from '@/utils/router.js'
+import { debounce, isLogin, showMsg } from '@/utils/common.js'
+import { needLogin, routerTo } from '@/utils/router.js'
+import { tabBarHeight } from '@/utils/system.js'
+
+const popupBottom_px = `${tabBarHeight + uni.rpx2px(40)}px`
 
 const cartStore = useCartStore()
+
+const cartPopRef = ref(null)
+/**
+ * 开启购物车弹出框
+ */
+const open = () => {
+	if (!cartPopRef.value) return showMsg('未知错误，请稍后再试')
+	if (isLogin()) cartPopRef.value.open()
+	else needLogin()
+}
+defineExpose({ open })
+const close = () => {
+	if (!cartPopRef.value) return showMsg('未知错误，请稍后再试')
+	cartPopRef.value.close()
+}
 
 // 移除商品确认
 const onConfirmRemove = async (item) => {
@@ -29,35 +48,44 @@ const updateQuantity = debounce((item, quantity) => {
 </script>
 
 <template>
-	<view class="goods-cart-container">
-		<scroll-view class="goods-cart_list" scroll-y>
+	<uni-popup ref="cartPopRef" type="bottom" :safe-area="false">
+		<view class="goods-cart-container">
+			<scroll-view class="goods-cart_list" scroll-y>
+				<view
+					class="goods-cart_list_item"
+					v-for="item in cartStore.localCart"
+					:key="`${item.goods_id}_${item.sku._id}`"
+				>
+					<goods-card
+						:detail="item"
+						:sku="item.sku"
+						:config="2"
+						@overMinus="onConfirmRemove(item)"
+						@updateQuantity="(quantity) => updateQuantity(item, quantity)"
+					></goods-card>
+				</view>
+				<view class="goods-cart_list_item nomore" v-if="!cartStore.selectedTotal">
+					购物车是空的
+				</view>
+			</scroll-view>
 			<view
-				class="goods-cart_list_item"
-				v-for="item in cartStore.localCart"
-				:key="`${item.goods_id}_${item.sku._id}`"
+				class="goods-cart_buy-btn"
+				v-if="cartStore.selectedTotal"
+				@click="routerTo('/pages/shop/cart')"
 			>
-				<goods-card
-					:detail="item"
-					:sku="item.sku"
-					:config="2"
-					@overMinus="onConfirmRemove(item)"
-					@updateQuantity="(quantity) => updateQuantity(item, quantity)"
-				></goods-card>
+				结算
 			</view>
-			<view class="goods-cart_list_item nomore" v-if="!cartStore.selectedTotal">购物车是空的</view>
-		</scroll-view>
-		<view
-			class="goods-cart_buy-btn"
-			v-if="cartStore.selectedTotal"
-			@click="routerTo('/pages/shop/cart')"
-		>
-			结算
 		</view>
-	</view>
+	</uni-popup>
 </template>
 
 <style scoped lang="scss">
 .goods-cart-container {
+	min-height: 300rpx;
+	padding: 40rpx 32rpx v-bind(popupBottom_px);
+	background-color: #ffffff;
+	border-radius: 30rpx 30rpx 0 0;
+
 	.goods-cart_list {
 		max-height: 50vh;
 

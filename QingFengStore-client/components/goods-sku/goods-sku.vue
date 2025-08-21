@@ -33,7 +33,6 @@ const open = (data) => {
 }
 const close = () => {
 	if (!skuPopRef.value) return showMsg('未知错误，请稍后再试')
-
 	skuPopRef.value.close()
 }
 defineExpose({ open })
