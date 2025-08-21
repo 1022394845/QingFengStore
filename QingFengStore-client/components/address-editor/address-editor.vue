@@ -1,5 +1,5 @@
 <script setup>
-import { computed, onMounted, ref } from 'vue'
+import { computed, nextTick, onMounted, ref } from 'vue'
 import RegionsPicker from './regions-picker.vue'
 import { showMsg } from '@/utils/common.js'
 import { useAddressStore } from '@/store/address.js'
@@ -10,9 +10,10 @@ const popupBottom_px = `${safeareaHeight + uni.rpx2px(40)}px`
 const addressStore = useAddressStore()
 addressStore.init()
 // 没有默认地址时，强制为默认
-const needDefault = computed(
-	() => formData.value._id && formData.value._id === addressStore.defaultAddress._id
-)
+const needDefault = computed(() => {
+	if (addressStore.addressList.length === 0) return true
+	return formData.value._id && formData.value._id === addressStore.defaultAddress._id ? true : false
+})
 
 const defaultData = {
 	_id: null,
@@ -91,6 +92,7 @@ const onSetRegion = (data) => {
 }
 
 const addressPopRef = ref(null)
+const formRef = ref(null)
 /**
  * 打开编辑框
  * @param {object} [info] 编辑回显数据
@@ -107,7 +109,6 @@ const open = (info = null) => {
 defineExpose({ open })
 
 // 提交
-const formRef = ref(null)
 const emits = defineEmits(['success'])
 const onSubmit = async () => {
 	if (!formRef.value) return showMsg('未知错误，请稍后再试')
