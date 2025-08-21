@@ -24,6 +24,7 @@ module.exports = {
 			const { errCode, errMsg, data } = await dbJQL
 				.collection('QingFengStore-address')
 				.where(`user_id == "${user_id}"`)
+				.orderBy('create_date desc')
 				.get()
 
 			if (errCode !== 0) return result({ errCode, errMsg: 'fail', type: '获取', custom: errMsg })

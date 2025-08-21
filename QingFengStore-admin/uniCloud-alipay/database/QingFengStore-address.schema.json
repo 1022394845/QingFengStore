@@ -60,6 +60,14 @@
 			"description": "是否为默认地址",
 			"title": "默认地址",
 			"defaultValue": false
+		},
+		"create_date": {
+			"bsonType": "timestamp",
+			"description": "创建时间",
+			"title": "创建时间",
+			"forceDefaultValue": {
+				"$env": "now"
+			}
 		}
 	},
 	"version": "0.0.1"

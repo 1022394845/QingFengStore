@@ -57,7 +57,7 @@ export const useAddressStore = defineStore('address', () => {
 			} = await addressCloudObj.add({ ...data, user_id: uid })
 			if (errCode !== 0) return { errCode, errMsg }
 
-			if (data.default) {
+			if (data.default && defaultAddress.value?._id) {
 				await addressCloudObj.update({ _id: defaultAddress.value._id, default: false })
 				const target = addressList.value.find((item) => item._id === defaultAddress.value._id)
 				if (target) target.default = false
@@ -113,11 +113,11 @@ export const useAddressStore = defineStore('address', () => {
 	/**
 	 * 删除地址
 	 * @param {string} id 删除地址id
-	 * @returns {number} deleted 成功删除个数
+	 * @returns {object} 操作结果
 	 */
 	const remove = async (id) => {
 		try {
-			const targetIndex = addressList.value.findIndex((item) => item._id === data._id)
+			const targetIndex = addressList.value.findIndex((item) => item._id === id)
 			if (targetIndex === -1) throw new Error()
 
 			loading.value = true

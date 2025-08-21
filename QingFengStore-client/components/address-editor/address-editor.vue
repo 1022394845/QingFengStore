@@ -16,7 +16,6 @@ const needDefault = computed(() => {
 })
 
 const defaultData = {
-	_id: null,
 	region: '',
 	province_code: null,
 	city_code: null,
@@ -106,6 +105,11 @@ const open = (info = null) => {
 
 	addressPopRef.value.open()
 }
+const close = () => {
+	if (!addressPopRef.value) return
+
+	addressPopRef.value.close()
+}
 defineExpose({ open })
 
 // 提交
@@ -133,6 +137,29 @@ const onSubmit = async () => {
 
 	showMsg('保存成功')
 	addressPopRef.value.close()
+}
+
+// 删除
+const onRemove = async () => {
+	if (!formData.value || !formData.value._id) return showMsg('未知错误，请稍后再试')
+
+	const { cancel } = await uni.showModal({
+		title: '温馨提示',
+		content: '确认删除该地址吗？',
+		confirmColor: '#bdaf8d'
+	})
+	if (cancel) return
+
+	try {
+		const { errCode } = await addressStore.remove(formData.value._id)
+		if (errCode !== 0) throw new Error()
+
+		showMsg('删除成功')
+		close()
+	} catch (err) {
+		console.log(err)
+		return showMsg('删除失败，请稍后再试')
+	}
 }
 </script>
 
@@ -173,7 +200,10 @@ const onSubmit = async () => {
 						:disabled="needDefault"
 					></uv-switch>
 				</uv-form-item>
-				<view class="submit-btn" @click="onSubmit">保存地址</view>
+				<view class="btn-group">
+					<view class="btn remove" v-if="formData._id" @click="onRemove">删除地址</view>
+					<view class="btn submit" @click="onSubmit">保存地址</view>
+				</view>
 			</uv-form>
 			<regions-picker ref="pickerRef" @confirm="(data) => onSetRegion(data)"></regions-picker>
 		</view>
@@ -188,16 +218,30 @@ const onSubmit = async () => {
 	border-radius: 30rpx 30rpx 0 0;
 }
 
-.submit-btn {
+.btn-group {
 	width: 100%;
 	height: 80rpx;
-	margin: 60rpx auto 20rpx;
+	margin: 40rpx auto 20rpx;
 	display: flex;
-	justify-content: center;
+	gap: 40rpx;
 	align-items: center;
-	font-size: 32rpx;
-	color: #ffffff;
-	background-color: $uni-color-primary;
-	border-radius: 20rpx;
+
+	.btn {
+		flex: 1;
+		height: 100%;
+		display: flex;
+		justify-content: center;
+		align-items: center;
+		font-size: 32rpx;
+		color: #ffffff;
+		border-radius: 20rpx;
+
+		&.submit {
+			background-color: $uni-color-primary;
+		}
+		&.remove {
+			background-color: #ef5350;
+		}
+	}
 }
 </style>

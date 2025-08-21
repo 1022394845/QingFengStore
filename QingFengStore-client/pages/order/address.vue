@@ -33,8 +33,16 @@ const openAddressPop = (info = null) => {
 					<view class="address-list_item_info">
 						<view class="address-list_item_info_base-address">{{ item.region }}</view>
 						<view class="address-list_item_info_detail-address">{{ item.detail }}</view>
-						<view class="address-list_item_info_contact">
-							{{ `${item.name}  ${item.phone}` }}
+						<view class="address-list_item_info_note">
+							<view class="address-list_item_info_note_contact">
+								{{ `${item.name}  ${item.phone}` }}
+							</view>
+							<view
+								class="address-list_item_info_note_tag"
+								v-if="addressStore.defaultAddress._id === item._id"
+							>
+								默认
+							</view>
 						</view>
 					</view>
 					<view class="address-list_item_edit" @click="openAddressPop(item)">
@@ -114,9 +122,23 @@ const openAddressPop = (info = null) => {
 					color: #000000;
 				}
 
-				&_contact {
-					font-size: 30rpx;
-					color: #000000;
+				&_note {
+					display: flex;
+					gap: 30rpx;
+					align-items: center;
+
+					&_contact {
+						font-size: 30rpx;
+						color: #000000;
+					}
+
+					&_tag {
+						padding: 2rpx 8rpx;
+						font-size: 22rpx;
+						color: #ffffff;
+						background-color: $uni-color-primary;
+						border-radius: 5rpx;
+					}
 				}
 			}
 
