@@ -66,21 +66,9 @@ const registerObserver = () => {
 
 // SKU弹出框
 const skuPopRef = ref(null)
-const currentGoodsDetail = ref({})
-const currentSkuId = ref(null)
 const openSkuPop = (item) => {
 	if (!skuPopRef.value) return showMsg('未知错误，请刷新后重试')
-
-	// 查看新商品信息，更新缓存
-	if (!Object.keys(currentGoodsDetail.value).length || currentGoodsDetail.value._id !== item._id) {
-		currentGoodsDetail.value = { ...item }
-		currentSkuId.value = item.skus?.[0]?._id || null
-	}
-
-	skuPopRef.value.open()
-}
-const closeSkuPop = () => {
-	skuPopRef.value.close()
+	skuPopRef.value.open(item)
 }
 
 // 购物车弹出框
@@ -144,7 +132,7 @@ const onSearch = (newKeyword) => {
 										:key="item._id"
 										:detail="item"
 										:config="0"
-										@onSelectBuy="openSkuPop(item)"
+										@onSelectSku="openSkuPop(item)"
 									></goods-card>
 								</template>
 								<!-- 加载占位 -->
@@ -177,15 +165,7 @@ const onSearch = (newKeyword) => {
 				<view class="settle-btn" @click="routerTo('/pages/shop/cart')">去结算</view>
 			</view>
 			<!-- SKU弹出框 -->
-			<uni-popup ref="skuPopRef" type="bottom" :safe-area="false">
-				<view class="sku-popup_container">
-					<goods-sku
-						v-model="currentSkuId"
-						:detail="currentGoodsDetail"
-						@close="closeSkuPop"
-					></goods-sku>
-				</view>
-			</uni-popup>
+			<goods-sku ref="skuPopRef"></goods-sku>
 			<!-- 购物车弹出框 -->
 			<uni-popup ref="cartPopRef" type="bottom" :safe-area="false">
 				<view class="cart-popup_container">
@@ -319,7 +299,6 @@ const onSearch = (newKeyword) => {
 		}
 	}
 
-	.sku-popup_container,
 	.cart-popup_container {
 		min-height: 300rpx;
 		padding: 40rpx 32rpx v-bind(popupBottom_px);

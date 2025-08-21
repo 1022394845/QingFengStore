@@ -20,7 +20,7 @@ const props = defineProps({
 		default: 0
 	}
 })
-const emits = defineEmits(['onSelectBuy', 'overMinus', 'updateQuantity'])
+const emits = defineEmits(['onSelectSku', 'overMinus', 'updateQuantity'])
 
 const goods_id = computed(() => {
 	if ([2, 3].includes(props.config)) return props.detail.goods_id
@@ -28,8 +28,8 @@ const goods_id = computed(() => {
 })
 const info = computed(() => ({ ...props.detail, ...props.sku }))
 
-const onSelectBuy = () => {
-	emits('onSelectBuy')
+const onSelectSku = () => {
+	emits('onSelectSku')
 }
 
 // 步进器超出阈值
@@ -89,7 +89,7 @@ const checkDetail = () => {
 				<view class="goods-card_info_bottom_right">
 					<!-- 选购按钮 -->
 					<template v-if="[0].includes(config)">
-						<view class="goods-card_info_bottom_right_buy" @click.stop="onSelectBuy">选购</view>
+						<view class="goods-card_info_bottom_right_buy" @click.stop="onSelectSku">选购</view>
 					</template>
 
 					<!-- 购买数量步进器 -->

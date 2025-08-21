@@ -3,27 +3,48 @@ import { computed, ref, watch } from 'vue'
 import { useCartStore } from '@/store/cart.js'
 import { isLogin, showMsg } from '@/utils/common.js'
 import { needLogin } from '@/utils/router.js'
+import { tabBarHeight } from '@/utils/system.js'
 
-const props = defineProps({
-	detail: {
-		type: Object,
-		required: true
-	}
-})
-const emits = defineEmits(['close'])
+const popupBottom_px = `${tabBarHeight + uni.rpx2px(40)}px`
 
-// 当前选择sku_id
-const currentSkuId = defineModel()
+const detail = ref({})
+// 当前选中的SKU
+const currentSkuId = ref(null)
 const currentSku = computed(() => {
-	return props.detail.skus?.find((item) => item._id === currentSkuId.value) || {}
+	if (!currentSkuId.value) return {}
+	return detail.value.skus?.find((item) => item._id === currentSkuId.value) || {}
 })
 
+const skuPopRef = ref(null)
+/**
+ * 开启SKU编辑框
+ * @param {object} data 选择商品数据
+ */
+const open = (data) => {
+	if (!skuPopRef.value) return showMsg('未知错误，请稍后再试')
+
+	if (!detail.value._id || detail.value._id !== data._id) {
+		// 查看新商品 更新缓存
+		detail.value = { ...data }
+		currentSkuId.value = data.skus?.[0]?._id || null
+	}
+
+	skuPopRef.value.open()
+}
+const close = () => {
+	if (!skuPopRef.value) return showMsg('未知错误，请稍后再试')
+
+	skuPopRef.value.close()
+}
+defineExpose({ open })
+
+// 切换SKU
 const onChangeSku = (sku_id) => {
 	currentSkuId.value = sku_id
 }
 
-// 创建信息
-const count = ref(1) // 选择数量
+// 创建商品购买信息
+const quantity = ref(1) // 选择数量
 const createInfo = () => {
 	if (!currentSkuId.value) {
 		return { errCode: 400, errMsg: '缺少商品规格参数' }
@@ -34,14 +55,14 @@ const createInfo = () => {
 	}
 
 	try {
-		const { _id, skus, price, market_price, ...cartGoodsInfo } = props.detail
+		const { _id, skus, price, market_price, ...cartGoodsInfo } = detail.value
 
 		const data = {
 			...cartGoodsInfo,
 			goods_id: _id,
-			goods_thumb: currentSku.value.sku_thumb || props.detail.goods_thumb || null,
+			goods_thumb: currentSku.value.sku_thumb || detail.value.goods_thumb || null,
 			sku: currentSku.value,
-			quantity: count.value
+			quantity: quantity.value
 		}
 
 		return {
@@ -65,7 +86,8 @@ const onCart = () => {
 			if (errCode !== 0) return showMsg(errMsg || '添加商品至购物车失败')
 		}
 
-		emits('close')
+		close()
+		showMsg('加入购物车成功')
 	} else needLogin()
 }
 
@@ -76,47 +98,52 @@ const onBuy = () => {
 		if (errCode !== 0) return showMsg(errMsg)
 
 		console.log('buy', data)
-		emits('close')
+		close()
 	} else needLogin()
 }
 </script>
 
 <template>
-	<view class="goods-sku-container">
-		<goods-card :detail="detail" :sku="currentSku" :config="1"></goods-card>
-		<!-- SKU列表 -->
-		<view class="goods-sku">
-			<view class="goods-sku_label label">规格</view>
-			<view class="goods-sku_list">
-				<view class="goods-sku_list_item" v-if="!detail.skus || detail.skus.length === 0">
-					暂无规格
-				</view>
-				<view
-					class="goods-sku_list_item"
-					v-for="item in detail.skus"
-					:key="item._id"
-					:class="{ active: item._id === currentSkuId }"
-					@click="onChangeSku(item._id)"
-				>
-					{{ item.sku_name }}
+	<uni-popup ref="skuPopRef" type="bottom" :safe-area="false">
+		<view class="goods-sku-container">
+			<goods-card :detail="detail" :sku="currentSku" :config="1"></goods-card>
+			<!-- SKU列表 -->
+			<view class="goods-sku">
+				<view class="goods-sku_label label">规格</view>
+				<view class="goods-sku_list">
+					<view class="goods-sku_list_item" v-if="detail.skus?.length === 0">暂无规格</view>
+					<view
+						class="goods-sku_list_item"
+						v-for="item in detail.skus"
+						:key="item._id"
+						:class="{ active: item._id === currentSkuId }"
+						@click="onChangeSku(item._id)"
+					>
+						{{ item.sku_name }}
+					</view>
 				</view>
 			</view>
+			<!-- 步进器 -->
+			<view class="goods-quantity">
+				<view class="goods-quantity_label label">数量</view>
+				<number-box v-model="quantity"></number-box>
+			</view>
+			<!-- 操作 -->
+			<view class="goods-btn-group">
+				<view class="goods-btn cart" @click="onCart">加入购物车</view>
+				<view class="goods-btn buy" @click="onBuy">立即购买</view>
+			</view>
 		</view>
-		<!-- 步进器 -->
-		<view class="goods-count">
-			<view class="goods-count_label label">数量</view>
-			<number-box v-model="count"></number-box>
-		</view>
-		<!-- 操作 -->
-		<view class="goods-btn-group">
-			<view class="goods-btn cart" @click="onCart">加入购物车</view>
-			<view class="goods-btn buy" @click="onBuy">立即购买</view>
-		</view>
-	</view>
+	</uni-popup>
 </template>
 
 <style scoped lang="scss">
 .goods-sku-container {
+	min-height: 300rpx;
+	padding: 40rpx 32rpx v-bind(popupBottom_px);
+	background-color: #ffffff;
+	border-radius: 30rpx 30rpx 0 0;
+
 	.label {
 		font-size: 32rpx;
 		font-weight: bold;
@@ -152,7 +179,7 @@ const onBuy = () => {
 		}
 	}
 
-	.goods-count {
+	.goods-quantity {
 		margin-top: 44rpx;
 		display: flex;
 		justify-content: space-between;
