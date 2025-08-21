@@ -1,5 +1,22 @@
 <script setup>
-import { windowHeight_px } from '@/utils/system.js'
+import { ref } from 'vue'
+import { windowHeight_px, safeareaHeight } from '@/utils/system.js'
+
+const popupBottom_px = `${safeareaHeight + uni.rpx2px(40)}px`
+
+// 地址编辑框
+const addressPopRef = ref(null)
+/**
+ * 开启地址编辑框
+ * @param {object} [info] 编辑回显数据
+ */
+const openAddressPop = (info = {}) => {
+	if (!addressPopRef.value) return
+	addressPopRef.value.open()
+}
+const closeAddressPop = () => {
+	addressPopRef.value.close()
+}
 </script>
 
 <template>
@@ -7,7 +24,7 @@ import { windowHeight_px } from '@/utils/system.js'
 		<view class="wrapper">
 			<view class="header">
 				<view class="header_title">选择地址</view>
-				<view class="header_add-address">
+				<view class="header_add-address" @click="openAddressPop">
 					<view class="iconfont icon-add"></view>
 					<view class="text">新增地址</view>
 				</view>
@@ -25,6 +42,12 @@ import { windowHeight_px } from '@/utils/system.js'
 				</view>
 			</view>
 		</view>
+		<!-- 地址编辑弹出框 -->
+		<uni-popup ref="addressPopRef" type="bottom" :safe-area="false">
+			<view class="address-popup_container">
+				<address-editor @success="closeAddressPop"></address-editor>
+			</view>
+		</uni-popup>
 	</view>
 </template>
 
@@ -99,5 +122,12 @@ import { windowHeight_px } from '@/utils/system.js'
 			}
 		}
 	}
+}
+
+.address-popup_container {
+	min-height: 300rpx;
+	padding: 40rpx 32rpx v-bind(popupBottom_px);
+	background-color: #ffffff;
+	border-radius: 30rpx 30rpx 0 0;
 }
 </style>

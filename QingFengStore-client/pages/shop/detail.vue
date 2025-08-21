@@ -46,7 +46,7 @@ const currentSku = computed(() => {
 
 // SKU弹出框
 const skuPopRef = ref(null)
-const openSkuPop = (item) => {
+const openSkuPop = () => {
 	if (!skuPopRef.value) return
 	skuPopRef.value.open()
 }
