@@ -149,7 +149,7 @@ const onSearch = (newKeyword) => {
 			<view class="settle-container">
 				<view class="settle-info">
 					<view class="settle-info_icon icon-container" @click="openCartPop">
-						<view class="iconfont icon-caigou"></view>
+						<view class="iconfont icon-cart-fill"></view>
 						<view class="settle-info_icon_tag" v-if="cartStore.selectedTotal">
 							{{ cartStore.selectedTotal }}
 						</view>
