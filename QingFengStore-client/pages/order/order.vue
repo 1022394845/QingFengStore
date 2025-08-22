@@ -8,9 +8,13 @@ import {
 import { formatPrice } from '@/utils/format.js'
 import { routerTo } from '@/utils/router.js'
 import { ref } from 'vue'
+import { useAddressStore } from '@/store/address.js'
 
 const wrapperHeight_px = `${containerHeight - settleBarHeight}px`
 const wrapperBottom_px = `${settleBarHeight + uni.rpx2px(40)}px`
+
+const addressStore = useAddressStore()
+addressStore.init()
 
 const goodsList = ref([
 	{
@@ -83,17 +87,22 @@ const payMethodList = [
 		<view class="wrapper">
 			<!-- 地址信息 -->
 			<view class="address-container card">
-				<view class="base-address">山东省 济南市 历下区</view>
-				<view class="detail-address">中铁会展中心2号楼5层530室</view>
-				<view class="contact">张三 13888888888</view>
-				<view class="delivery">
-					<view class="delivery-method">配送方式</view>
-					<view class="delivery-cost">快递运费 ￥28.88</view>
-				</view>
-				<view
-					class="edit-address iconfont icon-edit"
-					@click="routerTo('/pages/order/address')"
-				></view>
+				<template v-if="addressStore.selectedAddress?._id">
+					<view class="base-address">{{ addressStore.selectedAddress.region }}</view>
+					<view class="detail-address">{{ addressStore.selectedAddress.detail }}</view>
+					<view class="contact">
+						{{ `${addressStore.selectedAddress.name} ${addressStore.selectedAddress.phone}` }}
+					</view>
+					<view class="delivery">
+						<view class="delivery-method">配送方式</view>
+						<view class="delivery-cost">快递运费 ￥{{ formatPrice(999) }}</view>
+					</view>
+					<view
+						class="edit-address iconfont icon-edit"
+						@click="routerTo('/pages/order/address')"
+					></view>
+				</template>
+				<dot-loading v-else>加载中</dot-loading>
 			</view>
 
 			<!-- 商品列表 -->
@@ -161,7 +170,7 @@ const payMethodList = [
 					</view>
 					<view class="order_discount_item">
 						<view class="order_discount_item_label">配送费</view>
-						<view class="order_discount_item_price">￥{{ formatPrice(2888) }}</view>
+						<view class="order_discount_item_price">￥{{ formatPrice(999) }}</view>
 						<view class="order_discount_item_more"></view>
 					</view>
 				</view>
