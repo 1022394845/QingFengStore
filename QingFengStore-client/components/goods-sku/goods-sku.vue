@@ -2,8 +2,9 @@
 import { computed, ref, watch } from 'vue'
 import { useCartStore } from '@/store/cart.js'
 import { isLogin, showMsg } from '@/utils/common.js'
-import { needLogin } from '@/utils/router.js'
+import { needLogin, routerTo } from '@/utils/router.js'
 import { tabBarHeight } from '@/utils/system.js'
+import { useOrderStore } from '@/store/order.js'
 
 const popupBottom_px = `${tabBarHeight + uni.rpx2px(40)}px`
 
@@ -17,25 +18,32 @@ const currentSku = computed(() => {
 
 const skuPopRef = ref(null)
 /**
- * 开启SKU编辑框
- * @param {object} data 选择商品数据
+ * 设置当前查看商品数据
+ * @param {object} data 查看商品数据
  */
-const open = (data) => {
-	if (!skuPopRef.value) return showMsg('未知错误，请稍后再试')
-
+const setInfo = (data) => {
 	if (!detail.value._id || detail.value._id !== data._id) {
 		// 查看新商品 更新缓存
 		detail.value = { ...data }
 		currentSkuId.value = data.skus?.[0]?._id || null
 	}
+}
 
+/**
+ * 开启SKU编辑框
+ * @param {object} data 选择商品数据
+ */
+const open = (data = null) => {
+	if (!skuPopRef.value) return showMsg('未知错误，请稍后再试')
+
+	if (data) setInfo(data)
 	skuPopRef.value.open()
 }
 const close = () => {
 	if (!skuPopRef.value) return showMsg('未知错误，请稍后再试')
 	skuPopRef.value.close()
 }
-defineExpose({ open })
+defineExpose({ setInfo, open, currentSku })
 
 // 切换SKU
 const onChangeSku = (sku_id) => {
@@ -73,8 +81,8 @@ const createInfo = () => {
 	}
 }
 
-const cartStore = useCartStore()
 // 加入购物车
+const cartStore = useCartStore()
 const onCart = () => {
 	if (isLogin()) {
 		const { errCode, errMsg, data } = createInfo()
@@ -91,13 +99,15 @@ const onCart = () => {
 }
 
 // 立即购买
+const orderStore = useOrderStore()
 const onBuy = () => {
 	if (isLogin()) {
 		const { errCode, errMsg, data } = createInfo()
 		if (errCode !== 0) return showMsg(errMsg)
 
-		console.log('buy', data)
+		orderStore.createCheck([data])
 		close()
+		routerTo('/pages/order/order')
 	} else needLogin()
 }
 </script>
