@@ -1,11 +1,23 @@
 <script setup>
-import { ref } from 'vue'
+import { computed, ref } from 'vue'
 import { useCartStore } from '@/store/cart.js'
 import { debounce, isLogin, showMsg } from '@/utils/common.js'
 import { needLogin, routerTo } from '@/utils/router.js'
 import { tabBarHeight } from '@/utils/system.js'
 
-const popupBottom_px = `${tabBarHeight + uni.rpx2px(40)}px`
+const props = defineProps({
+	tabBar: {
+		// 用于区分弹出框是否需要tabBarHeight底填充
+		type: Boolean,
+		default: false
+	}
+})
+const popupBottom_px = computed(() => {
+	const base = uni.rpx2px(40)
+
+	if (props.tabBar) return `${tabBarHeight + base}px`
+	return `${base}px`
+})
 
 const cartStore = useCartStore()
 

@@ -161,7 +161,7 @@ const onSearch = (newKeyword) => {
 			<!-- SKU弹出框 -->
 			<goods-sku ref="skuPopRef" :tabBar="true"></goods-sku>
 			<!-- 购物车弹出框 -->
-			<goods-cart ref="cartPopRef"></goods-cart>
+			<goods-cart ref="cartPopRef" :tabBar="true"></goods-cart>
 		</view>
 	</view>
 </template>
