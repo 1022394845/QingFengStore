@@ -6,13 +6,21 @@ const addressCloudObj = uniCloud.importObject('client-address')
 export const useAddressStore = defineStore('address', () => {
 	const addressList = ref([]) // 地址列表
 	const loading = ref(false) // 数据加载中
-	const uid = uniCloud.getCurrentUserInfo().uid || null
-	let isInitialized = false
+	const uid = uniCloud.getCurrentUserInfo().uid || null // 用户uid
+	let isInitialized = false // 是否初始化过
+	const selectedAddressId = ref(null) // 当前选择地址id
 
 	// 默认地址
 	const defaultAddress = computed(
 		() => addressList.value.find((item) => item.default === true) || addressList.value[0]
 	)
+
+	// 当前选择地址
+	const selectedAddress = computed(() => {
+		if (selectedAddressId.value)
+			return addressList.value.find((item) => item._id === selectedAddressId.value)
+		return defaultAddress.value
+	})
 
 	/**
 	 * 初始化获取数据
@@ -125,6 +133,7 @@ export const useAddressStore = defineStore('address', () => {
 			const { errCode, errMsg, data } = await addressCloudObj.remove(id)
 			if (errCode !== 0) return { errCode, errMsg }
 
+			if (selectedAddressId.value === id) selectedAddressId.value = null // 删除当前选中地址
 			addressList.value.splice(targetIndex, 1)
 			loading.value = false
 
@@ -134,13 +143,25 @@ export const useAddressStore = defineStore('address', () => {
 		}
 	}
 
+	/**
+	 * 选择地址
+	 * @param {string} id 选择地址id
+	 */
+	const select = (id) => {
+		if (!id) return
+		selectedAddressId.value = id
+	}
+
 	return {
 		addressList,
 		loading,
+		selectedAddressId,
 		defaultAddress,
+		selectedAddress,
 		init,
 		add,
 		update,
-		remove
+		remove,
+		select
 	}
 })

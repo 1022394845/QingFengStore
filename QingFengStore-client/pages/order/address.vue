@@ -29,7 +29,13 @@ const openAddressPop = (info = null) => {
 			</view>
 
 			<view class="address-list" v-if="addressStore.addressList.length">
-				<view class="address-list_item" v-for="item in addressStore.addressList" :key="item._id">
+				<view
+					class="address-list_item"
+					v-for="item in addressStore.addressList"
+					:key="item._id"
+					:class="{ active: item._id === addressStore.selectedAddress?._id }"
+					@click="addressStore.select(item._id)"
+				>
 					<view class="address-list_item_info">
 						<view class="address-list_item_info_base-address">{{ item.region }}</view>
 						<view class="address-list_item_info_detail-address">{{ item.detail }}</view>
@@ -45,7 +51,7 @@ const openAddressPop = (info = null) => {
 							</view>
 						</view>
 					</view>
-					<view class="address-list_item_edit" @click="openAddressPop(item)">
+					<view class="address-list_item_edit" @click.stop="openAddressPop(item)">
 						<view class="iconfont icon-edit"></view>
 					</view>
 				</view>
@@ -105,6 +111,11 @@ const openAddressPop = (info = null) => {
 			align-items: center;
 			background-color: #ffffff;
 			border-radius: 20rpx;
+			box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+
+			&.active {
+				background: linear-gradient(to right, rgba($uni-color-primary, 0.8), #ffffff);
+			}
 
 			&_info {
 				flex: 1;
