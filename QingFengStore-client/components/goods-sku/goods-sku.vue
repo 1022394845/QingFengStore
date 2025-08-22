@@ -6,7 +6,19 @@ import { needLogin, routerTo } from '@/utils/router.js'
 import { tabBarHeight } from '@/utils/system.js'
 import { useOrderStore } from '@/store/order.js'
 
-const popupBottom_px = `${tabBarHeight + uni.rpx2px(40)}px`
+const props = defineProps({
+	tabBar: {
+		// 用于区分弹出框是否需要tabBarHeight底填充
+		type: Boolean,
+		default: false
+	}
+})
+const popupBottom_px = computed(() => {
+	const base = uni.rpx2px(40)
+
+	if (props.tabBar) return `${tabBarHeight + base}px`
+	return `${base}px`
+})
 
 const detail = ref({})
 // 当前选中的SKU

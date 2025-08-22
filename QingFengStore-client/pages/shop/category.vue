@@ -159,7 +159,7 @@ const onSearch = (newKeyword) => {
 				<view class="settle-btn" @click="routerTo('/pages/shop/cart')">去结算</view>
 			</view>
 			<!-- SKU弹出框 -->
-			<goods-sku ref="skuPopRef"></goods-sku>
+			<goods-sku ref="skuPopRef" :tabBar="true"></goods-sku>
 			<!-- 购物车弹出框 -->
 			<goods-cart ref="cartPopRef"></goods-cart>
 		</view>
