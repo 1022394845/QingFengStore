@@ -25,16 +25,7 @@ const defaultData = {
 	phone: '',
 	default: false
 }
-const formData = ref({
-	region: '',
-	province_code: null,
-	city_code: null,
-	area_code: null,
-	detail: '',
-	name: '',
-	phone: '',
-	default: false
-})
+const formData = ref({ ...defaultData })
 const rules = {
 	region: {
 		validator: (rule, value, callback) => {

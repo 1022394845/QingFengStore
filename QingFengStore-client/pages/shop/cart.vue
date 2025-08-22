@@ -5,8 +5,10 @@ import { settleBarHeight_px, tabBarHeight_px } from '@/utils/system.js'
 import { formatPrice } from '@/utils/format.js'
 import { debounce } from '@/utils/common.js'
 import { routerTo } from '@/utils/router.js'
+import { useOrderStore } from '@/store/order'
 
 const cartStore = useCartStore()
+const orderStore = useOrderStore()
 
 // 更改选择状态
 const toggleSelect = (item) => {
@@ -28,6 +30,7 @@ const updateQuantity = debounce((item, quantity) => {
 
 // 订单结算
 const onCheck = () => {
+	orderStore.createCheck(cartStore.selectedGoods)
 	routerTo(`/pages/order/order`)
 }
 </script>

@@ -1,0 +1,98 @@
+[
+	{
+		"IndexName": "type",
+		"MgoKeySchema": {
+			"MgoIndexKeys": [
+				{
+					"Name": "type",
+					"Direction": "1"
+				}
+			],
+			"MgoIsUnique": false
+		}
+	},
+	{
+		"IndexName": "userId",
+		"MgoKeySchema": {
+			"MgoIndexKeys": [
+				{
+					"Name": "userId",
+					"Direction": "1"
+				}
+			],
+			"MgoIsUnique": false
+		}
+	},
+	{
+		"IndexName": "payType",
+		"MgoKeySchema": {
+			"MgoIndexKeys": [
+				{
+					"Name": "payType",
+					"Direction": "1"
+				}
+			],
+			"MgoIsUnique": false
+		}
+	},
+	{
+		"IndexName": "status",
+		"MgoKeySchema": {
+			"MgoIndexKeys": [
+				{
+					"Name": "status",
+					"Direction": "1"
+				}
+			],
+			"MgoIsUnique": false
+		}
+	},
+	{
+		"IndexName": "refundStatus",
+		"MgoKeySchema": {
+			"MgoIndexKeys": [
+				{
+					"Name": "refundStatus",
+					"Direction": "1"
+				}
+			],
+			"MgoIsUnique": false
+		}
+	},
+	{
+		"IndexName": "isRefund",
+		"MgoKeySchema": {
+			"MgoIndexKeys": [
+				{
+					"Name": "isRefund",
+					"Direction": "1"
+				}
+			],
+			"MgoIsUnique": false
+		}
+	},
+	{
+		"IndexName": "transactionId",
+		"MgoKeySchema": {
+			"MgoIndexKeys": [
+				{
+					"Name": "transactionId",
+					"Direction": "1"
+				}
+			],
+			"MgoIsUnique": false
+		}
+	},
+	{
+		"IndexName": "createTime",
+		"MgoKeySchema": {
+			"MgoIndexKeys": [
+				{
+					"Name": "createTime",
+					"Direction": "1"
+				}
+			],
+			"MgoIsUnique": false
+		}
+	}
+]

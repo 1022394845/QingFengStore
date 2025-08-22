@@ -14,7 +14,7 @@ module.exports = {
 	/**
 	 * 获取地址列表
 	 * @param {string} user_id 用户id
-	 * @return {object[]} 资讯列表
+	 * @returns {object[]} 地址列表
 	 */
 	async list(user_id) {
 		if (!user_id)
@@ -29,8 +29,7 @@ module.exports = {
 
 			if (errCode !== 0) return result({ errCode, errMsg: 'fail', type: '获取', custom: errMsg })
 			return result({ errCode: 0, errMsg: 'success', data, type: '获取' })
-		} catch (err) {
-			console.log(err)
+		} catch {
 			return defaultError
 		}
 	},
@@ -46,7 +45,7 @@ module.exports = {
 	 * @param {string} data.area_code 区级编码
 	 * @param {string} data.detail 详细地址
 	 * @param {boolean} [data.default] 是否为默认地址
-	 * @return {string} id 新增商品id
+	 * @returns {string} id 新增地址id
 	 */
 	async add(data = {}) {
 		try {
@@ -71,7 +70,7 @@ module.exports = {
 	 * @param {string} [data.area_code] 区级编码
 	 * @param {string} [data.detail] 详细地址
 	 * @param {boolean} [data.default] 是否为默认地址
-	 * @return {number} updated 成功修改个数(无变化为0)
+	 * @returns {number} updated 成功修改个数(无变化为0)
 	 */
 	async update(data = {}) {
 		if (!data._id)
@@ -93,7 +92,7 @@ module.exports = {
 	/**
 	 * 删除地址
 	 * @param {string} id 删除地址id
-	 * @return {number} deleted 成功删除个数
+	 * @returns {number} deleted 成功删除个数
 	 */
 	async remove(id) {
 		if (!id)
