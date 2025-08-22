@@ -246,6 +246,9 @@ const payMethodList = [
 			position: absolute;
 			top: 40rpx;
 			right: 40rpx;
+			width: 80rpx;
+			height: 80rpx;
+			text-align: right;
 			font-size: 42rpx;
 			color: #aaaaaa;
 		}
