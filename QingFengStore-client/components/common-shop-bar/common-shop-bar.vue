@@ -5,13 +5,14 @@ import { platform, safeareaHeight, safeareaHeight_px } from '@/utils/system.js'
 
 const shopBarHeight_px = `${safeareaHeight + uni.rpx2px(100)}px`
 
+const cartStore = useCartStore()
+cartStore.init()
+
 // 联系客服
 const onContact = () => {
 	// 仅支持小程序联系客服
 	if (!platform.startsWith('mp')) return showMsg('当前平台暂不支持联系客服')
 }
-
-const cartStore = useCartStore()
 
 const emits = defineEmits(['openSku', 'openCart'])
 const openSku = () => {
@@ -39,8 +40,8 @@ const openCart = () => {
 			<view class="common-shop-bar_menu_item" @click="openCart">
 				<view class="common-shop-bar_menu_item_icon icon-container">
 					<uni-icons type="cart" size="48rpx" color="#666666"></uni-icons>
-					<view class="common-shop-bar_menu_item_icon_tag" v-if="cartStore.cartTotalNum">
-						{{ cartStore.cartTotalNum }}
+					<view class="common-shop-bar_menu_item_icon_tag" v-if="cartStore.selectedTotal">
+						{{ cartStore.selectedTotal }}
 					</view>
 				</view>
 				<view class="common-shop-bar_menu_item_label">购物车</view>
