@@ -142,25 +142,21 @@
 			}
 		},
 		{
-			"path" : "pages/order/order",
-			"style" : 
-			{
-				"navigationBarTitleText" : "确认订单"
+			"path": "pages/order/order",
+			"style": {
+				"navigationBarTitleText": "确认订单"
 			}
 		},
 		{
-			"path" : "pages/order/address",
-			"style" : 
-			{
-				"navigationBarTitleText" : "收货地址"
+			"path": "pages/order/address",
+			"style": {
+				"navigationBarTitleText": "收货地址"
 			}
 		},
 		{
-			"path" : "pages/order/feedback",
-			"style" : 
-			{
-				"navigationBarTitleText" : "支付结果\r
-		\t\t\t\t"
+			"path": "pages/order/feedback",
+			"style": {
+				"navigationBarTitleText": "支付结果"
 			}
 		}
 	],

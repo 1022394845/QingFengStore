@@ -21,12 +21,11 @@ const wrapperHeight_px = `${containerHeight - searchHeight - tabBarHeight - sett
 const cartStore = useCartStore()
 
 // 分类
+const loading = ref(false)
 const dataList = ref([])
 const getCategoryList = async () => {
 	try {
-		uni.showLoading({
-			title: '加载中...'
-		})
+		loading.value = true
 		const { errCode, data } = await goodsCloudObj.categories()
 		if (errCode !== 0) throw new Error()
 
@@ -34,7 +33,7 @@ const getCategoryList = async () => {
 	} catch {
 		showMsg('获取数据失败，请刷新重试')
 	} finally {
-		uni.hideLoading()
+		loading.value = false
 	}
 }
 onMounted(async () => {
@@ -92,6 +91,7 @@ const onSearch = (newKeyword) => {
 			@search="(newKeyword) => onSearch(newKeyword)"
 		></common-search>
 		<view class="wrapper">
+			<uv-loading-page :loading="loading" loading-text="加载中" font-size="48rpx"></uv-loading-page>
 			<uv-vtabs
 				:list="dataList"
 				:hdHeight="headerHeight_px"

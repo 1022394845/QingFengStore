@@ -22,9 +22,10 @@ const getDetail = async (id) => {
 
 		detail.value = data
 		skuPopRef.value.setInfo(data)
-		loading.value = false
 	} catch {
-		return showMsg('获取商品信息失败')
+		showMsg('获取商品信息失败')
+	} finally {
+		loading.value = false
 	}
 }
 
@@ -115,9 +116,7 @@ const openCartPop = () => {
 				</view>
 			</template>
 
-			<view class="loading" v-if="loading">
-				<dot-loading>加载中</dot-loading>
-			</view>
+			<uv-loading-page :loading="loading" loading-text="加载中" font-size="48rpx"></uv-loading-page>
 		</view>
 		<!-- 操作栏 -->
 		<common-shop-bar
