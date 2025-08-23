@@ -171,6 +171,10 @@
 		"selectedColor": "#BDAF8D",
 		"borderStyle": "black",
 		"backgroundColor": "#FFFFFF",
+		"fontSize": "20rpx",
+		"iconWidth": "48rpx",
+		"spacing": "6rpx",
+		"height": "100rpx",
 		"list": [{
 				"text": "首页",
 				"pagePath": "pages/index/index",
