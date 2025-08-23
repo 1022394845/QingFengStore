@@ -7,7 +7,12 @@ const userCloudObj = uniCloud.importObject('uni-id-co')
 // 用户
 export const useUserStore = defineStore('user', () => {
 	let token = null // 用户token
-	const userInfo = ref({}) // 用户信息
+	// 用户信息
+	const userInfo = ref({
+		_id: null, // 用户id
+		nickname: null, // 用户昵称
+		avatar_file: null // 用户头像
+	})
 	const TOKEN_STORAGE_KEY = 'uni_id_token'
 	const INFO_STORAGE_KEY = 'uni-id-pages-userInfo'
 
@@ -16,9 +21,9 @@ export const useUserStore = defineStore('user', () => {
 	 */
 	const init = () => {
 		if (token) return
-		token = uni.getStorageSync(TOKEN_STORAGE_KEY)
+		token = uni.getStorageSync(TOKEN_STORAGE_KEY) || null
 		if (!token) return needLogin(true)
-		userInfo.value = uni.getStorageSync(INFO_STORAGE_KEY).data
+		userInfo.value = { ...uni.getStorageSync(INFO_STORAGE_KEY) } || null
 	}
 
 	/**

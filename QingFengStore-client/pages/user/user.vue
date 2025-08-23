@@ -83,15 +83,25 @@ const menuList = [
 			<view class="user">
 				<view class="user_info">
 					<view class="user_info_avatar">
-						<image class="image" src="/static/defAvatar.png" mode="aspectFill"></image>
+						<image
+							class="image"
+							:src="
+								userStore.userInfo.avatar_file
+									? userStore.userInfo.avatar_file
+									: '/static/defAvatar.png'
+							"
+							mode="aspectFill"
+						></image>
 					</view>
 					<view class="user_info_text">
 						<view class="user_info_text_name">
-							<view class="user_info_text_name_nickname ellipsis">{{ '测试用户' }}</view>
+							<view class="user_info_text_name_nickname ellipsis">
+								{{ userStore.userInfo.nickname }}
+							</view>
 							<view class="user_info_text_name_tag vip" v-if="true">高级会员</view>
 							<view class="user_info_text_name_tag normal" v-else>普通用户</view>
 						</view>
-						<view class="user_info_text_id">ID: {{ '123456789' }}</view>
+						<view class="user_info_text_id">ID: {{ userStore.userInfo._id }}</view>
 					</view>
 				</view>
 				<view class="user_menu">
