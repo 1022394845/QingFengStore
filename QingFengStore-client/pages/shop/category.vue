@@ -9,10 +9,10 @@ import {
 	settleBarHeight_px
 } from '@/utils/system.js'
 import { formatPrice } from '@/utils/format.js'
-import { nextTick, onMounted, ref } from 'vue'
+import { nextTick, onMounted, onUnmounted, ref } from 'vue'
 import { useCartStore } from '@/store/cart.js'
 import { needLogin, routerTo } from '@/utils/router.js'
-import { observeElement, showMsg } from '@/utils/common.js'
+import { createObserver, showMsg } from '@/utils/common.js'
 const goodsCloudObj = uniCloud.importObject('client-goods', { customUI: true })
 
 const headerHeight_px = `${navBarHeight + searchHeight}px`
@@ -55,14 +55,22 @@ const getCategoryGoods = async (category_id) => {
 		return showMsg('获取商品信息失败，请刷新重试')
 	}
 }
+
+const observers = []
 const registerObserver = () => {
 	if (!dataList.value) return
 
 	dataList.value.forEach((item) => {
-		const selector = `#group-${item._id}`
-		observeElement(selector, () => getCategoryGoods(item._id), true)
+		const target = `#group-${item._id}`
+		const observer = createObserver(target, () => getCategoryGoods(item._id), true)
+		if (observer) observers.push(observer)
 	})
 }
+onUnmounted(() => {
+	observers.forEach((observer) => {
+		if (observer && typeof observer.disconnect === 'function') observer.disconnect()
+	})
+})
 
 // SKU弹出框
 const skuPopRef = ref(null)
@@ -117,8 +125,8 @@ const onSearch = (newKeyword) => {
 			>
 				<template v-for="group in dataList" :key="group._id">
 					<uv-vtabs-item :index="group._id">
-						<view class="group" :id="`group-${group._id}`">
-							<view class="group-title">{{ group.name }}</view>
+						<view class="group">
+							<view class="group-title" :id="`group-${group._id}`">{{ group.name }}</view>
 							<view class="group-list">
 								<template v-if="group.goods">
 									<goods-card

@@ -1,7 +1,6 @@
 <script setup>
-import { onReady } from '@dcloudio/uni-app'
-import { onMounted, ref } from 'vue'
-import { observeElement, showMsg } from '@/utils/common.js'
+import { onMounted, onUnmounted, ref } from 'vue'
+import { createObserver, showMsg } from '@/utils/common.js'
 import { routerTo } from '@/utils/router.js'
 const newsCloudObj = uniCloud.importObject('client-news', { customUI: true })
 const goodsCloudObj = uniCloud.importObject('client-goods', { customUI: true })
@@ -70,9 +69,13 @@ const getHotList = async () => {
 		showMsg('获取热销产品失败')
 	}
 }
-onReady(() => {
-	// 热销产品懒加载
-	observeElement('.hot', () => getHotList(), true)
+
+let observer = null
+onMounted(() => {
+	observer = createObserver('.hot', () => getHotList(), true)
+})
+onUnmounted(() => {
+	if (observer && observer.disconnect === 'function') observer.disconnect()
 })
 </script>
 

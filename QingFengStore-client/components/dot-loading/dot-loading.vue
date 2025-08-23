@@ -5,9 +5,9 @@
 		<!-- 显示内容 -->
 		<slot></slot>
 		<!-- 加载样式 -->
-		<view class="loading-dot" id="dot1"></view>
-		<view class="loading-dot" id="dot2"></view>
-		<view class="loading-dot" id="dot3"></view>
+		<view class="loading-dot dot1"></view>
+		<view class="loading-dot dot2"></view>
+		<view class="loading-dot dot3"></view>
 	</view>
 </template>
 
@@ -26,7 +26,7 @@
 		animation: dotPulse 1.5s infinite ease-in-out;
 
 		@for $i from 1 through 3 {
-			&#dot#{$i} {
+			&.dot#{$i} {
 				animation-delay: 0.2s * ($i - 1);
 			}
 		}

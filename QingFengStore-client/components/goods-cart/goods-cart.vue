@@ -3,7 +3,7 @@ import { computed, ref } from 'vue'
 import { useCartStore } from '@/store/cart.js'
 import { debounce, isLogin, showMsg } from '@/utils/common.js'
 import { needLogin, routerTo } from '@/utils/router.js'
-import { tabBarHeight } from '@/utils/system.js'
+import { safeareaHeight, tabBarHeight } from '@/utils/system.js'
 
 const props = defineProps({
 	tabBar: {
@@ -13,7 +13,7 @@ const props = defineProps({
 	}
 })
 const popupBottom_px = computed(() => {
-	const base = uni.rpx2px(40)
+	const base = safeareaHeight + uni.rpx2px(40)
 
 	if (props.tabBar) return `${tabBarHeight + base}px`
 	return `${base}px`

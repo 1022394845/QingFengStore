@@ -7,7 +7,6 @@ import { showMsg } from '@/utils/common.js'
 const props = defineProps({
 	detail: {
 		type: Object,
-		required: true,
 		default: {}
 	},
 	sku: {
