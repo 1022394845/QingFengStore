@@ -41,9 +41,11 @@ export function routerTo(url, type = 'navigateTo') {
 
 /**
  * 路由返回
+ * @param {number} [delta] 返回级数
  */
-export function routerBack() {
+export function routerBack(delta = 1) {
 	uni.navigateBack({
+		delta,
 		fail: (err) => {
 			routerTo()
 		}

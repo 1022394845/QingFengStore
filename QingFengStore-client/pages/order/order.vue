@@ -29,7 +29,12 @@ const onConfirm = async () => {
 	// 拉起支付
 	try {
 		const { errCode, errMsg } = await orderStore.pay(cache_id)
-		routerTo(`/pages/order/feedback?id=${cache_id}&status=${errCode === 0 ? true : false}`)
+		routerTo(
+			`/pages/order/feedback?id=${cache_id}&total=${orderStore.totalFee}&status=${
+				errCode === 0 ? true : false
+			}`,
+			'redirectTo'
+		)
 	} catch {
 		showMsg('未知错误', 'error')
 	}
