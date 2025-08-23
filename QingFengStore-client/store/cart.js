@@ -48,7 +48,7 @@ export const useCartStore = defineStore('cart', () => {
 	 * 加载购物车数据
 	 */
 	const loadCartData = async () => {
-		const local = JSON.parse(localStorage.getItem(STORAGE_KEY)) // 本地数据
+		const local = uni.getStorageSync(STORAGE_KEY) // 本地数据
 		if (
 			local &&
 			local.user_id &&
@@ -84,7 +84,7 @@ export const useCartStore = defineStore('cart', () => {
 			user_id: uid
 		}
 		localUpdateDate = cartData.update_date
-		localStorage.setItem(STORAGE_KEY, JSON.stringify(cartData))
+		uni.setStorageSync(STORAGE_KEY, cartData)
 		if (!cloudUpdateDate) needSync = true // 开启需要同步标志
 	}
 

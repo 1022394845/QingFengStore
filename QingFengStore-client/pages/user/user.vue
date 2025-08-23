@@ -1,8 +1,6 @@
 <script setup>
 import { routerTo } from '@/utils/router.js'
-import { containerHeight, tabBarHeight } from '@/utils/system.js'
-
-const wrapperHeight_px = `${containerHeight - tabBarHeight}px`
+import { tabBarHeight_px, navBarHeight_px, safeareaHeight_px } from '@/utils/system.js'
 
 const userMenuList = [
 	{
@@ -129,7 +127,9 @@ const menuList = [
 
 <style scoped lang="scss">
 .wrapper {
-	min-height: v-bind(wrapperHeight_px);
+	min-height: calc(
+		100vh - v-bind(tabBarHeight_px) - v-bind(navBarHeight_px) - v-bind(safeareaHeight_px)
+	);
 	padding: 26rpx;
 	background-color: #f9f9f9;
 

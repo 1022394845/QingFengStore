@@ -7,7 +7,6 @@ import { showMsg } from '@/utils/common.js'
 const goodsCloudObj = uniCloud.importObject('client-goods', { customUI: true })
 
 const detailHeight_px = `${safeareaHeight + shopBarHeight + uni.rpx2px(30)}px`
-const popupBottom_px = `${safeareaHeight + uni.rpx2px(40)}px`
 
 const loading = ref(false)
 const detail = ref({})

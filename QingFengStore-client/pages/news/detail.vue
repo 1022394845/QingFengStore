@@ -4,7 +4,6 @@ import { getCurrentInstance, nextTick, onMounted, ref } from 'vue'
 import { onLoad } from '@dcloudio/uni-app'
 const newsCloudObj = uniCloud.importObject('client-news', { customUI: true })
 
-let newsId = null
 const detail = ref({})
 const instance = getCurrentInstance()
 const getDetail = async (id) => {
@@ -28,10 +27,7 @@ const getDetail = async (id) => {
 }
 
 onLoad((e) => {
-	if (e.id) newsId = e.id
-})
-onMounted(() => {
-	getDetail(newsId)
+	if (e.id) getDetail(e.id)
 })
 </script>
 

@@ -8,6 +8,7 @@ import { routerTo } from '@/utils/router.js'
 import { useOrderStore } from '@/store/order'
 
 const cartStore = useCartStore()
+cartStore.init()
 const orderStore = useOrderStore()
 
 // 更改选择状态
@@ -45,22 +46,26 @@ const onCheck = () => {
 					v-for="item in cartStore.localCart"
 					:key="`${item.goods_id}_${item.sku._id}`"
 				>
-					<uv-checkbox-group
-						:value="[item.is_selected]"
-						shape="circle"
-						size="32rpx"
-						iconSize="24rpx"
-						labelSize="28rpx"
-						@change="toggleSelect(item)"
-					>
-						<uv-checkbox activeColor="#bdaf8d" :name="true"></uv-checkbox>
-					</uv-checkbox-group>
-					<goods-card
-						:detail="item"
-						:sku="item.sku"
-						:config="2"
-						@updateQuantity="(quantity) => updateQuantity(item, quantity)"
-					></goods-card>
+					<view class="goods-list_item_checkbox">
+						<uv-checkbox-group
+							:value="[item.is_selected]"
+							shape="circle"
+							size="32rpx"
+							iconSize="24rpx"
+							labelSize="28rpx"
+							@change="toggleSelect(item)"
+						>
+							<uv-checkbox activeColor="#bdaf8d" :name="true"></uv-checkbox>
+						</uv-checkbox-group>
+					</view>
+					<view class="goods-list_item_goods">
+						<goods-card
+							:detail="item"
+							:sku="item.sku"
+							:config="2"
+							@updateQuantity="(quantity) => updateQuantity(item, quantity)"
+						></goods-card>
+					</view>
 				</view>
 			</scroll-view>
 
@@ -111,6 +116,14 @@ const onCheck = () => {
 		display: flex;
 		gap: 20rpx;
 		align-items: center;
+
+		&_checkbox {
+			flex-shrink: 0;
+		}
+
+		&_goods {
+			flex: 1;
+		}
 	}
 }
 

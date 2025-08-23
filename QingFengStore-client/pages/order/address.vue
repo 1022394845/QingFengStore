@@ -1,6 +1,7 @@
 <script setup>
 import { ref } from 'vue'
 import { useAddressStore } from '@/store/address.js'
+import { defaultNavBarHeight_px } from '@/utils/system.js'
 
 const addressStore = useAddressStore()
 addressStore.init()
@@ -73,7 +74,7 @@ const openAddressPop = (info = null) => {
 <style scoped lang="scss">
 .wrapper {
 	width: 100%;
-	min-height: calc(100vh - 44px);
+	min-height: calc(100vh - v-bind(defaultNavBarHeight_px));
 	padding: 40rpx;
 	background-color: #f3f4f6;
 

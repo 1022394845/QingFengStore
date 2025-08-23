@@ -3,7 +3,8 @@ import {
 	safeareaHeight_px,
 	settleBarHeight,
 	settleBarHeight_px,
-	containerHeight
+	safeareaHeight,
+	defaultNavBarHeight_px
 } from '@/utils/system.js'
 import { formatPrice } from '@/utils/format.js'
 import { routerTo } from '@/utils/router.js'
@@ -11,9 +12,6 @@ import { ref } from 'vue'
 import { useAddressStore } from '@/store/address.js'
 import { useOrderStore } from '@/store/order.js'
 import { showMsg } from '@/utils/common.js'
-
-const wrapperHeight_px = `${containerHeight - settleBarHeight}px`
-const wrapperBottom_px = `${settleBarHeight + uni.rpx2px(40)}px`
 
 const addressStore = useAddressStore()
 const orderStore = useOrderStore()
@@ -166,9 +164,11 @@ const onConfirm = async () => {
 <style scoped lang="scss">
 .wrapper {
 	width: 100%;
+	height: calc(100vh - v-bind(settleBarHeight_px) - v-bind(defaultNavBarHeight_px));
 	padding: 40rpx;
-	padding-bottom: v-bind(wrapperBottom_px);
+	padding-bottom: 40rpx;
 	background-color: #f9f9f9;
+	overflow-y: auto;
 
 	.card {
 		width: 100%;

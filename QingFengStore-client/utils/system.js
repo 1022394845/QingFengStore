@@ -38,6 +38,10 @@ export const searchHeight_px = `${searchHeight}px`
 export const windowHeight = SYSTEM_INFO.windowHeight
 export const windowHeight_px = `${windowHeight}px`
 
+// 默认导航栏高度
+export const defaultNavBarHeight = 44
+export const defaultNavBarHeight_px = '44px'
+
 // 视口容器高度 px
 export const containerHeight = windowHeight - navBarHeight
 export const containerHeight_px = `${containerHeight}px`
