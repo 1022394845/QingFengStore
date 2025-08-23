@@ -57,7 +57,10 @@ const menuList = [
 	{
 		icon: 'icon-location-fill',
 		label: '收货地址',
-		note: '管理收获地址'
+		note: '管理收货地址',
+		click: () => {
+			routerTo('/pages/order/address')
+		}
 	},
 	{
 		icon: 'icon-reduce-fill',
@@ -112,7 +115,12 @@ const menuList = [
 				</view>
 			</view>
 			<view class="menu">
-				<view class="menu_item" v-for="item in menuList" :key="item.label">
+				<view
+					class="menu_item"
+					v-for="item in menuList"
+					:key="item.label"
+					@click="item.click && item.click()"
+				>
 					<view class="menu_item_icon icon-container">
 						<view class="iconfont" :class="item.icon"></view>
 					</view>

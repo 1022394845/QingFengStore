@@ -1,7 +1,7 @@
 <script setup>
 import { computed, nextTick, onMounted, ref } from 'vue'
 import RegionsPicker from './regions-picker.vue'
-import { showMsg } from '@/utils/common.js'
+import { showConfirm, showMsg } from '@/utils/common.js'
 import { useAddressStore } from '@/store/address.js'
 import { safeareaHeight } from '@/utils/system.js'
 
@@ -134,11 +134,7 @@ const onSubmit = async () => {
 const onRemove = async () => {
 	if (!formData.value || !formData.value._id) return showMsg('未知错误，请稍后再试')
 
-	const { cancel } = await uni.showModal({
-		title: '温馨提示',
-		content: '确认删除该地址吗？',
-		confirmColor: '#bdaf8d'
-	})
+	const cancel = await showConfirm('温馨提示', '确认删除该地址吗？')
 	if (cancel) return
 
 	try {

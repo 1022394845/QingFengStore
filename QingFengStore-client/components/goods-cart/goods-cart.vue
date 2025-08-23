@@ -1,7 +1,7 @@
 <script setup>
 import { computed, ref } from 'vue'
 import { useCartStore } from '@/store/cart.js'
-import { debounce, isLogin, showMsg } from '@/utils/common.js'
+import { debounce, isLogin, showConfirm, showMsg } from '@/utils/common.js'
 import { needLogin, routerTo } from '@/utils/router.js'
 import { safeareaHeight, tabBarHeight } from '@/utils/system.js'
 
@@ -38,11 +38,7 @@ const close = () => {
 
 // 移除商品确认
 const onConfirmRemove = async (item) => {
-	const { cancel } = await uni.showModal({
-		title: '温馨提示',
-		content: '你确认移除该商品吗',
-		confirmColor: '#bdaf8d'
-	})
+	const cancel = await showConfirm('温馨提示', '确认移除该商品吗?')
 	if (cancel) return
 
 	cartStore.remove(item.goods_id, item.sku._id)

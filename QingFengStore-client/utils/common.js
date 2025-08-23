@@ -14,6 +14,23 @@ export function showMsg(title, icon = 'none', duration = 1500) {
 }
 
 /**
+ * 确认弹出框
+ * @param {string} title 标题
+ * @param {string} content 内容
+ * @param {string} [confirmText] 确认按钮文字 默认-确定
+ * @returns {boolean} cancel 是否取消
+ */
+export async function showConfirm(title, content, confirmText = '确定') {
+	const { cancel } = await uni.showModal({
+		title,
+		content,
+		confirmText,
+		confirmColor: '#bdaf8d'
+	})
+	return cancel
+}
+
+/**
  * 监听元素进入视口并执行回调函数
  * @param {string} target 目标元素选择器
  * @param {function} callback 元素可见时执行的回调函数
