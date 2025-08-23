@@ -1,6 +1,10 @@
 <script setup>
+import { useUserStore } from '@/store/user.js'
 import { routerTo } from '@/utils/router.js'
 import { tabBarHeight_px, navBarHeight_px, safeareaHeight_px } from '@/utils/system.js'
+
+const userStore = useUserStore()
+userStore.init()
 
 const userMenuList = [
 	{
@@ -59,13 +63,15 @@ const menuList = [
 		label: '收货地址',
 		note: '管理收货地址',
 		click: () => {
+			// 前往地址管理页面
 			routerTo('/pages/order/address')
 		}
 	},
 	{
 		icon: 'icon-reduce-fill',
 		label: '退出登录',
-		note: '退出当前账号'
+		note: '退出当前账号',
+		click: () => userStore.logout()
 	}
 ]
 </script>

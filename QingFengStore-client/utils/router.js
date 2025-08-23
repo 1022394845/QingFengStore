@@ -1,3 +1,5 @@
+import { showConfirm } from './common'
+
 /**
  * 路由跳转
  * @param {string} url - 跳转地址
@@ -54,15 +56,14 @@ export function routerBack(delta = 1) {
 
 /**
  * 跳转登录
+ * @param {boolean} [force] 强制跳转
  */
-export async function needLogin() {
-	// 确认是否跳转登录
-	const { cancel } = await uni.showModal({
-		title: '请先登录',
-		content: '此操作需要先完成登录',
-		confirmColor: '#bdaf8d'
-	})
-	if (cancel) return
+export async function needLogin(force = false) {
+	if (!force) {
+		// 确认是否跳转登录
+		const cancel = await showConfirm('请先登录', '此操作需要先完成登录', '登录')
+		if (cancel) return
+	}
 
 	// #ifdef MP-WEIXIN
 	routerTo('/uni_modules/uni-id-pages/pages/login/login-withoutpwd')
