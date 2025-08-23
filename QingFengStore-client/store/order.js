@@ -1,5 +1,6 @@
 import { defineStore } from 'pinia'
 import { computed, ref } from 'vue'
+const orderCloudObj = uniCloud.importObject('client-order')
 
 // 订单
 export const useOrderStore = defineStore('order', () => {
@@ -58,11 +59,72 @@ export const useOrderStore = defineStore('order', () => {
 		formData.value.info = info
 	}
 
+	/**
+	 * 支付订单
+	 * @param {string} id 订单id
+	 * @param {boolean} [force_result] 强制结果
+	 * @returns {object} 操作结果
+	 */
+	const pay = async (id, force_result = true) => {
+		if (!id) return { errCode: 400, errMsg: '订单id不可为空' }
+
+		// 模拟支付
+		return new Promise((resolve, reject) => {
+			uni.showLoading({
+				title: '支付中...'
+			})
+			setTimeout(() => {
+				uni.hideLoading()
+				if (force_result) {
+					resolve({ errCode: 0, errMsg: '支付成功' })
+				} else {
+					resolve({ errCode: 403, errMsg: '支付失败' })
+				}
+			}, 2000)
+		})
+	}
+
+	/**
+	 * 创建订单
+	 * @returns {object} 操作结果
+	 * @returns {string} id 订单id
+	 */
+	const create = async () => {
+		const { user_id, pay_type, info } = formData.value
+		const now = Date.now()
+		const form = {
+			user_id,
+			pay_type,
+			info,
+			total_fee: totalFee.value,
+			create_time: now,
+			update_time: now
+		}
+
+		try {
+			// 生成订单
+			const {
+				errCode,
+				errMsg,
+				data: { id }
+			} = await orderCloudObj.create(form)
+			if (errCode !== 0) return { errCode, errMsg }
+
+			// 如果是从购物车中生成的订单，需要删除对应物品
+
+			return { errCode, errMsg, id }
+		} catch {
+			return { errCode: 500, errMsg: '服务器错误' }
+		}
+	}
+
 	return {
 		formData,
 		payMethodList,
 		goodsPrice,
 		totalFee,
-		createCheck
+		createCheck,
+		create,
+		pay
 	}
 })

@@ -10,6 +10,7 @@ import { routerTo } from '@/utils/router.js'
 import { ref } from 'vue'
 import { useAddressStore } from '@/store/address.js'
 import { useOrderStore } from '@/store/order.js'
+import { showMsg } from '@/utils/common.js'
 
 const wrapperHeight_px = `${containerHeight - settleBarHeight}px`
 const wrapperBottom_px = `${settleBarHeight + uni.rpx2px(40)}px`
@@ -17,6 +18,24 @@ const wrapperBottom_px = `${settleBarHeight + uni.rpx2px(40)}px`
 const addressStore = useAddressStore()
 const orderStore = useOrderStore()
 addressStore.init()
+
+let cache_id = null // 避免在支付阶段发生错误而重复生成订单
+const onConfirm = async () => {
+	if (!cache_id) {
+		// 创建订单
+		const { errCode, id } = await orderStore.create()
+		if (errCode !== 0) return showMsg('生成订单失败')
+		cache_id = id
+	}
+
+	// 拉起支付
+	try {
+		const { errCode, errMsg } = await orderStore.pay(cache_id)
+		routerTo(`/pages/order/feedback?id=${cache_id}&status=${errCode === 0 ? true : false}`)
+	} catch {
+		showMsg('未知错误', 'error')
+	}
+}
 </script>
 
 <template>
@@ -139,7 +158,7 @@ addressStore.init()
 					</view>
 				</view>
 			</view>
-			<view class="settle-btn">提交订单</view>
+			<view class="settle-btn" @click="onConfirm">提交订单</view>
 		</view>
 	</view>
 </template>

@@ -49,7 +49,7 @@ module.exports = {
 
 		try {
 			const now = Date.now()
-			const { errCode, id } = await dbJQL.collection('QingFengStore-mall-order').add({
+			const { errCode, errMsg, id } = await dbJQL.collection('QingFengStore-mall-order').add({
 				...data,
 				create_time: now,
 				update_time: now

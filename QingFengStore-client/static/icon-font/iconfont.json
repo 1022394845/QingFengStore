@@ -6,6 +6,20 @@
   "description": "",
   "glyphs": [
     {
+      "icon_id": "17700",
+      "name": "成功",
+      "font_class": "success",
+      "unicode": "e602",
+      "unicode_decimal": 58882
+    },
+    {
+      "icon_id": "9626932",
+      "name": "失败",
+      "font_class": "error",
+      "unicode": "e87c",
+      "unicode_decimal": 59516
+    },
+    {
       "icon_id": "58333",
       "name": "add",
       "font_class": "add",
