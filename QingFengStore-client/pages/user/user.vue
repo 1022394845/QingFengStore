@@ -26,22 +26,27 @@ const userMenuList = [
 
 const orderMenuList = [
 	{
+		status: 1,
 		icon: 'icon-wallet',
 		label: '待付款'
 	},
 	{
+		status: 2,
 		icon: 'icon-package',
 		label: '待发货'
 	},
 	{
+		status: 3,
 		icon: 'icon-transportation',
 		label: '运输中'
 	},
 	{
+		status: 4,
 		icon: 'icon-bag',
 		label: '待收货'
 	},
 	{
+		status: 5,
 		icon: 'icon-refund-fill',
 		label: '售后/退款'
 	}
@@ -105,7 +110,7 @@ const menuList = [
 					</view>
 				</view>
 				<view class="user_menu">
-					<view class="user_menu_item" v-for="item in userMenuList" :key="item.label">
+					<view class="user_menu_item" v-for="item in userMenuList" :key="item.status">
 						<view class="user_menu_item_icon icon-container">
 							<view class="iconfont" :class="item.icon"></view>
 						</view>
@@ -124,7 +129,9 @@ const menuList = [
 					<view class="order_list_item" v-for="item in orderMenuList" :key="item.label">
 						<view class="order_list_item_icon">
 							<view class="iconfont" :class="item.icon"></view>
-							<view class="order_list_item_icon_tag">{{ '3' }}</view>
+							<view class="order_list_item_icon_tag" v-if="userStore.orderCount[item.status]">
+								{{ userStore.orderCount[item.status] }}
+							</view>
 						</view>
 						<view class="order_list_item_label">{{ item.label }}</view>
 					</view>
@@ -303,7 +310,7 @@ const menuList = [
 					position: relative;
 
 					.iconfont {
-						font-size: 48rpx;
+						font-size: 42rpx;
 						color: #000000;
 					}
 
@@ -325,7 +332,8 @@ const menuList = [
 				}
 
 				&_label {
-					font-size: 32rpx;
+					margin-top: 10rpx;
+					font-size: 28rpx;
 				}
 			}
 		}
