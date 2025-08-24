@@ -141,5 +141,31 @@ module.exports = {
 		} catch {
 			return defaultError
 		}
+	},
+
+	/**
+	 * 改变订单状态
+	 * @param {string} id 订单id
+	 * @param {number} status 订单状态 客户端仅支持：2-待发货，5-已完成，6-申请退款
+	 * @returns {number} updated 成功修改个数(无变化为0)
+	 */
+	async status(id, status) {
+		if (!id || typeof status !== 'number')
+			return result({ errCode: 400, errMsg: 'error', type: '请求', custom: '必要参数缺失' })
+
+		if (![2, 5, 6].includes(status))
+			return result({ errCode: 403, errMsg: 'error', type: '请求', custom: '权限不足' })
+
+		try {
+			const { errCode, errMsg, updated } = await dbJQL
+				.collection('QingFengStore-mall-order')
+				.doc(id)
+				.update({ status, update_time: Date.now() })
+
+			if (errCode !== 0) return result({ errCode, errMsg: 'fail', type: '修改', custom: errMsg })
+			return result({ errCode: 0, errMsg: 'success', data: { updated }, type: '修改' })
+		} catch {
+			return defaultError
+		}
 	}
 }

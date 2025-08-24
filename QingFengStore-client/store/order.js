@@ -73,12 +73,19 @@ export const useOrderStore = defineStore('order', () => {
 			uni.showLoading({
 				title: '支付中...'
 			})
-			setTimeout(() => {
+			setTimeout(async () => {
 				uni.hideLoading()
-				if (force_result) {
-					resolve({ errCode: 0, errMsg: '支付成功' })
-				} else {
+				if (!force_result) {
 					resolve({ errCode: 403, errMsg: '支付失败' })
+				} else {
+					try {
+						const { errCode } = await orderCloudObj.status(id, 2)
+						if (errCode !== 0) throw new Error()
+
+						resolve({ errCode: 0, errMsg: '支付成功' })
+					} catch {
+						resolve({ errCode: 403, errMsg: '支付失败' })
+					}
 				}
 			}, 2000)
 		})
