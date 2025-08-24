@@ -2,12 +2,12 @@
 import { onLoad } from '@dcloudio/uni-app'
 import { ref } from 'vue'
 import { defaultNavBarHeight_px } from '@/utils/system.js'
+import { showMsg } from '@/utils/common.js'
 const orderCloudObj = uniCloud.importObject('client-order', { customUI: true })
 
 const currentNav = ref(0)
 const navList = [
 	{
-		status: [-2, -1, 1, 2, 3, 4, 5, 6],
 		name: '全部'
 	},
 	{
@@ -40,21 +40,23 @@ onLoad((e) => {
 	}
 })
 const onChangeNav = (item) => {
-	console.log(item.index)
 	currentNav.value = item.index
+	if (pagingRef.value) pagingRef.value.reload()
 }
 
 // 订单列表
 const pagingRef = ref(null)
 const orderList = ref([])
 const loadOrderList = async (page, pageSize) => {
+	if (!pagingRef.value) return showMsg('未知错误，请刷新重试')
+
 	try {
 		const uid = uniCloud.getCurrentUserInfo().uid || null
 		const status = navList[currentNav.value]?.status || null
-		const { errCode, data } = await orderCloudObj.list({ page, pageSize }, uid, status)
+		const { errCode, data, total } = await orderCloudObj.list({ page, pageSize }, uid, status)
 
 		if (errCode !== 0) throw new Error()
-		pagingRef.value.complete(data)
+		pagingRef.value.completeByTotal(data, total)
 	} catch {
 		pagingRef.value.complete(false)
 	}
@@ -78,6 +80,7 @@ const loadOrderList = async (page, pageSize) => {
 					lineColor="#bdaf8d"
 					lineWidth="40rpx"
 					lineHeight="4rpx"
+					:itemStyle="{ height: '88rpx' }"
 					@change="(item) => onChangeNav(item)"
 				></uv-tabs>
 			</template>
@@ -90,7 +93,7 @@ const loadOrderList = async (page, pageSize) => {
 
 			<view class="order-list">
 				<view class="order-list_item" v-for="item in orderList" :key="item._id">
-					{{ item._id }}
+					<order-card :detail="item"></order-card>
 				</view>
 			</view>
 		</z-paging>
@@ -101,5 +104,13 @@ const loadOrderList = async (page, pageSize) => {
 .container {
 	min-height: calc(100vh - v-bind(defaultNavBarHeight_px));
 	background-color: #f9f9f9;
+}
+
+.order-list {
+	width: 100%;
+	padding: 40rpx;
+	display: flex;
+	flex-direction: column;
+	gap: 40rpx;
 }
 </style>

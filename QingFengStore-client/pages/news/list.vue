@@ -3,16 +3,19 @@ import dayjs from 'dayjs'
 import { routerTo } from '@/utils/router.js'
 import { onMounted, ref } from 'vue'
 import { navBarHeight_px } from '@/utils/system.js'
+import { showMsg } from '@/utils/common.js'
 const newsCloudObj = uniCloud.importObject('client-news', { customUI: true })
 
 const newsList = ref([])
 const pagingRef = ref(null)
 const loadNewsList = async (page, pageSize) => {
+	if (!pagingRef.value) return showMsg('未知错误，请刷新重试')
+
 	try {
-		const { errCode, data } = await newsCloudObj.list({ page, pageSize })
+		const { errCode, data, total } = await newsCloudObj.list({ page, pageSize })
 
 		if (errCode !== 0) throw new Error()
-		pagingRef.value.complete(data)
+		pagingRef.value.completeByTotal(data, total)
 	} catch {
 		pagingRef.value.complete(false)
 	}
@@ -21,7 +24,12 @@ const loadNewsList = async (page, pageSize) => {
 
 <template>
 	<view class="container">
-		<z-paging ref="pagingRef" v-model="newsList" :default-page-size="9" @query="loadNewsList">
+		<z-paging
+			ref="pagingRef"
+			v-model="newsList"
+			:default-page-size="9"
+			@query="(page, pageSize) => loadNewsList(page, pageSize)"
+		>
 			<template #top>
 				<common-nav-bar title="资讯" titleColor="#ffffff"></common-nav-bar>
 			</template>
