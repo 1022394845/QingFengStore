@@ -122,11 +122,16 @@ const menuList = [
 			<view class="order">
 				<view class="order_header">
 					<view class="order_header_text">我的订单</view>
-					<view class="order_header_note">查看全部订单</view>
+					<view class="order_header_note" @click="routerTo('/pages/user/order')">查看全部订单</view>
 					<view class="order_header_more iconfont icon-more"></view>
 				</view>
 				<view class="order_list">
-					<view class="order_list_item" v-for="item in orderMenuList" :key="item.label">
+					<view
+						class="order_list_item"
+						v-for="item in orderMenuList"
+						:key="item.label"
+						@click="routerTo(`/pages/user/order?status=${item.status}`)"
+					>
 						<view class="order_list_item_icon">
 							<view class="iconfont" :class="item.icon"></view>
 							<view class="order_list_item_icon_tag" v-if="userStore.orderCount[item.status]">

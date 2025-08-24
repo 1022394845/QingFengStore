@@ -61,7 +61,7 @@ export const useUserStore = defineStore('user', () => {
 		if (!uid) return { errCode: 400, errMsg: '用户id不可为空' }
 
 		try {
-			const { errCode, errMsg, data } = await orderCloudObj.list(uid)
+			const { errCode, errMsg, data } = await orderCloudObj.count(uid)
 			if (errCode !== 0) return { errCode, errMsg }
 
 			orderCount.value = {}

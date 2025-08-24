@@ -67,7 +67,7 @@ module.exports = {
 	 * @param {string} user_id 用户id
 	 * @returns {object} 订单数量信息
 	 */
-	async list(user_id) {
+	async count(user_id) {
 		if (!user_id)
 			return result({ errCode: 400, errMsg: 'error', type: '请求', custom: '用户id不可为空' })
 
@@ -82,6 +82,60 @@ module.exports = {
 			if (errCode !== 0) return result({ errCode, errMsg: 'fail', type: '获取', custom: errMsg })
 			return result({ errCode: 0, errMsg: 'success', data, type: '获取' })
 		} catch {
+			return defaultError
+		}
+	},
+
+	/**
+	 * 分页获取订单列表
+	 * @param {object} pageInfo 分页信息
+	 * @param {number} pageInfo.page 当前页码
+	 * @param {number} pageInfo.pageSize 页容量
+	 * @param {string} user_id 用户id
+	 * @param {number[]|number} [status] 筛选获取订单的状态
+	 * @return {object[]} 订单列表
+	 */
+	async list({ page = 1, pageSize = 6 } = {}, user_id, status = null) {
+		if (!user_id)
+			return result({ errCode: 400, errMsg: 'error', type: '请求', custom: '用户id不可为空' })
+		if (page < 1) return result({ errCode: 400, errMsg: 'error', type: '请求', custom: '页码异常' })
+
+		if (typeof status === 'number') status = [status]
+
+		try {
+			pageSize = Math.min(20, pageSize) // 保证pageSize合理
+
+			const currentSize = (page - 1) * pageSize // 忽略条数
+
+			let query = `user_id == "${user_id}"`
+			if (status && Array.isArray(status)) query += ' && ' + `status in ${JSON.stringify(status)}`
+
+			// id 金额 状态 创建时间 商品信息
+			const { errCode, errMsg, data } = await dbJQL
+				.collection('QingFengStore-mall-order')
+				.where(query)
+				.field('_id, total_fee, status, create_time, info')
+				.orderBy('create_time desc')
+				.skip(currentSize)
+				.limit(pageSize)
+				.get()
+
+			if (errCode !== 0) return result({ errCode, errMsg: 'fail', type: '获取', custom: errMsg })
+
+			// 简化商品信息（仅保留用于列表展示内容）
+			data.forEach((order) => {
+				order.info = order.info.map((item) => ({
+					name: item.name,
+					goods_thumb: item.goods_thumb,
+					quantity: item.quantity,
+					sku_name: item.sku.sku_name,
+					price: item.sku.price
+				}))
+			})
+
+			return result({ errCode: 0, errMsg: 'success', data, type: '获取' })
+		} catch (err) {
+			console.log(err)
 			return defaultError
 		}
 	}

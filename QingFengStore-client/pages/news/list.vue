@@ -2,6 +2,7 @@
 import dayjs from 'dayjs'
 import { routerTo } from '@/utils/router.js'
 import { onMounted, ref } from 'vue'
+import { navBarHeight_px } from '@/utils/system.js'
 const newsCloudObj = uniCloud.importObject('client-news', { customUI: true })
 
 const newsList = ref([])
@@ -26,7 +27,9 @@ const loadNewsList = async (page, pageSize) => {
 			</template>
 
 			<template #loading>
-				<uni-load-more iconType="circle" status="loading"></uni-load-more>
+				<view class="loading" style="margin: 100rpx auto">
+					<dot-loading>加载中</dot-loading>
+				</view>
 			</template>
 
 			<view class="news-list">
@@ -63,6 +66,11 @@ const loadNewsList = async (page, pageSize) => {
 </template>
 
 <style scoped lang="scss">
+.container {
+	min-height: calc(100vh - v-bind(navBarHeight_px));
+	background-color: #f9f9f9;
+}
+
 .news-list {
 	padding: 20rpx;
 	width: 100%;

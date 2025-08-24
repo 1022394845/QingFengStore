@@ -15,6 +15,7 @@
 .dot-loading {
 	display: flex;
 	gap: 10rpx;
+	font-size: 32rpx;
 	align-items: center;
 	color: #666666;
 

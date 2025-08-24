@@ -158,6 +158,13 @@
 			"style": {
 				"navigationBarTitleText": "支付结果"
 			}
+		},
+		{
+			"path" : "pages/user/order",
+			"style" : 
+			{
+				"navigationBarTitleText" : "我的订单"
+			}
 		}
 	],
 	"globalStyle": {
