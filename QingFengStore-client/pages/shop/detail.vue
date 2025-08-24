@@ -6,7 +6,7 @@ import { safeareaHeight, shopBarHeight } from '@/utils/system.js'
 import { showMsg } from '@/utils/common.js'
 const goodsCloudObj = uniCloud.importObject('client-goods', { customUI: true })
 
-const detailHeight_px = `${safeareaHeight + shopBarHeight + uni.rpx2px(30)}px`
+const detailBottom_px = `${safeareaHeight + shopBarHeight + uni.rpx2px(30)}px`
 
 const loading = ref(false)
 const detail = ref({})
@@ -159,7 +159,8 @@ const openCartPop = () => {
 
 	.detail {
 		padding: 32rpx;
-		padding-bottom: v-bind(detailHeight_px);
+		padding-bottom: v-bind(detailBottom_px);
+		background-color: #ffffff;
 
 		&_title {
 			font-size: 42rpx;
@@ -202,10 +203,9 @@ const openCartPop = () => {
 			height: 100rpx;
 			display: flex;
 			align-items: center;
-			padding-top: 16rpx;
+			margin-top: 16rpx;
 			font-size: 32rpx;
-			background-color: #ffffff;
-			border-top: 32rpx solid #f9f9f9;
+			border-bottom: #f9f9f9 solid 4rpx;
 
 			&_label {
 				flex-shrink: 0;
