@@ -56,7 +56,18 @@ export const useOrderStore = defineStore('order', () => {
 	 */
 	const createCheck = (info) => {
 		formData.value = { ...defaultData }
-		formData.value.info = info
+		// 简化商品信息（仅保留用于列表展示内容
+		formData.value.info = info.map((item) => ({
+			goods_id: item.goods_id,
+			name: item.name,
+			goods_thumb: item.goods_thumb,
+			quantity: item.quantity,
+			sku: {
+				_id: item.sku._id,
+				sku_name: item.sku.sku_name,
+				price: item.sku.price
+			}
+		}))
 	}
 
 	/**

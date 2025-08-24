@@ -122,21 +122,6 @@ module.exports = {
 
 			if (errCode !== 0) return result({ errCode, errMsg: 'fail', type: '获取', custom: errMsg })
 
-			// 简化商品信息（仅保留用于列表展示内容）
-			data.forEach((order) => {
-				order.info = order.info.map((item) => ({
-					goods_id: item.goods_id,
-					name: item.name,
-					goods_thumb: item.goods_thumb,
-					quantity: item.quantity,
-					sku: {
-						_id: item.sku._id,
-						sku_name: item.sku.sku_name,
-						price: item.sku.price
-					}
-				}))
-			})
-
 			return result({ errCode: 0, errMsg: 'success', data, total: count, type: '获取' })
 		} catch {
 			return defaultError
