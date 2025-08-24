@@ -39,10 +39,13 @@ onLoad((e) => {
 		currentNav.value = index
 	}
 })
+const reload = () => {
+	if (pagingRef.value) pagingRef.value.reload()
+}
 // 切换tab时重新加载数据 防抖500ms
 const onChangeNav = debounce((item) => {
 	currentNav.value = item.index
-	if (pagingRef.value) pagingRef.value.reload()
+	reload()
 }, 500)
 
 // 订单列表
@@ -95,7 +98,7 @@ const loadOrderList = async (page, pageSize) => {
 
 			<view class="order-list">
 				<view class="order-list_item" v-for="item in orderList" :key="item._id">
-					<order-card :detail="item"></order-card>
+					<order-card :detail="item" @success="reload"></order-card>
 				</view>
 			</view>
 		</z-paging>

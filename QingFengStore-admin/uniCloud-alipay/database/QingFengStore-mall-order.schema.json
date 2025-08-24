@@ -28,8 +28,8 @@
 		},
 		"status": {
 			"bsonType": "int",
-			"minimum": -3,
-			"maximum": 5,
+			"minimum": -2,
+			"maximum": 7,
 			"description": "订单状态，1：待付款，2：待发货，3：运输中，4：待收货，5：已完成，6：申请退款，7：已退款，-1已关闭，-2：退款失败",
 			"defaultValue": 1
 		},

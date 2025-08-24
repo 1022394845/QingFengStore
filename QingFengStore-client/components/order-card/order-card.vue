@@ -77,6 +77,44 @@ const onPay = () => {
 	orderStore.createCheck(props.detail.info, id)
 	routerTo('/pages/order/order')
 }
+
+// 确认收货
+const onConfirm = async () => {
+	const cancel = await showConfirm('温馨提示', '确认收到商品了吗？')
+	if (cancel) return
+
+	const id = props.detail._id
+	if (!id) return showMsg('获取订单信息异常')
+
+	try {
+		const { errCode } = await orderCloudObj.status(id, 5)
+		if (errCode !== 0) throw new Error()
+
+		emits('success')
+		showMsg('收货成功')
+	} catch {
+		return showMsg('收货失败')
+	}
+}
+
+// 申请退款
+const onRefund = async () => {
+	const cancel = await showConfirm('温馨提示', '商品有问题建议先与商家沟通，确认要退款吗？')
+	if (cancel) return
+
+	const id = props.detail._id
+	if (!id) return showMsg('获取订单信息异常')
+
+	try {
+		const { errCode } = await orderCloudObj.status(id, 6)
+		if (errCode !== 0) throw new Error()
+
+		emits('success')
+		showMsg('申请退款成功')
+	} catch {
+		return showMsg('申请退款失败')
+	}
+}
 </script>
 
 <template>
@@ -119,8 +157,10 @@ const onPay = () => {
 					确认付款
 				</view>
 				<view class="btn" v-if="[3].includes(detail.status)">查看物流</view>
-				<view class="btn highlight" v-if="[3, 4].includes(detail.status)">确认收货</view>
-				<view class="btn" v-if="[4, 5].includes(detail.status)">申请退款</view>
+				<view class="btn highlight" v-if="[3, 4].includes(detail.status)" @click="onConfirm">
+					确认收货
+				</view>
+				<view class="btn" v-if="[4, 5].includes(detail.status)" @click="onRefund">申请退款</view>
 				<view class="btn highlight" v-if="[2, 5].includes(detail.status)">联系商家</view>
 			</view>
 		</view>
