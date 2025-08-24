@@ -17,20 +17,21 @@ const addressStore = useAddressStore()
 const orderStore = useOrderStore()
 addressStore.init()
 
-let cache_id = null // 避免在支付阶段发生错误而重复生成订单
 const onConfirm = async () => {
-	if (!cache_id) {
+	const id = orderStore.formData._id || null
+
+	if (!id) {
 		// 创建订单
 		const { errCode, id } = await orderStore.create()
 		if (errCode !== 0) return showMsg('生成订单失败')
-		cache_id = id
 	}
 
 	// 拉起支付
 	try {
-		const { errCode, errMsg } = await orderStore.pay(cache_id)
+		const { errCode, errMsg } = await orderStore.pay(id)
+		if (errCode !== 0) return showMsg('支付失败')
 		routerTo(
-			`/pages/order/feedback?id=${cache_id}&total=${orderStore.totalFee}&status=${
+			`/pages/order/feedback?id=${id}&total=${orderStore.totalFee}&status=${
 				errCode === 0 ? true : false
 			}`,
 			'redirectTo'

@@ -53,8 +53,9 @@ export const useOrderStore = defineStore('order', () => {
 	/**
 	 * 生成订单预览
 	 * @param {object[]} info 商品信息
+	 * @param {string} [id] 订单id 用于待付款订单重新拉起预览
 	 */
-	const createCheck = (info) => {
+	const createCheck = (info, id = null) => {
 		formData.value = { ...defaultData }
 		// 简化商品信息（仅保留用于列表展示内容
 		formData.value.info = info.map((item) => ({
@@ -68,6 +69,7 @@ export const useOrderStore = defineStore('order', () => {
 				price: item.sku.price
 			}
 		}))
+		if (id) formData.value._id = id
 	}
 
 	/**
@@ -130,6 +132,7 @@ export const useOrderStore = defineStore('order', () => {
 
 			// 如果是从购物车中生成的订单，需要删除对应物品
 
+			formData.value._id = id
 			return { errCode, errMsg, id }
 		} catch {
 			return { errCode: 500, errMsg: '服务器错误' }

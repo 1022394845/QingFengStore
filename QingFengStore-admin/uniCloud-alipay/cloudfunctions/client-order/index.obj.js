@@ -115,7 +115,7 @@ module.exports = {
 				.collection('QingFengStore-mall-order')
 				.where(query)
 				.field('_id, total_fee, status, info')
-				.orderBy('create_time desc')
+				.orderBy('update_time desc, create_time desc')
 				.skip(currentSize)
 				.limit(pageSize)
 				.get({ getCount: true })
@@ -131,14 +131,14 @@ module.exports = {
 	/**
 	 * 改变订单状态
 	 * @param {string} id 订单id
-	 * @param {number} status 订单状态 客户端仅支持：2-待发货，5-已完成，6-申请退款
+	 * @param {number} status 订单状态 客户端仅支持：2-待发货，5-已完成，6-申请退款，-1-已关闭
 	 * @returns {number} updated 成功修改个数(无变化为0)
 	 */
 	async status(id, status) {
 		if (!id || typeof status !== 'number')
 			return result({ errCode: 400, errMsg: 'error', type: '请求', custom: '必要参数缺失' })
 
-		if (![2, 5, 6].includes(status))
+		if (![-1, 2, 5, 6].includes(status))
 			return result({ errCode: 403, errMsg: 'error', type: '请求', custom: '权限不足' })
 
 		try {
