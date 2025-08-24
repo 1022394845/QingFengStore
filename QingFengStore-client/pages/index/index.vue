@@ -2,6 +2,7 @@
 import { onMounted, onUnmounted, ref } from 'vue'
 import { createObserver, showMsg } from '@/utils/common.js'
 import { routerTo } from '@/utils/router.js'
+import { tabBarHeight_px, safeareaHeight_px } from '@/utils/system.js'
 const newsCloudObj = uniCloud.importObject('client-news', { customUI: true })
 const goodsCloudObj = uniCloud.importObject('client-goods', { customUI: true })
 
@@ -142,6 +143,10 @@ onUnmounted(() => {
 </template>
 
 <style scoped lang="scss">
+.container {
+	padding-bottom: calc(v-bind(safeareaHeight_px) + v-bind(tabBarHeight_px));
+}
+
 .wrapper {
 	position: relative;
 	padding: 20rpx 32rpx;
