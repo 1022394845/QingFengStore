@@ -2,7 +2,7 @@
 import { onLoad } from '@dcloudio/uni-app'
 import { ref } from 'vue'
 import { defaultNavBarHeight_px } from '@/utils/system.js'
-import { showMsg } from '@/utils/common.js'
+import { debounce, showMsg } from '@/utils/common.js'
 const orderCloudObj = uniCloud.importObject('client-order', { customUI: true })
 
 const currentNav = ref(0)
@@ -39,10 +39,11 @@ onLoad((e) => {
 		currentNav.value = index
 	}
 })
-const onChangeNav = (item) => {
+// 切换tab时重新加载数据 防抖500ms
+const onChangeNav = debounce((item) => {
 	currentNav.value = item.index
 	if (pagingRef.value) pagingRef.value.reload()
-}
+}, 500)
 
 // 订单列表
 const pagingRef = ref(null)
@@ -69,6 +70,7 @@ const loadOrderList = async (page, pageSize) => {
 			ref="pagingRef"
 			v-model="orderList"
 			:default-page-size="6"
+			:auto-hide-loading-after-first-loaded="false"
 			@query="(page, pageSize) => loadOrderList(page, pageSize)"
 		>
 			<template #top>
