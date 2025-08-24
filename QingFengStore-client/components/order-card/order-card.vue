@@ -230,12 +230,6 @@ const onRefund = async () => {
 	}
 }
 
-.uv-read-more {
-	:deep(.uvicon-arrow-down) {
-		font-size: 24rpx;
-	}
-}
-
 .devider {
 	width: 100%;
 	height: 4rpx;

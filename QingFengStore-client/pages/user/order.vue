@@ -74,6 +74,7 @@ const loadOrderList = async (page, pageSize) => {
 			v-model="orderList"
 			:default-page-size="6"
 			:auto-hide-loading-after-first-loaded="false"
+			:safe-area-inset-bottom="true"
 			@query="(page, pageSize) => loadOrderList(page, pageSize)"
 		>
 			<template #top>
