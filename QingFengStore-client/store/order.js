@@ -97,7 +97,7 @@ export const useOrderStore = defineStore('order', () => {
 
 						resolve({ errCode: 0, errMsg: '支付成功' })
 					} catch {
-						resolve({ errCode: 403, errMsg: '支付失败' })
+						resolve({ errCode: 500, errMsg: '服务器错误' })
 					}
 				}
 			}, 2000)

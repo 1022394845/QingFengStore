@@ -9,35 +9,50 @@ import {
 import { formatPrice } from '@/utils/format.js'
 import { routerTo } from '@/utils/router.js'
 import { ref } from 'vue'
+import { onLoad } from '@dcloudio/uni-app'
 import { useAddressStore } from '@/store/address.js'
 import { useOrderStore } from '@/store/order.js'
 import { showMsg } from '@/utils/common.js'
+import { useCartStore } from '@/store/cart.js'
 
 const addressStore = useAddressStore()
+const cartStore = useCartStore()
 const orderStore = useOrderStore()
 addressStore.init()
+cartStore.init()
+
+let isFromCart = false // 商品是否来自购物车
+onLoad((e) => {
+	if (e.from && e.from === 'cart') isFromCart = true
+})
 
 const onConfirm = async () => {
-	const id = orderStore.formData._id || null
+	let _id = orderStore.formData._id || null
 
-	if (!id) {
+	if (!_id) {
 		// 创建订单
 		const { errCode, id } = await orderStore.create()
 		if (errCode !== 0) return showMsg('生成订单失败')
+		_id = id
 	}
 
 	// 拉起支付
 	try {
-		const { errCode, errMsg } = await orderStore.pay(id)
-		if (errCode !== 0) return showMsg('支付失败')
+		const { errCode, errMsg } = await orderStore.pay(_id)
+
+		if (errCode === 0 && isFromCart) {
+			// 支付成功 若来自购物车 则清理购物车对应商品
+			cartStore.orderClean(orderStore.formData.info)
+		}
+
 		routerTo(
-			`/pages/order/feedback?id=${id}&total=${orderStore.totalFee}&status=${
+			`/pages/order/feedback?id=${_id}&total=${orderStore.totalFee}&status=${
 				errCode === 0 ? true : false
 			}`,
 			'redirectTo'
 		)
 	} catch {
-		showMsg('未知错误', 'error')
+		return showMsg('未知错误', 'error')
 	}
 }
 </script>

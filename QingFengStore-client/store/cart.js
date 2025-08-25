@@ -287,6 +287,31 @@ export const useCartStore = defineStore('cart', () => {
 	}
 
 	/**
+	 * 支付成功后移除对应的商品
+	 * @param {object[]} list 商品信息列表
+	 * @returns {object} 操作结果
+	 */
+	const orderClean = async (list) => {
+		if (!Array.isArray(list) || list.length === 0)
+			return { errCode: 400, errMsg: '参数格式错误或为空' }
+
+		try {
+			const removeId = new Set()
+			list.forEach((item) => removeId.add(`${item.goods_id}_${item.sku._id}`))
+
+			localCart.value = localCart.value.filter((item) => {
+				const id = `${item.goods_id}_${item.sku._id}`
+				return !removeId.has(id)
+			})
+
+			saveLocalCart()
+			return { errCode: 0 }
+		} catch {
+			return { errCode: 500, errMsg: '未知错误' }
+		}
+	}
+
+	/**
 	 * 初始化 开启定时同步 监听强制同步
 	 */
 	const init = async () => {
@@ -324,6 +349,7 @@ export const useCartStore = defineStore('cart', () => {
 		add,
 		update,
 		remove,
+		orderClean,
 		toggleAllSelect,
 		forceSync
 	}

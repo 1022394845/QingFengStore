@@ -32,7 +32,7 @@ const updateQuantity = debounce((item, quantity) => {
 // 订单结算
 const onCheck = () => {
 	orderStore.createCheck(cartStore.selectedGoods)
-	routerTo(`/pages/order/order`)
+	routerTo(`/pages/order/order?from=cart`)
 }
 
 // 移除商品
