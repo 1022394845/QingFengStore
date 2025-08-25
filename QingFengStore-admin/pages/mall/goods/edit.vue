@@ -136,12 +136,12 @@ onLoad(async (e) => {
 		if (goods_banner_imgs.length) uploadRef.value.init(goods_banner_imgs)
 		dataLoading.value = false
 	} catch {
-		showMsg('获取数据失败，请刷新页面重试')
+		showMsg('获取数据失败，请刷新页面重试', 'error')
 	}
 })
 // 重新加载sku列表
 const reloadSku = async () => {
-	if (!goods_id) return showMsg('获取商品信息异常，请刷新重试')
+	if (!goods_id) return showMsg('获取商品信息异常，请刷新重试', 'error')
 
 	try {
 		dataLoading.value = true
@@ -151,7 +151,7 @@ const reloadSku = async () => {
 		skuList.value = data
 		dataLoading.value = false
 	} catch {
-		showMsg('获取规格信息失败，请刷新页面重试')
+		showMsg('获取规格信息失败，请刷新页面重试', 'error')
 	}
 }
 

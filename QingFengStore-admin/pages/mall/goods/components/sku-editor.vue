@@ -1,6 +1,7 @@
 <script setup>
 import { ref } from 'vue'
 import { showMsg } from '@/utils/common.js'
+import { ElMessageBox } from 'element-plus'
 const skuCloudObj = uniCloud.importObject('admin-sku', { customUI: true })
 
 const dialogVisible = ref(false)
@@ -25,7 +26,7 @@ const open = (goodsId, skuId) => {
 	} else {
 		// 新建规格
 		if (formRef.value) formRef.value.resetFields()
-		if (formData.value._id) formData.value._id = null
+		if (formData.value._id) delete formData.value._id
 		fileList.value = []
 	}
 	sku_id = skuId // 缓存当前sku_id
@@ -144,6 +145,30 @@ const getDetail = async (id) => {
 const onRemoveImage = () => {
 	formData.value.sku_thumb = null
 }
+
+// 删除
+const onRemove = async () => {
+	await ElMessageBox.confirm('确认删除该规格吗？', '警告', {
+		confirmButtonText: '确认',
+		cancelButtonText: '取消',
+		type: 'warning',
+		center: true,
+		'show-close': false
+	})
+
+	if (!sku_id) return showMsg('获取规格信息失败')
+
+	try {
+		const { errCode } = await skuCloudObj.remove(sku_id)
+		if (errCode !== 0) throw new Error()
+
+		emits('success')
+		close()
+		showMsg('删除成功')
+	} catch {
+		return showMsg('删除规格失败')
+	}
+}
 </script>
 
 <template>
@@ -207,12 +232,11 @@ const onRemoveImage = () => {
 			</template>
 
 			<template #footer>
-				<span class="dialog-footer">
+				<div class="dialog-footer">
 					<el-button @click="close">取消</el-button>
-					<el-button type="primary" style="margin-left: 50px" @click="onSubmit" :loading="loading">
-						保存
-					</el-button>
-				</span>
+					<el-button type="danger" v-if="formData._id" @click="onRemove">删除</el-button>
+					<el-button type="primary" @click="onSubmit" :loading="loading">保存</el-button>
+				</div>
 			</template>
 		</el-dialog>
 	</view>
@@ -224,6 +248,13 @@ const onRemoveImage = () => {
 
 	.el-dialog__header {
 		padding-right: 0;
+	}
+
+	.dialog-footer {
+		display: flex;
+		justify-content: center;
+		gap: 25px;
+		align-items: center;
 	}
 }
 </style>

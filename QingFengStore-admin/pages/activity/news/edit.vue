@@ -89,7 +89,7 @@ onLoad(async (e) => {
 
 		dataLoading.value = false
 	} catch {
-		showMsg('获取数据失败，请刷新页面重试')
+		showMsg('获取数据失败，请刷新页面重试', 'error')
 	}
 })
 

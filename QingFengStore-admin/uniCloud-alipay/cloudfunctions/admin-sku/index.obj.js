@@ -113,5 +113,27 @@ module.exports = {
 		} catch {
 			return defaultError
 		}
+	},
+
+	/**
+	 * 删除sku
+	 * @param {string} id sku_id
+	 * @returns {number} deleted 删除个数
+	 */
+	async remove(id) {
+		if (!id)
+			return result({ errCode: 400, errMsg: 'error', type: '请求', custom: '规格id不可为空' })
+
+		try {
+			const { errCode, errMsg, deleted } = await dbJQL
+				.collection('QingFengStore-mall-sku')
+				.doc(id)
+				.remove()
+
+			if (errCode !== 0) return result({ errCode, errMsg: 'fail', type: '删除', custom: errMsg })
+			return result({ errCode: 0, errMsg: 'success', data: { deleted }, type: '删除' })
+		} catch {
+			return defaultError
+		}
 	}
 }
