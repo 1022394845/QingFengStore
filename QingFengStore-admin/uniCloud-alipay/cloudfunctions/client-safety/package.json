@@ -1,0 +1,9 @@
+{
+  "name": "client-safety",
+  "dependencies": {
+    "utils": "file:../common/utils"
+  },
+  "extensions": {
+    "uni-cloud-jql": {}
+  }
+}

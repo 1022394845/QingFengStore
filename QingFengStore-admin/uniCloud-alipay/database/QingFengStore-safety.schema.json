@@ -1,7 +1,7 @@
 // 文档教程: https://uniapp.dcloud.net.cn/uniCloud/schema
 {
 	"bsonType": "object",
-	"required": [],
+	"required": ["user_id"],
 	"permission": {
 		"read": false,
 		"create": false,
@@ -20,7 +20,7 @@
 				"$env": "uid"
 			}
 		},
-		"score_password": {
+		"balence_password": {
 			"bsonType": "password",
 			"description": "余额支付密码",
 			"title": "支付密码"
