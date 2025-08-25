@@ -15,9 +15,17 @@ const open = (goodsId, skuId) => {
 	if (!goodsId) return showMsg('请先新建商品，再添加规格信息', 'error')
 	goods_id = goodsId
 	// 判断是否可以使用缓存数据
-	if (skuId && sku_id && skuId !== sku_id) {
-		getDetail(skuId)
+	if (skuId) {
+		if (!sku_id || skuId !== sku_id) {
+			// 如果没有缓存或缓存数据不为当前查看 重新获取数据
+			getDetail(skuId)
+			if (formRef.value) formRef.value.resetFields()
+			fileList.value = []
+		}
+	} else {
+		// 新建规格
 		if (formRef.value) formRef.value.resetFields()
+		if (formData.value._id) formData.value._id = null
 		fileList.value = []
 	}
 	sku_id = skuId // 缓存当前sku_id
@@ -99,8 +107,8 @@ const onSubmit = async () => {
 			showMsg('新增成功', 'success')
 		}
 
-		close()
 		emits('success')
+		close()
 		sku_id = null // 清除缓存sku_id
 	} catch (err) {
 		showMsg(`${err.message === 'edit' ? '修改' : '新增'}失败`, 'error')
@@ -120,8 +128,9 @@ const getDetail = async (id) => {
 		const { errCode, data } = await skuCloudObj.detail(id)
 		if (errCode !== 0) throw new Error()
 		// 将价格转为以元为单位
-		if (data.price) data.price = (parseFloat(data.price) / 100).toFixed(2)
-		if (data.market_price) data.market_price = (parseFloat(data.market_price) / 100).toFixed(2)
+		if (data.price) data.price = parseFloat((parseFloat(data.price) / 100).toFixed(2))
+		if (data.market_price)
+			data.market_price = parseFloat((parseFloat(data.market_price) / 100).toFixed(2))
 		formData.value = { ...data }
 		if (data.sku_thumb) uploadRef.value.init(data.sku_thumb)
 
