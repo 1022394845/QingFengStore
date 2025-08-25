@@ -1,9 +1,9 @@
 <script setup>
 import { onLoad } from '@dcloudio/uni-app'
 import { useCartStore } from '@/store/cart.js'
-import { settleBarHeight_px, tabBarHeight_px } from '@/utils/system.js'
+import { settleBarHeight_px, tabBarHeight_px, navBarHeight_px } from '@/utils/system.js'
 import { formatPrice } from '@/utils/format.js'
-import { debounce } from '@/utils/common.js'
+import { debounce, showConfirm, showMsg } from '@/utils/common.js'
 import { routerTo } from '@/utils/router.js'
 import { useOrderStore } from '@/store/order'
 
@@ -33,6 +33,19 @@ const updateQuantity = debounce((item, quantity) => {
 const onCheck = () => {
 	orderStore.createCheck(cartStore.selectedGoods)
 	routerTo(`/pages/order/order`)
+}
+
+// 移除商品
+const overMinus = async (item) => {
+	const cancel = await showConfirm('温馨提示', '确认移除该商品吗？')
+	if (cancel) return
+
+	try {
+		const { errCode } = cartStore.remove(item.goods_id, item.sku._id)
+		if (errCode !== 0) throw new Error()
+	} catch {
+		return showMsg('移除商品失败，请稍后再试')
+	}
 }
 </script>
 
@@ -64,6 +77,7 @@ const onCheck = () => {
 							:sku="item.sku"
 							:config="2"
 							@updateQuantity="(quantity) => updateQuantity(item, quantity)"
+							@overMinus="overMinus(item)"
 						></goods-card>
 					</view>
 				</view>
@@ -99,12 +113,16 @@ const onCheck = () => {
 			<template v-if="cartStore.isIniting">
 				<dot-loading>加载中</dot-loading>
 			</template>
-			<template v-else>购物车为空</template>
+			<template v-else>购物车暂无商品</template>
 		</view>
 	</view>
 </template>
 
 <style scoped lang="scss">
+.container {
+	min-height: calc(100vh - v-bind(navBarHeight_px));
+}
+
 .goods-list {
 	width: 100%;
 	padding: 30rpx;
