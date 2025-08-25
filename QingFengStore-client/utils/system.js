@@ -35,7 +35,7 @@ export const searchHeight = uni.rpx2px(100)
 export const searchHeight_px = `${searchHeight}px`
 
 // 可使用的窗口高度 px
-export const windowHeight = SYSTEM_INFO.windowHeight
+export const windowHeight = SYSTEM_WINDOW_INFO.windowHeight
 export const windowHeight_px = `${windowHeight}px`
 
 // 默认导航栏高度
@@ -47,7 +47,7 @@ export const containerHeight = windowHeight - navBarHeight
 export const containerHeight_px = `${containerHeight}px`
 
 // 标签栏高度 px
-export const tabBarHeight = platform === 'web' ? 50 : 0
+export const tabBarHeight = platform === 'web' ? uni.rpx2px(100) : 0
 export const tabBarHeight_px = `${tabBarHeight}px`
 
 // 结算栏高度 rpx

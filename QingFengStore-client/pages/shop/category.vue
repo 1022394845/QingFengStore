@@ -16,7 +16,7 @@ import { createObserver, showMsg } from '@/utils/common.js'
 const goodsCloudObj = uniCloud.importObject('client-goods', { customUI: true })
 
 const headerHeight_px = `${navBarHeight + searchHeight}px`
-const wrapperHeight_px = `${containerHeight - searchHeight - tabBarHeight - settleBarHeight}px`
+const wrapperHeight_px = `${containerHeight - searchHeight - settleBarHeight}px`
 
 const cartStore = useCartStore()
 
