@@ -86,7 +86,7 @@ const onSubmit = async () => {
 const categoryList = ref([])
 const getCategoryList = async () => {
 	try {
-		const { errCode, data } = await categoriesCloudObj.list()
+		const { errCode, data } = await categoriesCloudObj.list(true)
 
 		if (errCode !== 0) throw new Error()
 		categoryList.value = data

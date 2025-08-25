@@ -12,12 +12,16 @@ module.exports = {
 
 	/**
 	 * 获取分类列表
+	 * @param {boolean} [status] 筛选状态
 	 * @returns {object[]} 资讯列表
 	 */
-	async list() {
+	async list(status) {
 		try {
+			const query = status ? `status == ${status}` : {}
+
 			const { errCode, data, count } = await dbJQL
 				.collection('QingFengStore-mall-categories')
+				.where(query)
 				.orderBy('sort, create_date desc')
 				.get({ getCount: true })
 
