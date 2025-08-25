@@ -132,6 +132,23 @@ module.exports = {
 				.remove()
 
 			if (errCode !== 0) return result({ errCode, errMsg: 'fail', type: '删除', custom: errMsg })
+
+			// 删除对应的sku
+			{
+				const { errCode, errMsg } = await dbJQL
+					.collection('QingFengStore-mall-sku')
+					.where(`goods_id in ${JSON.stringify(ids)}`)
+					.remove()
+
+				if (errCode !== 0)
+					return result({
+						errCode,
+						errMsg: 'fail',
+						type: '删除',
+						custom: '商品删除成功，对应SKU删除失败'
+					})
+			}
+
 			return result({ errCode: 0, errMsg: 'success', data: { deleted }, type: '删除' })
 		} catch {
 			return defaultError
