@@ -14,8 +14,8 @@ const userMenuList = [
 	},
 	{
 		icon: 'icon-point',
-		label: '我的积分',
-		note: '当前3258分'
+		label: '我的余额',
+		note: '当前3258'
 	},
 	{
 		icon: 'icon-assessed-badge',
@@ -59,9 +59,13 @@ const menuList = [
 		note: '已签到10天'
 	},
 	{
-		icon: 'icon-gift-fill',
-		label: '抽奖记录',
-		note: '已参与3次'
+		icon: 'icon-safe-fill',
+		label: '安全管理',
+		note: '修改支付密码',
+		click: () => {
+			// 前往安全管理页面
+			routerTo('/pages/user/safe')
+		}
 	},
 	{
 		icon: 'icon-location-fill',

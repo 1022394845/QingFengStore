@@ -160,10 +160,22 @@
 			}
 		},
 		{
-			"path" : "pages/user/order",
+			"path": "pages/user/order",
+			"style": {
+				"navigationBarTitleText": "我的订单"
+			}
+		},
+		{
+			"path": "pages/user/safety/safety",
+			"style": {
+				"navigationBarTitleText": "安全管理"
+			}
+		},
+		{
+			"path" : "pages/user/safety/payment",
 			"style" : 
 			{
-				"navigationBarTitleText" : "我的订单"
+				"navigationBarTitleText" : "支付密码"
 			}
 		}
 	],
