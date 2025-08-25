@@ -15,7 +15,7 @@ const open = (goodsId, skuId) => {
 	if (!goodsId) return showMsg('请先新建商品，再添加规格信息', 'error')
 	goods_id = goodsId
 	// 判断是否可以使用缓存数据
-	if (!(skuId && sku_id && sku_id === skuId)) {
+	if (skuId && sku_id && skuId !== sku_id) {
 		getDetail(skuId)
 		if (formRef.value) formRef.value.resetFields()
 		fileList.value = []
@@ -50,6 +50,7 @@ const uploadRef = ref(null)
 const fileList = ref([]) // 展示图片列表
 const loading = ref(false)
 const dataLoading = ref(false)
+const emits = defineEmits(['success'])
 const onSubmit = async () => {
 	if (!goods_id) return showMsg('获取商品id异常，请刷新重试', 'error')
 	if (!formRef.value) return showMsg('未知错误，请刷新页面重试', 'error')
@@ -99,6 +100,7 @@ const onSubmit = async () => {
 		}
 
 		close()
+		emits('success')
 		sku_id = null // 清除缓存sku_id
 	} catch (err) {
 		showMsg(`${err.message === 'edit' ? '修改' : '新增'}失败`, 'error')

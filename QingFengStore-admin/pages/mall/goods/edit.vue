@@ -6,6 +6,7 @@ import { showMsg } from '@/utils/common.js'
 import SkuEditor from './components/sku-editor.vue'
 const categoriesCloudObj = uniCloud.importObject('admin-categories', { customUI: true })
 const goodsCloudObj = uniCloud.importObject('admin-goods', { customUI: true })
+const skuCloudObj = uniCloud.importObject('admin-sku', { customUI: true })
 
 const formData = ref({
 	name: '', // 商品名称
@@ -138,6 +139,21 @@ onLoad(async (e) => {
 		showMsg('获取数据失败，请刷新页面重试')
 	}
 })
+// 重新加载sku列表
+const reloadSku = async () => {
+	if (!goods_id) return showMsg('获取商品信息异常，请刷新重试')
+
+	try {
+		dataLoading.value = true
+		const { errCode, data } = await skuCloudObj.list(goods_id)
+
+		if (errCode !== 0) throw new Error()
+		skuList.value = data
+		dataLoading.value = false
+	} catch {
+		showMsg('获取规格信息失败，请刷新页面重试')
+	}
+}
 
 // 移除编辑时初始的展示图片
 const onRemoveImage = (url) => {
@@ -229,7 +245,7 @@ const onRemoveImage = (url) => {
 						</view>
 					</el-form-item>
 				</el-form>
-				<sku-editor ref="skuEditorRef"></sku-editor>
+				<sku-editor ref="skuEditorRef" @success="reloadSku"></sku-editor>
 			</el-col>
 		</el-row>
 	</view>
