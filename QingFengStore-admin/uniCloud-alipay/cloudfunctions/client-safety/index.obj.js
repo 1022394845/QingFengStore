@@ -36,7 +36,7 @@ module.exports = {
 	/**
 	 * @param {object} data 信息对象
 	 * @param {string} user_id 用户id
-	 * @param {string} [data.balence_password] 支付密码
+	 * @param {string} [data.balance_password] 支付密码
 	 * @returns {string} id 新增id
 	 */
 	async add(data) {
@@ -66,7 +66,7 @@ module.exports = {
 	 * 修改用户安全信息
 	 * @param {object} data 信息对象
 	 * @param {string} data.user_id 用户id
-	 * @param {string} [data.balence_password] 支付密码
+	 * @param {string} [data.balance_password] 支付密码
 	 * @returns {number} updated 成功修改个数(无变化为0)
 	 */
 	async update(data) {
@@ -98,7 +98,7 @@ module.exports = {
 	 * @param {string} user_id 用户id
 	 * @returns {boolean} exist 是否存在
 	 */
-	async existBalencePassword(user_id) {
+	async existBalancePassword(user_id) {
 		if (!user_id)
 			return result({ errCode: 400, errMsg: 'error', type: '请求', custom: '用户id不可为空' })
 
@@ -106,14 +106,14 @@ module.exports = {
 			const { errCode, errMsg, data } = await dbJQL
 				.collection('QingFengStore-safety')
 				.where(`user_id == "${user_id}"`)
-				.field('balence_password')
+				.field('balance_password')
 				.get({ getOne: true })
 
 			if (errCode !== 0) return result({ errCode, errMsg: 'fail', type: '获取', custom: errMsg })
 			return result({
 				errCode: 0,
 				errMsg: 'success',
-				data: { exist: data?.balence_password ? true : false },
+				data: { exist: data?.balance_password ? true : false },
 				type: '获取'
 			})
 		} catch {
@@ -127,7 +127,7 @@ module.exports = {
 	 * @param {string} password 支付密码
 	 * @returns {boolean} result 验证结果
 	 */
-	async verifyBalencePassword(user_id, password = '') {
+	async verifyBalancePassword(user_id, password = '') {
 		if (!user_id || !password)
 			return result({ errCode: 400, errMsg: 'error', type: '请求', custom: '必要参数不可为空' })
 
@@ -135,10 +135,10 @@ module.exports = {
 			const { errCode, errMsg, data } = await dbJQL
 				.collection('QingFengStore-safety')
 				.where(`user_id == "${user_id}"`)
-				.field('balence_password')
+				.field('balance_password')
 				.get({ getOne: true })
 
-			if (errCode !== 0 || !data.balence_password)
+			if (errCode !== 0 || !data.balance_password)
 				return result({ errCode, errMsg: 'fail', type: '验证', custom: errMsg })
 
 			const encrypted = encrypt(password)
@@ -146,7 +146,7 @@ module.exports = {
 			return result({
 				errCode: 0,
 				errMsg: 'success',
-				data: { result: encrypted === data.balence_password },
+				data: { result: encrypted === data.balance_password },
 				type: '验证'
 			})
 		} catch {

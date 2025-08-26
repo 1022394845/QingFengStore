@@ -18,7 +18,7 @@ const userMenuList = [
 		note: '当前3258',
 		click: () => {
 			// 前往我的余额页面
-			routerTo('/pages/user/balence')
+			routerTo('/pages/user/balance')
 		}
 	},
 	{

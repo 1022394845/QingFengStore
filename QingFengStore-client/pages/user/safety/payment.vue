@@ -28,7 +28,7 @@ const onNextStep = async () => {
 			const {
 				errCode,
 				data: { result }
-			} = await safetyCloudObj.verifyBalencePassword(uid, formData.value.old_code)
+			} = await safetyCloudObj.verifyBalancePassword(uid, formData.value.old_code)
 			if (errCode !== 0) throw new Error()
 
 			if (result) {
@@ -61,7 +61,7 @@ const onNextStep = async () => {
 
 			const { errCode } = await safetyCloudObj.update({
 				user_id: uid,
-				balence_password: formData.value.new_code
+				balance_password: formData.value.new_code
 			})
 			if (errCode !== 0) throw new Error()
 
@@ -90,7 +90,7 @@ const existPassword = async () => {
 		const {
 			errCode,
 			data: { exist }
-		} = await safetyCloudObj.existBalencePassword(uid)
+		} = await safetyCloudObj.existBalancePassword(uid)
 		if (errCode !== 0) throw new Error()
 
 		isExist.value = exist

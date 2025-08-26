@@ -172,17 +172,15 @@
 			}
 		},
 		{
-			"path" : "pages/user/safety/payment",
-			"style" : 
-			{
-				"navigationBarTitleText" : "支付密码"
+			"path": "pages/user/safety/payment",
+			"style": {
+				"navigationBarTitleText": "支付密码"
 			}
 		},
 		{
-			"path" : "pages/user/balence",
-			"style" : 
-			{
-				"navigationBarTitleText" : "我的余额"
+			"path": "pages/user/balance",
+			"style": {
+				"navigationBarTitleText": "我的余额"
 			}
 		}
 	],

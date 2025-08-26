@@ -42,7 +42,7 @@ const mock = [
 ]
 const list = ref([])
 const pagingRef = ref(null)
-const loadBalenceList = async (page, pageSize) => {
+const loadBalanceList = async (page, pageSize) => {
 	if (!pagingRef.value) return showMsg('未知错误，请刷新重试')
 	try {
 		// const { errCode, data, total } = await newsCloudObj.list({ page, pageSize })
@@ -64,7 +64,7 @@ const loadBalenceList = async (page, pageSize) => {
 			v-model="list"
 			:default-page-size="5"
 			:safe-area-inset-bottom="true"
-			@query="(page, pageSize) => loadBalenceList(page, pageSize)"
+			@query="(page, pageSize) => loadBalanceList(page, pageSize)"
 		>
 			<template #top>
 				<view class="header">

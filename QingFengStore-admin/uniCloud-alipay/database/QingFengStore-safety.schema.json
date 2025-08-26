@@ -20,7 +20,7 @@
 				"$env": "uid"
 			}
 		},
-		"balence_password": {
+		"balance_password": {
 			"bsonType": "password",
 			"description": "余额支付密码",
 			"title": "支付密码"

@@ -13,7 +13,8 @@ export const useUserStore = defineStore('user', () => {
 	const userInfo = ref({
 		_id: null, // 用户id
 		nickname: null, // 用户昵称
-		avatar_file: null // 用户头像
+		avatar_file: null, // 用户头像
+		balance: 0 // 余额
 	})
 	const orderCount = ref({}) // 订单按状态分组数量信息
 	const TOKEN_STORAGE_KEY = 'uni_id_token'
