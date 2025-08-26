@@ -177,6 +177,13 @@
 			{
 				"navigationBarTitleText" : "支付密码"
 			}
+		},
+		{
+			"path" : "pages/user/balence",
+			"style" : 
+			{
+				"navigationBarTitleText" : "我的余额"
+			}
 		}
 	],
 	"globalStyle": {

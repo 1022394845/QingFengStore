@@ -15,7 +15,11 @@ const userMenuList = [
 	{
 		icon: 'icon-point',
 		label: '我的余额',
-		note: '当前3258'
+		note: '当前3258',
+		click: () => {
+			// 前往我的余额页面
+			routerTo('/pages/user/balence')
+		}
 	},
 	{
 		icon: 'icon-assessed-badge',
@@ -114,7 +118,12 @@ const menuList = [
 					</view>
 				</view>
 				<view class="user_menu">
-					<view class="user_menu_item" v-for="item in userMenuList" :key="item.status">
+					<view
+						class="user_menu_item"
+						v-for="item in userMenuList"
+						:key="item.status"
+						@click="item.click && item.click()"
+					>
 						<view class="user_menu_item_icon icon-container">
 							<view class="iconfont" :class="item.icon"></view>
 						</view>
