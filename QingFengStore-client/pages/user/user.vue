@@ -64,7 +64,7 @@ const menuList = [
 		note: '修改支付密码',
 		click: () => {
 			// 前往安全管理页面
-			routerTo('/pages/user/safe')
+			routerTo('/pages/user/safety/safety')
 		}
 	},
 	{

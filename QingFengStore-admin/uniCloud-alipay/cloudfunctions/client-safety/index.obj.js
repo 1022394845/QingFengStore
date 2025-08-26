@@ -1,4 +1,4 @@
-// 订单
+// 安全
 let dbJQL = uniCloud.databaseForJQL()
 const { result } = require('utils')
 const defaultError = result({ errCode: 500, errMsg: 'error', type: '服务器' })
@@ -57,8 +57,7 @@ module.exports = {
 
 			if (errCode !== 0) return result({ errCode, errMsg: 'fail', type: '新增', custom: errMsg })
 			return result({ errCode: 0, errMsg: 'success', data: { id }, type: '新增' })
-		} catch (err) {
-			console.log(err)
+		} catch {
 			return defaultError
 		}
 	},
@@ -89,6 +88,65 @@ module.exports = {
 
 			if (errCode !== 0) return result({ errCode, errMsg: 'fail', type: '修改', custom: errMsg })
 			return result({ errCode: 0, errMsg: 'success', data: { updated }, type: '修改' })
+		} catch {
+			return defaultError
+		}
+	},
+
+	/**
+	 * 判断用户是否已存在支付密码
+	 * @param {string} user_id 用户id
+	 * @returns {boolean} exist 是否存在
+	 */
+	async existBalencePassword(user_id) {
+		if (!user_id)
+			return result({ errCode: 400, errMsg: 'error', type: '请求', custom: '用户id不可为空' })
+
+		try {
+			const { errCode, errMsg, data } = await dbJQL
+				.collection('QingFengStore-safety')
+				.where(`user_id == "${user_id}"`)
+				.field('balence_password')
+				.get({ getOne: true })
+
+			if (errCode !== 0) return result({ errCode, errMsg: 'fail', type: '获取', custom: errMsg })
+			return result({
+				errCode: 0,
+				errMsg: 'success',
+				data: { exist: data?.balence_password ? true : false },
+				type: '获取'
+			})
+		} catch {
+			return defaultError
+		}
+	},
+
+	/**
+	 * 验证支付密码
+	 * @param {string} user_id 用户id
+	 * @param {string} password 支付密码
+	 * @returns {boolean} result 验证结果
+	 */
+	async verifyBalencePassword(user_id, password = '') {
+		if (!user_id || !password)
+			return result({ errCode: 400, errMsg: 'error', type: '请求', custom: '必要参数不可为空' })
+
+		try {
+			const { errCode, errMsg, data } = await dbJQL
+				.collection('QingFengStore-safety')
+				.where(`user_id == "${user_id}"`)
+				.field('balence_password')
+				.get({ getOne: true })
+
+			if (errCode !== 0 || !data.balence_password)
+				return result({ errCode, errMsg: 'fail', type: '验证', custom: errMsg })
+
+			return result({
+				errCode: 0,
+				errMsg: 'success',
+				data: { result: encrypted === data.balence_password },
+				type: '验证'
+			})
 		} catch {
 			return defaultError
 		}
