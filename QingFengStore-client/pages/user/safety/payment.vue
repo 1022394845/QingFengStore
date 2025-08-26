@@ -93,7 +93,7 @@ const existPassword = async () => {
 		} = await safetyCloudObj.existBalencePassword(uid)
 		if (errCode !== 0) throw new Error()
 
-		isExist.value = !exist
+		isExist.value = exist
 		loading.value = false
 	} catch {
 		return showMsg('获取用户信息异常，请刷新重试')
@@ -123,18 +123,11 @@ onMounted(() => {
 				<template v-if="opStep === 0">
 					<view class="title">请输入旧密码</view>
 					<view class="input">
-						<view class="input-box">
-							<uv-code-input
-								v-model="formData.old_code"
-								dot
-								focus
-								size="70rpx"
-								space="20rpx"
-								borderColor="#bdaf8d"
-								:disabledKeyboard="Boolean(lock) || btnLoading"
-								@finish="onNextStep"
-							></uv-code-input>
-						</view>
+						<code-input
+							v-model="formData.old_code"
+							:disabled="Boolean(lock) || btnLoading"
+							@finish="onNextStep"
+						></code-input>
 					</view>
 					<button
 						class="next-step-btn"
@@ -150,31 +143,14 @@ onMounted(() => {
 					<view class="title">请设置新密码</view>
 					<view class="input">
 						<view class="input-label">请输入新密码</view>
-						<view class="input-box">
-							<uv-code-input
-								v-model="formData.new_code"
-								dot
-								focus
-								size="70rpx"
-								space="20rpx"
-								borderColor="#bdaf8d"
-								@finish="formData.show_repeate = true"
-							></uv-code-input>
-						</view>
+						<code-input
+							v-model="formData.new_code"
+							@finish="formData.show_repeate = true"
+						></code-input>
 					</view>
 					<view class="input" v-if="formData.show_repeate">
 						<view class="input-label">请再次输入密码</view>
-						<view class="input-box">
-							<uv-code-input
-								v-model="formData.repeate_code"
-								dot
-								focus
-								size="70rpx"
-								space="20rpx"
-								borderColor="#bdaf8d"
-								:disabledKeyboard="btnLoading"
-							></uv-code-input>
-						</view>
+						<code-input v-model="formData.repeate_code" :disabled="btnLoading"></code-input>
 					</view>
 					<button
 						class="next-step-btn"
@@ -231,11 +207,6 @@ onMounted(() => {
 			margin-bottom: 10rpx;
 			font-size: 28rpx;
 			color: #666666;
-		}
-
-		&-box {
-			display: flex;
-			justify-content: center;
 		}
 	}
 

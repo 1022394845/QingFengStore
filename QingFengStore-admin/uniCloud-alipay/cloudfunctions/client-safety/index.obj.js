@@ -141,6 +141,8 @@ module.exports = {
 			if (errCode !== 0 || !data.balence_password)
 				return result({ errCode, errMsg: 'fail', type: '验证', custom: errMsg })
 
+			const encrypted = encrypt(password)
+
 			return result({
 				errCode: 0,
 				errMsg: 'success',
