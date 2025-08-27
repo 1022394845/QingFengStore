@@ -1,58 +1,54 @@
 <script setup>
-import { ref } from 'vue'
+import { onMounted, ref } from 'vue'
 import { showMsg } from '@/utils/common.js'
 import dayjs from 'dayjs'
+import { useUserStore } from '@/store/user.js'
+import { formatPrice } from '@/utils/format.js'
 
-const mock = [
-	{
-		_id: '1',
-		score: 20,
-		type: 1,
-		comment: '余额充值',
-		create_date: '2025-08-26 14:23:00'
-	},
-	{
-		_id: '2',
-		score: 5,
-		type: 2,
-		comment: '商品消费',
-		create_date: '2025-08-26 16:58:00'
-	},
-	{
-		_id: '3',
-		score: 15,
-		type: 2,
-		comment: '商品消费',
-		create_date: '2025-08-26 22:31:00'
-	},
-	{
-		_id: '4',
-		score: 100,
-		type: 1,
-		comment: '余额充值',
-		create_date: '2025-08-27 09:18:00'
-	},
-	{
-		_id: '5',
-		score: 30,
-		type: 2,
-		comment: '商品消费',
-		create_date: '2025-08-27 16:11:00'
-	}
-]
+const balanceCloudObj = uniCloud.importObject('client-balance', { customUI: true })
+
+const userStore = useUserStore()
+onMounted(() => {
+	userStore.getBalance()
+})
+
 const list = ref([])
 const pagingRef = ref(null)
 const loadBalanceList = async (page, pageSize) => {
 	if (!pagingRef.value) return showMsg('未知错误，请刷新重试')
 	try {
-		// const { errCode, data, total } = await newsCloudObj.list({ page, pageSize })
-		// if (errCode !== 0) throw new Error()
-		// pagingRef.value.completeByTotal(data, total)
-		setTimeout(() => {
-			pagingRef.value.completeByTotal(mock, 15)
-		}, 1000)
+		const uid = uniCloud.getCurrentUserInfo().uid || null
+		const { errCode, data, total } = await balanceCloudObj.list({ page, pageSize }, uid)
+		if (errCode !== 0) throw new Error()
+		pagingRef.value.completeByTotal(data, total)
 	} catch {
 		pagingRef.value.complete(false)
+	}
+}
+
+// 充值
+const onRecharge = async () => {
+	const { cancel, content } = await uni.showModal({
+		title: '充值',
+		editable: true,
+		placeholderText: '请输入兑换码',
+		confirmColor: '#bdaf8d'
+	})
+	if (cancel || !content) return
+
+	try {
+		uni.showLoading({
+			title: '充值中'
+		})
+		const { errCode, change } = await userStore.charge(content)
+		if (errCode !== 0) throw new Error()
+
+		showMsg(`充值成功：${formatPrice(change)}元`)
+	} catch (err) {
+		console.log(err)
+		showMsg('充值失败')
+	} finally {
+		uni.hideLoading()
 	}
 }
 </script>
@@ -70,11 +66,11 @@ const loadBalanceList = async (page, pageSize) => {
 				<view class="header">
 					<view class="total">
 						<view class="total_number">
-							{{ '9999' }}
+							{{ formatPrice(userStore.userInfo.balance || 0) }}
 						</view>
 						<view class="total_text">当前余额</view>
 					</view>
-					<view class="charge-btn">充值</view>
+					<view class="charge-btn" @click="onRecharge">充值</view>
 				</view>
 			</template>
 
@@ -96,8 +92,8 @@ const loadBalanceList = async (page, pageSize) => {
 						</view>
 						<view class="list_item_info_text ellipsis">备注：{{ item.comment }}</view>
 					</view>
-					<view class="list_item_score">
-						{{ `${item.type === 1 ? '+' : '-'}${item.score}` }}
+					<view class="list_item_change">
+						{{ `${item.type === 1 ? '+' : '-'}${formatPrice(item.change)}` }}
 					</view>
 				</view>
 			</view>
@@ -172,7 +168,7 @@ const loadBalanceList = async (page, pageSize) => {
 			}
 		}
 
-		&_score {
+		&_change {
 			flex-shrink: 0;
 			font-size: 38rpx;
 			color: #333333;

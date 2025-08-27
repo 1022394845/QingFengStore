@@ -34,6 +34,7 @@ module.exports = {
 	},
 
 	/**
+	 * 创建用户安全信息
 	 * @param {object} data 信息对象
 	 * @param {string} user_id 用户id
 	 * @param {string} [data.balance_password] 支付密码
