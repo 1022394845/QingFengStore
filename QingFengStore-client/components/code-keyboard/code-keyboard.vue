@@ -65,6 +65,7 @@ const onSubmit = async () => {
 		showMsg('未知错误')
 	} finally {
 		console.log('final')
+		password.value = ''
 		loading.value = false
 	}
 }
@@ -78,7 +79,7 @@ const onSubmit = async () => {
 				<!-- 加载 -->
 				<template v-if="loading">
 					<view class="loading">
-						<dot-loading></dot-loading>
+						<dot-loading :length="5" size="15rpx"></dot-loading>
 					</view>
 				</template>
 

@@ -1,13 +1,36 @@
-<script setup></script>
+<script setup>
+import { computed } from 'vue'
+
+const props = defineProps({
+	length: {
+		// 加载点的个数
+		type: Number,
+		default: 3
+	},
+	size: {
+		// 点大小 单位rpx
+		type: [Number, String],
+		default: '5rpx'
+	}
+})
+
+const size = computed(() => {
+	if (typeof props.size === 'number') return `${props.size}rpx`
+	return props.size
+})
+</script>
 
 <template>
 	<view class="dot-loading">
 		<!-- 显示内容 -->
 		<slot></slot>
 		<!-- 加载样式 -->
-		<view class="loading-dot dot1"></view>
-		<view class="loading-dot dot2"></view>
-		<view class="loading-dot dot3"></view>
+		<view
+			class="loading-dot"
+			v-for="index in length"
+			:key="index"
+			:style="{ fontSize: size, animationDelay: `${0.2 * (index - 1)}s` }"
+		></view>
 	</view>
 </template>
 
@@ -15,22 +38,16 @@
 .dot-loading {
 	display: flex;
 	gap: 10rpx;
-	font-size: 32rpx;
 	align-items: center;
 	color: #666666;
 
 	.loading-dot {
-		width: 5rpx;
-		height: 5rpx;
+		width: v-bind(size);
+		aspect-ratio: 1 / 1;
 		border-radius: 50%;
 		background-color: #333333;
 		animation: dotPulse 1.5s infinite ease-in-out;
-
-		@for $i from 1 through 3 {
-			&.dot#{$i} {
-				animation-delay: 0.2s * ($i - 1);
-			}
-		}
+		opacity: 0;
 	}
 
 	/* 点淡入淡出效果 */
