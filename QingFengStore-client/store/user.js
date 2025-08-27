@@ -31,6 +31,7 @@ export const useUserStore = defineStore('user', () => {
 		if (!token) return needLogin(true)
 
 		userInfo.value = { ...uni.getStorageSync(INFO_STORAGE_KEY) } || null
+		getOrderCount()
 	}
 
 	/**
@@ -58,39 +59,23 @@ export const useUserStore = defineStore('user', () => {
 	 * 订单状态，1：待付款，2：待发货，3：运输中，4：待收货，5：已完成，6：申请退款，7：已退款，-1已关闭，-2：退款失败
 	 * @returns {object} 操作结果
 	 */
-	const getOrderCount = (() => {
-		let executed = false
-		let result = null
+	const getOrderCount = async () => {
+		if (!uid) return { errCode: 400, errMsg: '用户id不可为空' }
 
-		return async () => {
-			if (executed) return result
-			executed = true
+		try {
+			const { errCode, errMsg, data } = await orderCloudObj.count(uid)
+			if (errCode !== 0) return (result = { errCode, errMsg })
 
-			if (!uid) {
-				result = { errCode: 400, errMsg: '用户id不可为空' }
-				return result
-			}
+			orderCount.value = {}
+			data.forEach((item) => {
+				orderCount.value[item.status] = item.total
+			})
 
-			try {
-				const { errCode, errMsg, data } = await orderCloudObj.count(uid)
-				if (errCode !== 0) {
-					result = { errCode, errMsg }
-					return result
-				}
-
-				orderCount.value = {}
-				data.forEach((item) => {
-					orderCount.value[item.status] = item.total
-				})
-
-				result = { errCode, errMsg }
-				return result
-			} catch {
-				result = { errCode: 500, errMsg: '服务器错误' }
-				return result
-			}
+			return { errCode, errMsg }
+		} catch {
+			return { errCode: 500, errMsg: '服务器错误' }
 		}
-	})()
+	}
 
 	/**
 	 * 获取用户当前余额

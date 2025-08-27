@@ -44,6 +44,7 @@ const onRecharge = async () => {
 		if (errCode !== 0) throw new Error()
 
 		showMsg(`充值成功：${formatPrice(change)}元`)
+		if (pagingRef.value) pagingRef.value.reload()
 	} catch (err) {
 		console.log(err)
 		showMsg('充值失败')

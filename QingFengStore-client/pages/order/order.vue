@@ -96,6 +96,9 @@ const finishPay = async () => {
 			cartStore.orderClean(orderStore.formData.info)
 		}
 
+		// 刷新订单数量信息
+		userStore.getOrderCount()
+
 		routerTo(
 			`/pages/order/feedback?id=${id}&total=${orderStore.totalFee}&status=${
 				errCode === 0 ? true : false
