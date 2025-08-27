@@ -7,6 +7,7 @@ import { computed } from 'vue'
 
 const userStore = useUserStore()
 userStore.init()
+userStore.getOrderCount()
 
 const userMenuList = computed(() => {
 	return [
