@@ -128,7 +128,7 @@ module.exports = {
 	 * @param {string} password 支付密码
 	 * @returns {boolean} result 验证结果
 	 */
-	async verifyBalancePassword(user_id, password = '') {
+	async verifyBalancePassword(user_id, password) {
 		if (!user_id || !password)
 			return result({ errCode: 400, errMsg: 'error', type: '请求', custom: '必要参数不可为空' })
 

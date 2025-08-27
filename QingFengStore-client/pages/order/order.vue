@@ -8,46 +8,88 @@ import {
 } from '@/utils/system.js'
 import { formatPrice } from '@/utils/format.js'
 import { routerTo } from '@/utils/router.js'
-import { ref } from 'vue'
+import { computed, ref } from 'vue'
 import { onLoad } from '@dcloudio/uni-app'
 import { useAddressStore } from '@/store/address.js'
 import { useOrderStore } from '@/store/order.js'
-import { showMsg } from '@/utils/common.js'
+import { showMsg, sleep } from '@/utils/common.js'
 import { useCartStore } from '@/store/cart.js'
+import { useUserStore } from '@/store/user.js'
+const safetyCloudObj = uniCloud.importObject('client-safety', { customUI: true })
 
 const addressStore = useAddressStore()
 const cartStore = useCartStore()
 const orderStore = useOrderStore()
+const userStore = useUserStore()
 addressStore.init()
 cartStore.init()
+userStore.getBalance()
 
 let isFromCart = false // 商品是否来自购物车
 onLoad((e) => {
 	if (e.from && e.from === 'cart') isFromCart = true
 })
 
-const keyboard = ref(null)
+const keyboardRef = ref(null)
 const onConfirm = async () => {
-	if (!keyboard.value) return
-
-	return keyboard.value.open()
-
-	let _id = orderStore.formData._id || null
-
-	if (!_id) {
+	if (!orderStore.formData?._id) {
 		// 创建订单
 		try {
-			const { errCode, id } = await orderStore.create()
+			const { errCode } = await orderStore.create()
 			if (errCode !== 0) throw new Error()
-			_id = id
 		} catch {
 			return showMsg('生成订单失败')
 		}
 	}
 
-	// 拉起支付
+	// 使用余额支付
+	if (orderStore.formData.pay_type === 'balance') {
+		try {
+			if (!keyboardRef.value) throw new Error()
+			keyboardRef.value.open()
+		} catch {
+			return showMsg('未知错误', 'error')
+		}
+	}
+}
+
+// 余额支付
+const onBalancePay = async (password) => {
 	try {
-		const { errCode, errMsg } = await orderStore.pay(_id)
+		const uid = uniCloud.getCurrentUserInfo().uid || null
+		const {
+			errCode,
+			data: { result }
+		} = await safetyCloudObj.verifyBalancePassword(uid, password)
+		await sleep(2000) // 优化视觉体验
+
+		if (errCode !== 0 || !result) throw new Error()
+
+		try {
+			const { errCode } = await userStore.updateBalance({
+				type: 2,
+				change: orderStore.totalFee,
+				comment: '商品消费'
+			})
+			if (errCode !== 0) {
+				if (keyboardRef.value) keyboardRef.value.reset()
+				showMsg('支付失败', 'error')
+			}
+		} catch {
+			return showMsg('支付异常')
+		}
+		finishPay()
+	} catch {
+		if (keyboardRef.value) keyboardRef.value.reset()
+		return showMsg('验证失败')
+	}
+}
+
+// 完成支付
+const finishPay = async () => {
+	try {
+		const id = orderStore.formData._id
+		const { errCode, errMsg } = await orderStore.pay(id)
 
 		if (errCode === 0 && isFromCart) {
 			// 支付成功 若来自购物车 则清理购物车对应商品
@@ -55,7 +97,7 @@ const onConfirm = async () => {
 		}
 
 		routerTo(
-			`/pages/order/feedback?id=${_id}&total=${orderStore.totalFee}&status=${
+			`/pages/order/feedback?id=${id}&total=${orderStore.totalFee}&status=${
 				errCode === 0 ? true : false
 			}`,
 			'redirectTo'
@@ -64,6 +106,35 @@ const onConfirm = async () => {
 		return showMsg('未知错误', 'error')
 	}
 }
+
+const payMethodList = computed(() => {
+	return [
+		{
+			label: '余额支付',
+			type: 'balance',
+			icon: 'icon-point-fill',
+			iconColor: '#bdaf8d',
+			disabled: false,
+			note: `当前余额 ${formatPrice(userStore?.userInfo?.balance || 0)}`
+		},
+		{
+			label: '微信支付',
+			type: 'wxpay',
+			icon: 'icon-wechatpay',
+			iconColor: '#00C800',
+			disabled: true,
+			note: '暂未开放'
+		},
+		{
+			label: '支付宝支付',
+			type: 'alipay',
+			icon: 'icon-zhifubaopay',
+			iconColor: '#009FE8',
+			disabled: true,
+			note: '暂未开放'
+		}
+	]
+})
 </script>
 
 <template>
@@ -122,7 +193,7 @@ const onConfirm = async () => {
 						:customStyle="{ gap: '30rpx' }"
 					>
 						<uv-radio
-							v-for="item in orderStore.payMethodList"
+							v-for="item in payMethodList"
 							:key="item.type"
 							:label="item.label"
 							:name="item.type"
@@ -190,7 +261,11 @@ const onConfirm = async () => {
 		</view>
 
 		<!-- 支付键盘 -->
-		<code-keyboard ref="keyboard" :price="orderStore.totalFee"></code-keyboard>
+		<code-keyboard
+			ref="keyboardRef"
+			:price="orderStore.totalFee"
+			@submit="(password) => onBalancePay(password)"
+		></code-keyboard>
 	</view>
 </template>
 

@@ -13,32 +13,6 @@ export const useOrderStore = defineStore('order', () => {
 		discount: 0 // 折扣
 	}
 	const formData = ref({ ...defaultData })
-	const payMethodList = [
-		{
-			label: '余额支付',
-			type: 'balance',
-			icon: 'icon-point-fill',
-			iconColor: '#bdaf8d',
-			disabled: false,
-			note: '当前余额 99999'
-		},
-		{
-			label: '微信支付',
-			type: 'wxpay',
-			icon: 'icon-wechatpay',
-			iconColor: '#00C800',
-			disabled: true,
-			note: '暂未开放'
-		},
-		{
-			label: '支付宝支付',
-			type: 'alipay',
-			icon: 'icon-zhifubaopay',
-			iconColor: '#009FE8',
-			disabled: true,
-			note: '暂未开放'
-		}
-	]
 
 	// 商品总价
 	const goodsPrice = computed(() =>
@@ -83,11 +57,7 @@ export const useOrderStore = defineStore('order', () => {
 
 		// 模拟支付
 		return new Promise((resolve, reject) => {
-			uni.showLoading({
-				title: '支付中...'
-			})
 			setTimeout(async () => {
-				uni.hideLoading()
 				if (force_result !== undefined && typeof force_result === 'boolean') {
 					if (force_result === true) resolve({ errCode: 0, errMsg: '支付成功' })
 					else resolve({ errCode: 403, errMsg: '支付失败' })
@@ -142,7 +112,6 @@ export const useOrderStore = defineStore('order', () => {
 
 	return {
 		formData,
-		payMethodList,
 		goodsPrice,
 		totalFee,
 		createCheck,

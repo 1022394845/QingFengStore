@@ -192,3 +192,16 @@ export function debounce(func, wait = 100) {
 
 	return wrapper
 }
+
+/**
+ * 不执行任何操作的延迟
+ * 一般用于避免异步操作事件过短造成闪屏，优化视觉体验
+ * @param {number} [delay] 延迟时间 默认1s
+ */
+export function sleep(delay = 1000) {
+	return new Promise((resolve) => {
+		setTimeout(() => {
+			resolve()
+		}, delay)
+	})
+}

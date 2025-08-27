@@ -14,6 +14,7 @@ const props = defineProps({
 		type: Number
 	}
 })
+const emits = defineEmits(['submit'])
 
 const keyboardPopRef = ref(null)
 const open = () => {
@@ -22,16 +23,21 @@ const open = () => {
 const close = () => {
 	if (keyboardPopRef.value) keyboardPopRef.value.close()
 }
-defineExpose({ open })
+const reset = () => {
+	loading.value = false
+	password.value = ''
+}
+defineExpose({ open, reset })
 
 const password = ref('')
-const onInput = (value) => {
+const handleInput = (value) => {
 	if (loading.value) return
-	if (password.value.length < props.length) password.value += value
-}
-const onRollBack = () => {
-	if (loading.value) return
-	if (password.value.length > 0) password.value = password.value.slice(0, -1)
+
+	if (typeof value === 'number') {
+		if (password.value.length < props.length) password.value += value.toString()
+	} else if (value === 'rollback') {
+		if (password.value.length > 0) password.value = password.value.slice(0, -1)
+	}
 }
 
 const keyboardList = [
@@ -46,28 +52,13 @@ const keyboardList = [
 	{ type: 'number', value: 9 },
 	{ type: 'empty' },
 	{ type: 'number', value: 0 },
-	{ type: 'icon', value: 'icon-rollback', event: onRollBack }
+	{ type: 'icon', value: 'rollback', class: 'icon-rollback' }
 ]
 
 const loading = ref(false)
 const onSubmit = async () => {
-	console.log('submit')
-	try {
-		loading.value = true
-
-		await new Promise((resolve) => {
-			setTimeout(() => {
-				console.log('success')
-				resolve()
-			}, 2000)
-		})
-	} catch {
-		showMsg('未知错误')
-	} finally {
-		console.log('final')
-		password.value = ''
-		loading.value = false
-	}
+	loading.value = true
+	emits('submit', password.value)
 }
 </script>
 
@@ -95,21 +86,22 @@ const onSubmit = async () => {
 				</template>
 			</view>
 			<view class="keyboard">
-				<view class="keyboard-item" v-for="(item, index) in keyboardList" :key="index">
+				<view
+					class="keyboard-item"
+					v-for="(item, index) in keyboardList"
+					:key="index"
+					@click="handleInput(item.value)"
+				>
 					<!-- 数字 -->
 					<template v-if="item.type === 'number'">
-						<view class="keyboard-item_content number" @click="onInput(item.value)">
+						<view class="keyboard-item_content number">
 							{{ item.value }}
 						</view>
 					</template>
 
 					<!-- 图标 -->
 					<template v-else-if="item.type === 'icon'">
-						<view
-							class="keyboard-item_content icon iconfont"
-							:class="item.value"
-							@click="() => onRollBack()"
-						></view>
+						<view class="keyboard-item_content icon iconfont" :class="item.class"></view>
 					</template>
 
 					<!-- 空占位 -->
