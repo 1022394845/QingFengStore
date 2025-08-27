@@ -26,14 +26,23 @@ onLoad((e) => {
 	if (e.from && e.from === 'cart') isFromCart = true
 })
 
+const keyboard = ref(null)
 const onConfirm = async () => {
+	if (!keyboard.value) return
+
+	return keyboard.value.open()
+
 	let _id = orderStore.formData._id || null
 
 	if (!_id) {
 		// 创建订单
-		const { errCode, id } = await orderStore.create()
-		if (errCode !== 0) return showMsg('生成订单失败')
-		_id = id
+		try {
+			const { errCode, id } = await orderStore.create()
+			if (errCode !== 0) throw new Error()
+			_id = id
+		} catch {
+			return showMsg('生成订单失败')
+		}
 	}
 
 	// 拉起支付
@@ -179,6 +188,9 @@ const onConfirm = async () => {
 			</view>
 			<view class="settle-btn" @click="onConfirm">提交订单</view>
 		</view>
+
+		<!-- 支付键盘 -->
+		<code-keyboard ref="keyboard" :price="orderStore.totalFee"></code-keyboard>
 	</view>
 </template>
 

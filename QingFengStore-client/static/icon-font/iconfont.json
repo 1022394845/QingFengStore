@@ -6,6 +6,13 @@
   "description": "",
   "glyphs": [
     {
+      "icon_id": "43453699",
+      "name": "回退",
+      "font_class": "rollback",
+      "unicode": "e7fb",
+      "unicode_decimal": 59387
+    },
+    {
       "icon_id": "1599882",
       "name": "安全-fill",
       "font_class": "safe-fill",

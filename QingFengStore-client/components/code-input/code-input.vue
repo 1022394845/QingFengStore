@@ -3,6 +3,10 @@ const props = defineProps({
 	disabled: {
 		type: Boolean,
 		default: false
+	},
+	length: {
+		type: Number,
+		default: 6
 	}
 })
 const value = defineModel()
@@ -18,6 +22,7 @@ const emits = defineEmits(['finish'])
 			size="70rpx"
 			space="20rpx"
 			borderColor="#bdaf8d"
+			:maxlength="length"
 			:disabledKeyboard="disabled"
 			@finish="emits('finish')"
 		></uv-code-input>

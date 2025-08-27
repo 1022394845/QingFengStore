@@ -159,6 +159,7 @@ export const useUserStore = defineStore('user', () => {
 	}
 
 	return {
+		token,
 		userInfo,
 		orderCount,
 		init,

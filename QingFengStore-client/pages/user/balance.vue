@@ -9,7 +9,7 @@ const balanceCloudObj = uniCloud.importObject('client-balance', { customUI: true
 
 const userStore = useUserStore()
 onMounted(() => {
-	userStore.getBalance()
+	if (!userStore.token) userStore.getBalance()
 })
 
 const list = ref([])

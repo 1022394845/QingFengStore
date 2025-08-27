@@ -1,32 +1,36 @@
 <script setup>
+import { formatPrice } from '@/utils/format.js'
 import { useUserStore } from '@/store/user.js'
 import { routerTo } from '@/utils/router.js'
 import { tabBarHeight_px, navBarHeight_px, safeareaHeight_px } from '@/utils/system.js'
+import { computed } from 'vue'
 
 const userStore = useUserStore()
 userStore.init()
 
-const userMenuList = [
-	{
-		icon: 'icon-calendar',
-		label: '每日签到',
-		note: '积分+1'
-	},
-	{
-		icon: 'icon-point',
-		label: '我的余额',
-		note: '当前3258',
-		click: () => {
-			// 前往我的余额页面
-			routerTo('/pages/user/balance')
+const userMenuList = computed(() => {
+	return [
+		{
+			icon: 'icon-calendar',
+			label: '每日签到',
+			note: '积分+1'
+		},
+		{
+			icon: 'icon-point',
+			label: '我的余额',
+			note: `当前${formatPrice(userStore?.userInfo?.balance || 0)}`,
+			click: () => {
+				// 前往我的余额页面
+				routerTo('/pages/user/balance')
+			}
+		},
+		{
+			icon: 'icon-assessed-badge',
+			label: '会员认证',
+			note: '已完成认证'
 		}
-	},
-	{
-		icon: 'icon-assessed-badge',
-		label: '会员认证',
-		note: '已完成认证'
-	}
-]
+	]
+})
 
 const orderMenuList = [
 	{

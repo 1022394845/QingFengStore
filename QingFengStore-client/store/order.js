@@ -78,7 +78,7 @@ export const useOrderStore = defineStore('order', () => {
 	 * @param {boolean} [force_result] 强制结果
 	 * @returns {object} 操作结果
 	 */
-	const pay = async (id, force_result = true) => {
+	const pay = async (id, force_result) => {
 		if (!id) return { errCode: 400, errMsg: '订单id不可为空' }
 
 		// 模拟支付
@@ -88,8 +88,9 @@ export const useOrderStore = defineStore('order', () => {
 			})
 			setTimeout(async () => {
 				uni.hideLoading()
-				if (!force_result) {
-					resolve({ errCode: 403, errMsg: '支付失败' })
+				if (force_result !== undefined && typeof force_result === 'boolean') {
+					if (force_result === true) resolve({ errCode: 0, errMsg: '支付成功' })
+					else resolve({ errCode: 403, errMsg: '支付失败' })
 				} else {
 					try {
 						const { errCode } = await orderCloudObj.status(id, 2)
